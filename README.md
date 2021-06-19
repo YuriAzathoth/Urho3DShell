@@ -1,2 +1,2 @@
 # Urho3DShell
-Lightweight Urho3D shell ready for making games.
+Lightweight Urho3D shell ready for making games (WIP).
