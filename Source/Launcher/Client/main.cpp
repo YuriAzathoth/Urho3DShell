@@ -20,9 +20,34 @@
 // THE SOFTWARE.
 //
 
-#include "Core/Launch.h"
+#include <boost/dll/import.hpp>
+#include <boost/function.hpp>
+
+#define LIBRARY_FILENAME "Urho3DShell"
+#define LAUNCH_FUNCTION "LaunchShell"
 
 int main(int argc, char** argv)
 {
-	return 0;
+	setlocale(LC_ALL, "");
+	using LaunchFun = int(int, char**);
+	boost::function<LaunchFun> launchFun;
+	try
+	{
+		launchFun =
+			boost::dll::import<LaunchFun>(LIBRARY_FILENAME, LAUNCH_FUNCTION, boost::dll::load_mode::append_decorations);
+	}
+	catch (boost::system::system_error& e)
+	{
+		fprintf(stderr, "An exception has occured: %s\n", e.what());
+		return 1;
+	}
+	return launchFun(argc, argv);
 }
+
+#ifdef _WIN32
+extern "C"
+{
+	__declspec(dllexport) unsigned NvOptimusEnablement = 1;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+#endif // _WIN32
