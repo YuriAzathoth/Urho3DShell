@@ -24,6 +24,7 @@
 #define SHELLAPPLICATION_H
 
 #include <Urho3D/Engine/Application.h>
+#include "Urho3DShellAPI.h"
 
 class ShellApplication : public Urho3D::Application
 {
@@ -33,5 +34,7 @@ public:
 	void Start() override;
 	void Stop() override;
 };
+
+extern "C" int URHO3DSHELLAPI_EXPORT LaunchShell(int argc, char** argv);
 
 #endif // SHELLAPPLICATION_H
