@@ -20,28 +20,56 @@
 // THE SOFTWARE.
 //
 
+#include <algorithm>
+#include <array>
+#include <vector>
 #include <boost/dll/import.hpp>
 #include <boost/function.hpp>
 
+#if defined (__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif // defined (__GNUC__) || defined(__GNUG__)
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wwrite-strings"
+#endif // defined(__clang__)
+
 #define LIBRARY_FILENAME "Urho3DShell"
+#define SETUP_FUNCTION "SetArguments"
 #define LAUNCH_FUNCTION "LaunchShell"
 
 int main(int argc, char** argv)
 {
 	setlocale(LC_ALL, "");
-	using LaunchFun = int(int, char**);
-	boost::function<LaunchFun> launchFun;
+	using SetupFunc = void(int, char**);
+	using LaunchFunc = int();
+	boost::function<SetupFunc> setupFunc;
+	boost::function<LaunchFunc> launchFunc;
 	try
 	{
-		launchFun =
-			boost::dll::import<LaunchFun>(LIBRARY_FILENAME, LAUNCH_FUNCTION, boost::dll::load_mode::append_decorations);
+		setupFunc =
+			boost::dll::import<SetupFunc>(LIBRARY_FILENAME, SETUP_FUNCTION, boost::dll::load_mode::append_decorations);
+		launchFunc =
+			boost::dll::import<LaunchFunc>(LIBRARY_FILENAME, LAUNCH_FUNCTION, boost::dll::load_mode::append_decorations);
 	}
 	catch (boost::system::system_error& e)
 	{
 		fprintf(stderr, "An exception has occured: %s\n", e.what());
 		return 1;
 	}
-	return launchFun(argc, argv);
+	{
+		const std::vector<char*> console_args { argv, argv + argc };
+		const std::vector<char*> launcher_args
+		{
+			@LAUNCHER_ARGUMENTS@
+		};
+		std::vector<char*> result_args(console_args.size() + launcher_args.size());
+		std::merge(launcher_args.begin(), launcher_args.begin(), console_args.begin(), console_args.end(), result_args.begin());
+		setupFunc(static_cast<int>(result_args.size()), static_cast<char**>(result_args.data()));
+	}
+	return launchFunc();
 }
 
 #ifdef _WIN32
@@ -51,3 +79,11 @@ extern "C"
 	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif // _WIN32
+
+#if defined (__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#endif // defined (__GNUC__) || defined(__GNUG__)
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // defined(__clang__)

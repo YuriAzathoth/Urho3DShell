@@ -35,6 +35,10 @@ public:
 	void Stop() override;
 };
 
-extern "C" int URHO3DSHELLAPI_EXPORT LaunchShell(int argc, char** argv);
+extern "C"
+{
+	void URHO3DSHELLAPI_EXPORT SetArguments(int argc, char** argv);
+	int URHO3DSHELLAPI_EXPORT LaunchShell();
+}
 
 #endif // SHELLAPPLICATION_H
