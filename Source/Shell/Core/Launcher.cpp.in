@@ -36,9 +36,14 @@
 #pragma clang diagnostic ignored "-Wwrite-strings"
 #endif // defined(__clang__)
 
-#define LIBRARY_FILENAME "Urho3DShell"
 #define SETUP_FUNCTION "SetArguments"
 #define LAUNCH_FUNCTION "LaunchShell"
+
+#ifdef NDEBUG
+#define LIBRARY_FILENAME "Urho3DShell"
+#else
+#define LIBRARY_FILENAME "Urho3DShell_d"
+#endif // NDEBUG
 
 int main(int argc, char** argv)
 {
