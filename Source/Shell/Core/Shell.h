@@ -34,6 +34,7 @@ public:
 	explicit Shell(Urho3D::Context* context);
 	~Shell();
 
+	void Setup(Urho3D::VariantMap& engineParameters);
 	void Initialize();
 };
 

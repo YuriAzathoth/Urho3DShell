@@ -14,11 +14,17 @@ public:
 
 	void Initialize(const Urho3D::String& gameName);
 
-	Urho3D::String GetUserDataPath() const;
+	void LoadProfile(const Urho3D::String& profileName);
+	void SaveProfile();
+
+	const Urho3D::String& GetUserDataPath() const noexcept { return userDataPath_; }
 
 private:
+	Urho3D::String GetGameDataPath() const;
+
 	Urho3D::String profileName_;
-	Urho3D::String gameDataPath_;
+	Urho3D::String gameName_;
+	Urho3D::String userDataPath_;
 };
 
 #endif // USERPROFILE_H

@@ -1,3 +1,25 @@
+//
+// Copyright (c) 2021 Yuriy Zinchenko.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
 #include <Urho3D/Audio/Audio.h>
 #include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/Engine/EngineDefs.h>
@@ -15,6 +37,244 @@ static String ResToStr(const IntVector3& res);
 
 Config::Config(Urho3D::Context* context)
 	: Object(context)
+{
+	RegisterParameters();
+}
+
+void Config::LoadXML(const Urho3D::XMLElement& source)
+{
+	String name;
+	Variant value;
+	for (XMLElement parameter = source.GetChild("parameter"); !parameter.IsNull(); parameter = parameter.GetNext())
+	{
+		name = parameter.GetAttribute("name");
+		value = parameter.GetVariant();
+		if (!name.Empty() && !value.IsEmpty() && parameters_.Contains(name))
+			changedParameters_[name] = value;
+	}
+}
+
+void Config::SaveXML(Urho3D::XMLElement& dst) const
+{
+	XMLElement parameter;
+	for (const auto& p : parameters_)
+	{
+		parameter = dst.CreateChild("parameter");
+		parameter.SetAttribute("name", p.second_.name_);
+		parameter.SetVariant(p.second_.reader_->Read());
+	}
+}
+
+void Config::ExtractEngineParameters(Urho3D::VariantMap& dst)
+{
+	// TODO: Implement registrable engine parameters forwarding
+	auto it = changedParameters_.Find(ECP_RESOLUTION);
+	if (it != changedParameters_.End())
+	{
+		const IntVector3 resolution = StrToRes(it->second_.GetString());
+		dst[EP_WINDOW_WIDTH] = resolution.x_;
+		dst[EP_WINDOW_HEIGHT] = resolution.y_;
+		dst[EP_REFRESH_RATE] = resolution.z_;
+	}
+	it = changedParameters_.Find(ECP_WINDOW_MODE);
+	if (it != changedParameters_.End())
+	{
+		const int windowMode = it->second_.GetInt();
+		dst[EP_FULL_SCREEN] = windowMode >= 1;
+		dst[EP_BORDERLESS] = windowMode == 2;
+	}
+	for (it = changedParameters_.Begin(); it != changedParameters_.End();)
+		if (parameters_[it->first_].flags_ & ParameterFlags::ENGINE)
+		{
+			dst.Insert(it);
+			it = changedParameters_.Erase(it);
+		}
+		else
+			++it;
+}
+
+void Config::Apply(bool engineToo)
+{
+	if (!changedParameters_.Empty())
+	{
+		ParametersMap::Iterator it;
+		for (const auto& p : changedParameters_)
+		{
+			it = parameters_.Find(p.first_);
+			if (it != parameters_.End() && !(engineToo && it->second_.flags_ & ParameterFlags::ENGINE))
+				it->second_.writer_->Write(p.second_);
+		}
+		changedParameters_.Clear();
+	}
+	for (auto& p : storages_)
+	{
+		p.second_->writer_(p.second_->parameters_);
+		p.second_->parameters_.Clear();
+	}
+}
+
+void Config::Clear()
+{
+	changedParameters_.Clear();
+	enumConstructors_.Clear();
+	for (auto& p : storages_)
+		p.second_->parameters_.Clear();
+}
+
+void Config::RegisterSettingsTab(const Urho3D::String& tabName) { settings_[tabName].name_ = tabName; }
+
+void Config::RemoveSettingsTab(Urho3D::StringHash tab) { settings_.Erase(tab); }
+
+Urho3D::StringVector Config::GetSettingsTabs() const
+{
+	StringVector ret;
+	ret.Reserve(settings_.Size());
+	for (const auto& p : settings_)
+		ret.Push(p.second_.name_);
+	return ret;
+}
+
+Urho3D::StringVector Config::GetSettings(Urho3D::StringHash settingsTab) const
+{
+	StringVector ret;
+	const auto it = settings_.Find(settingsTab);
+	if (it != settings_.End())
+	{
+		const SettingsTab& tab = it->second_;
+		ret.Reserve(tab.settings_.Size());
+		for (StringHash setting : tab.settings_)
+			ret.Push(parameters_[setting]->name_);
+	}
+	return ret;
+}
+
+bool Config::RegisterParameter(const Urho3D::String& parameterName,
+							   Urho3D::VariantType type,
+							   Urho3D::StringHash settingsTab,
+							   bool isEngine,
+							   bool localized)
+{
+	auto it = settings_.Find(settingsTab);
+	if (!parameters_.Contains(parameterName) && it != settings_.End())
+	{
+		Parameter& parameter = parameters_[parameterName];
+		parameter.name_ = parameterName;
+		parameter.settingsTab_ = settingsTab;
+		parameter.type_ = type;
+		if (isEngine)
+			parameter.flags_ = ParameterFlags::ENGINE;
+		if (localized)
+			parameter.flags_ = ParameterFlags::LOCALIZED;
+		it->second_.settings_.Push(parameterName);
+		return true;
+	}
+	else
+		return false;
+}
+
+void Config::RemoveParameter(Urho3D::StringHash parameter)
+{
+	auto itParameter = parameters_.Find(parameter);
+	if (itParameter != parameters_.End())
+	{
+		auto itSetting = settings_.Find(itParameter->second_.settingsTab_);
+		if (itSetting != settings_.End())
+			settings_.Erase(itSetting);
+		if (itParameter->second_.flags_ & ParameterFlags::ENUM)
+			enumConstructors_.Erase(itParameter->first_);
+		parameters_.Erase(itParameter);
+	}
+}
+
+void Config::RegisterReader(Urho3D::StringHash parameter, SimpleReaderFunc reader)
+{
+	auto it = parameters_.Find(parameter);
+	if (it != parameters_.End())
+		it->second_.reader_ = new SimpleReader(reader);
+}
+
+void Config::RegisterWriter(Urho3D::StringHash parameter, SimpleWriterFunc writer)
+{
+	auto it = parameters_.Find(parameter);
+	if (it != parameters_.End())
+		it->second_.writer_ = new SimpleWriter(writer);
+}
+
+void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor)
+{
+	auto it = parameters_.Find(parameter);
+	if (it != parameters_.End())
+	{
+		it->second_.flags_ |= ParameterFlags::ENUM;
+		enumConstructors_[parameter] = enumConstructor;
+	}
+}
+
+bool Config::RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterFunc writer)
+{
+	if (!storages_.Contains(cathegory))
+	{
+		SharedPtr<ComplexStorage> storage = MakeShared<ComplexStorage>();
+		storage->writer_ = writer;
+		storage->parametersCount_ = 0;
+		return true;
+	}
+	else
+		return false;
+}
+
+bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory)
+{
+	auto itParameter = parameters_.Find(parameter);
+	auto itStorage = storages_.Find(cathegory);
+	if (itParameter != parameters_.End() && itStorage != storages_.End())
+	{
+		itParameter->second_.writer_ = new ComplexWriter(itStorage->second_, parameter);
+		return true;
+	}
+	else
+		return false;
+}
+
+void Config::GetDebugString(Urho3D::String& dst) const
+{
+	// ATTENTION! Slow code! Use it ONLY for debugging purposes!
+	StringVector tabs = GetSettingsTabs();
+	StringVector parameters;
+	Variant value;
+	EnumVector enumVector;
+	for (const String& tabName : tabs)
+	{
+		dst.Append(tabName).Append('\n');
+		parameters = GetSettings(tabName);
+		for (const String& parameterName : parameters)
+		{
+			const Parameter& parameter = *parameters_[parameterName];
+			value = parameter.reader_->Read();
+			dst.Append("\t").Append(parameterName).Append('\n');
+			dst.Append("\t\tType  = ").Append(value.GetTypeName()).Append('\n');
+			dst.Append("\t\tValue = ").Append(value.ToString()).Append('\n');
+			dst.Append("\t\tStore = ");
+			if (parameter.flags_ & ParameterFlags::ENGINE)
+				dst.Append("ENGINE\n");
+			else
+				dst.Append("CUSTOM\n");
+			if (parameter.flags_ & ParameterFlags::ENUM)
+			{
+				dst.Append("\t\tEnum Variants:\n");
+				enumVector = (*enumConstructors_[parameterName])();
+				for (const EnumVariant& enumVariant : enumVector)
+					dst.Append("\t\t\t")
+						.Append(enumVariant.caption_)
+						.Append(" = ")
+						.Append(enumVariant.value_.ToString())
+						.Append('\n');
+			}
+		}
+	}
+}
+
+void Config::RegisterParameters()
 {
 	RegisterSettingsTab(ST_GAME);
 	{
@@ -308,239 +568,6 @@ Config::Config(Urho3D::Context* context)
 
 	RegisterSettingsTab(ST_INPUT);
 	{
-	}
-}
-
-void Config::LoadXML(const Urho3D::XMLElement& source)
-{
-	String name;
-	Variant value;
-	for (XMLElement parameter = source.GetChild("parameter"); !parameter.IsNull(); parameter = parameter.GetNext())
-	{
-		name = parameter.GetAttribute("name");
-		value = parameter.GetVariant();
-		if (!name.Empty() && !value.IsEmpty() && parameters_.Contains(name))
-			changedParameters_[name] = value;
-	}
-}
-
-void Config::SaveXML(Urho3D::XMLElement& dst) const
-{
-	XMLElement parameter;
-	for (const auto& p : parameters_)
-	{
-		parameter = dst.CreateChild("parameter");
-		parameter.SetAttribute("name", p.second_.name_);
-		parameter.SetVariant(p.second_.reader_->Read());
-	}
-}
-
-void Config::ExtractEngineParameters(Urho3D::VariantMap& dst)
-{
-	// TODO: Implement registrable engine parameters forwarding
-	auto it = changedParameters_.Find(ECP_RESOLUTION);
-	if (it != changedParameters_.End())
-	{
-		const IntVector3 resolution = StrToRes(it->second_.GetString());
-		dst[EP_WINDOW_WIDTH] = resolution.x_;
-		dst[EP_WINDOW_HEIGHT] = resolution.y_;
-		dst[EP_REFRESH_RATE] = resolution.z_;
-	}
-	it = changedParameters_.Find(ECP_WINDOW_MODE);
-	if (it != changedParameters_.End())
-	{
-		const int windowMode = it->second_.GetInt();
-		dst[EP_FULL_SCREEN] = windowMode >= 1;
-		dst[EP_BORDERLESS] = windowMode == 2;
-	}
-	for (it = changedParameters_.Begin(); it != changedParameters_.End();)
-		if (parameters_[it->first_].flags_ & ParameterFlags::ENGINE)
-		{
-			dst.Insert(it);
-			it = changedParameters_.Erase(it);
-		}
-		else
-			++it;
-}
-
-void Config::Apply(bool engineToo)
-{
-	if (!changedParameters_.Empty())
-	{
-		ParametersMap::Iterator it;
-		for (const auto& p : changedParameters_)
-		{
-			it = parameters_.Find(p.first_);
-			if (it != parameters_.End() && !(engineToo && it->second_.flags_ & ParameterFlags::ENGINE))
-				it->second_.writer_->Write(p.second_);
-		}
-		changedParameters_.Clear();
-	}
-	for (auto& p : storages_)
-	{
-		p.second_->writer_(p.second_->parameters_);
-		p.second_->parameters_.Clear();
-	}
-}
-
-void Config::Clear()
-{
-	changedParameters_.Clear();
-	enumConstructors_.Clear();
-	for (auto& p : storages_)
-		p.second_->parameters_.Clear();
-}
-
-void Config::RegisterSettingsTab(const Urho3D::String& tabName) { settings_[tabName].name_ = tabName; }
-
-void Config::RemoveSettingsTab(Urho3D::StringHash tab) { settings_.Erase(tab); }
-
-Urho3D::StringVector Config::GetSettingsTabs() const
-{
-	StringVector ret;
-	ret.Reserve(settings_.Size());
-	for (const auto& p : settings_)
-		ret.Push(p.second_.name_);
-	return ret;
-}
-
-Urho3D::StringVector Config::GetSettings(Urho3D::StringHash settingsTab) const
-{
-	StringVector ret;
-	const auto it = settings_.Find(settingsTab);
-	if (it != settings_.End())
-	{
-		const SettingsTab& tab = it->second_;
-		ret.Reserve(tab.settings_.Size());
-		for (StringHash setting : tab.settings_)
-			ret.Push(parameters_[setting]->name_);
-	}
-	return ret;
-}
-
-bool Config::RegisterParameter(const Urho3D::String& parameterName,
-							   Urho3D::VariantType type,
-							   Urho3D::StringHash settingsTab,
-							   bool isEngine,
-							   bool localized)
-{
-	auto it = settings_.Find(settingsTab);
-	if (!parameters_.Contains(parameterName) && it != settings_.End())
-	{
-		Parameter& parameter = parameters_[parameterName];
-		parameter.name_ = parameterName;
-		parameter.settingsTab_ = settingsTab;
-		parameter.type_ = type;
-		if (isEngine)
-			parameter.flags_ = ParameterFlags::ENGINE;
-		if (localized)
-			parameter.flags_ = ParameterFlags::LOCALIZED;
-		it->second_.settings_.Push(parameterName);
-		return true;
-	}
-	else
-		return false;
-}
-
-void Config::RemoveParameter(Urho3D::StringHash parameter)
-{
-	auto itParameter = parameters_.Find(parameter);
-	if (itParameter != parameters_.End())
-	{
-		auto itSetting = settings_.Find(itParameter->second_.settingsTab_);
-		if (itSetting != settings_.End())
-			settings_.Erase(itSetting);
-		if (itParameter->second_.flags_ & ParameterFlags::ENUM)
-			enumConstructors_.Erase(itParameter->first_);
-		parameters_.Erase(itParameter);
-	}
-}
-
-void Config::RegisterReader(Urho3D::StringHash parameter, SimpleReaderFunc reader)
-{
-	auto it = parameters_.Find(parameter);
-	if (it != parameters_.End())
-		it->second_.reader_ = new SimpleReader(reader);
-}
-
-void Config::RegisterWriter(Urho3D::StringHash parameter, SimpleWriterFunc writer)
-{
-	auto it = parameters_.Find(parameter);
-	if (it != parameters_.End())
-		it->second_.writer_ = new SimpleWriter(writer);
-}
-
-void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor)
-{
-	auto it = parameters_.Find(parameter);
-	if (it != parameters_.End())
-	{
-		it->second_.flags_ |= ParameterFlags::ENUM;
-		enumConstructors_[parameter] = enumConstructor;
-	}
-}
-
-bool Config::RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterFunc writer)
-{
-	if (!storages_.Contains(cathegory))
-	{
-		SharedPtr<ComplexStorage> storage = MakeShared<ComplexStorage>();
-		storage->writer_ = writer;
-		storage->parametersCount_ = 0;
-		return true;
-	}
-	else
-		return false;
-}
-
-bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory)
-{
-	auto itParameter = parameters_.Find(parameter);
-	auto itStorage = storages_.Find(cathegory);
-	if (itParameter != parameters_.End() && itStorage != storages_.End())
-	{
-		itParameter->second_.writer_ = new ComplexWriter(itStorage->second_, parameter);
-		return true;
-	}
-	else
-		return false;
-}
-
-void Config::GetDebugString(Urho3D::String& dst)
-{
-	// ATTENTION! Slow code! Use it ONLY for debugging purposes!
-	StringVector tabs = GetSettingsTabs();
-	StringVector parameters;
-	Variant value;
-	EnumVector enumVector;
-	for (const String& tabName : tabs)
-	{
-		dst.Append(tabName).Append('\n');
-		parameters = GetSettings(tabName);
-		for (const String& parameterName : parameters)
-		{
-			const Parameter& parameter = parameters_[parameterName];
-			value = parameter.reader_->Read();
-			dst.Append("\t").Append(parameterName).Append('\n');
-			dst.Append("\t\tType  = ").Append(value.GetTypeName()).Append('\n');
-			dst.Append("\t\tValue = ").Append(value.ToString()).Append('\n');
-			dst.Append("\t\tStore = ");
-			if (parameter.flags_ & ParameterFlags::ENGINE)
-				dst.Append("ENGINE\n");
-			else
-				dst.Append("CUSTOM\n");
-			if (parameter.flags_ & ParameterFlags::ENUM)
-			{
-				dst.Append("\t\tEnum Variants:\n");
-				enumVector = enumConstructors_[parameterName]();
-				for (const EnumVariant& enumVariant : enumVector)
-					dst.Append("\t\t\t")
-						.Append(enumVariant.caption_)
-						.Append(" = ")
-						.Append(enumVariant.value_.ToString())
-						.Append('\n');
-			}
-		}
 	}
 }
 

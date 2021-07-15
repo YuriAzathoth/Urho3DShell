@@ -21,11 +21,20 @@
 //
 
 #include <Urho3D/Core/Context.h>
+#include <Urho3D/Engine/EngineDefs.h>
+#include <Urho3D/IO/Log.h>
+#include <Urho3D/Resource/XMLFile.h>
+#include "Config/Config.h"
 #include "Core/UserProfile.h"
 #include "Plugin/PluginsRegistry.h"
 #include "Shell.h"
 
+#define CONFIG_FILENAME "Config.xml"
+#define CONFIG_PATH "Config"
+#define CONFIG_ROOT "config"
+#define DEFAULT_PROFILE "Default"
 #define PLUGINS_PATH "Plugins"
+#define PROFILE_FILENAME "Profile.txt"
 
 using namespace Urho3D;
 
@@ -33,20 +42,29 @@ Shell::Shell(Urho3D::Context* context)
 	: Object(context)
 {
 	context_->RegisterSubsystem<UserProfile>();
+	context_->RegisterSubsystem<Config>();
 	context_->RegisterSubsystem<PluginsRegistry>();
 }
 
 Shell::~Shell()
 {
+	context_->RemoveSubsystem<Config>();
 	context_->RemoveSubsystem<PluginsRegistry>();
 	context_->RemoveSubsystem<UserProfile>();
 }
 
-void Shell::Initialize()
+void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
-	UserProfile* userProfile = GetSubsystem<UserProfile>();
-	userProfile->Initialize("SampleGame");
+	Variant gameName;
+	if (engineParameters.TryGetValue(EP_WINDOW_TITLE, gameName))
+		GetSubsystem<UserProfile>()->Initialize(gameName.GetString());
+	else
+	{
+		GetSubsystem<UserProfile>()->Initialize("SampleGame");
+		URHO3D_LOGWARNING("Game name is not set. Game name is now \"SampleGame\".");
+	}
 
-	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
-	pluginsRegistry->SetPluginsPath(userProfile->GetUserDataPath() + PLUGINS_PATH + "/");
+	GetSubsystem<Config>()->ExtractEngineParameters(engineParameters);
 }
+
+void Shell::Initialize() { GetSubsystem<Config>()->Apply(false); }

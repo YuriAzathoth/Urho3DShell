@@ -26,7 +26,11 @@
 
 using namespace Urho3D;
 
-void ShellApplication::Setup() { Shell* shell = context_->RegisterSubsystem<Shell>(); }
+void ShellApplication::Setup()
+{
+	Shell* shell = context_->RegisterSubsystem<Shell>();
+	shell->Setup(engineParameters_);
+}
 
 void ShellApplication::Start() { GetSubsystem<Shell>()->Initialize(); }
 
