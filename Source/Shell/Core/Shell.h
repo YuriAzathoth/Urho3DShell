@@ -38,11 +38,13 @@ public:
 	void Initialize();
 
 	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
-	void SetProfileName(const Urho3D::String& profileName) { profileName_ = profileName; }
-	void LoadProfile();
+	void LoadProfile(const Urho3D::String& profileName);
 	void SaveProfile() const;
+	void CreateProfile(const Urho3D::String& profileName);
+	void RemoveProfile(const Urho3D::String& profileName);
 
 private:
+	void LoadProfile();
 	void LoadProfileName();
 	void SaveProfileName() const;
 
