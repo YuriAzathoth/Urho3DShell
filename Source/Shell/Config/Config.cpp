@@ -25,6 +25,7 @@
 #include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/Graphics/Renderer.h>
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Resource/Localization.h>
 #include <Urho3D/Resource/XMLElement.h>
 #include "Config.h"
@@ -108,8 +109,12 @@ void Config::Apply(bool engineToo)
 	}
 	for (auto& p : storages_)
 	{
-		p.second_->writer_(p.second_->parameters_);
-		p.second_->parameters_.Clear();
+		SharedPtr<ComplexStorage> storage = p.second_;
+		if (!storage->parameters_.Empty() && !(engineToo && storage->isEngine_))
+		{
+			storage->writer_(p.second_->parameters_);
+			storage->parameters_.Clear();
+		}
 	}
 }
 
@@ -162,14 +167,18 @@ bool Config::RegisterParameter(const Urho3D::String& parameterName,
 		parameter.settingsTab_ = settingsTab;
 		parameter.type_ = type;
 		if (isEngine)
-			parameter.flags_ = ParameterFlags::ENGINE;
+			parameter.flags_ |= ParameterFlags::ENGINE;
 		if (localized)
-			parameter.flags_ = ParameterFlags::LOCALIZED;
+			parameter.flags_ |= ParameterFlags::LOCALIZED;
 		it->second_.settings_.Push(parameterName);
 		return true;
 	}
 	else
+	{
+		URHO3D_LOGWARNINGF("Failed to register parameter %s: parameter is already registered.",
+						   parameterName.CString());
 		return false;
+	}
 }
 
 void Config::RemoveParameter(Urho3D::StringHash parameter)
@@ -229,6 +238,8 @@ bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringH
 	auto itStorage = storages_.Find(cathegory);
 	if (itParameter != parameters_.End() && itStorage != storages_.End())
 	{
+		if (!itStorage->second_->parametersCount_)
+			itStorage->second_->isEngine_ = itParameter->second_.flags_ & ParameterFlags::ENGINE;
 		itParameter->second_.writer_ = new ComplexWriter(itStorage->second_, parameter);
 		return true;
 	}

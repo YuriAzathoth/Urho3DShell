@@ -149,6 +149,7 @@ private:
 		ComplexWriterFunc writer_;
 		Urho3D::VariantMap parameters_;
 		unsigned char parametersCount_;
+		bool isEngine_;
 	};
 
 	class ComplexWriter : public Writer
