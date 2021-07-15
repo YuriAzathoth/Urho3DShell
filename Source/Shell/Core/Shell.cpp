@@ -111,7 +111,6 @@ void Shell::SaveProfile() const
 	file.SaveFile(userDataPath_ + CONFIG_PATH + "/" + CONFIG_FILENAME);
 }
 
-
 void Shell::LoadProfileName()
 {
 	File file(context_);
