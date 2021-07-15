@@ -36,6 +36,21 @@ public:
 
 	void Setup(Urho3D::VariantMap& engineParameters);
 	void Initialize();
+
+	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
+	void SetProfileName(const Urho3D::String& profileName) { profileName_ = profileName; }
+	void LoadProfile();
+	void SaveProfile() const;
+
+private:
+	void LoadProfileName();
+	void SaveProfileName() const;
+
+	Urho3D::String GetGameDataPath() const;
+
+	Urho3D::String gameName_;
+	Urho3D::String profileName_;
+	Urho3D::String userDataPath_;
 };
 
 #endif // SHELL_H
