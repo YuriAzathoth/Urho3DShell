@@ -225,7 +225,6 @@ bool Config::RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterF
 	{
 		SharedPtr<ComplexStorage> storage = MakeShared<ComplexStorage>();
 		storage->writer_ = writer;
-		storage->parametersCount_ = 0;
 		return true;
 	}
 	else
@@ -238,9 +237,8 @@ bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringH
 	auto itStorage = storages_.Find(cathegory);
 	if (itParameter != parameters_.End() && itStorage != storages_.End())
 	{
-		if (!itStorage->second_->parametersCount_)
-			itStorage->second_->isEngine_ = itParameter->second_.flags_ & ParameterFlags::ENGINE;
 		itParameter->second_.writer_ = new ComplexWriter(itStorage->second_, parameter);
+		itStorage->second_->isEngine_ = itParameter->second_.flags_ & ParameterFlags::ENGINE;
 		return true;
 	}
 	else

@@ -148,7 +148,6 @@ private:
 	{
 		ComplexWriterFunc writer_;
 		Urho3D::VariantMap parameters_;
-		unsigned char parametersCount_;
 		bool isEngine_;
 	};
 
@@ -159,9 +158,7 @@ private:
 			: storage_(storage)
 			, name_(name)
 		{
-			++storage_->parametersCount_;
 		}
-		~ComplexWriter() { --storage_->parametersCount_; }
 		void Write(const Urho3D::Variant& value) override { storage_->parameters_[name_] = value; }
 
 	private:
