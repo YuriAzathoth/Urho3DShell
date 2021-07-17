@@ -64,13 +64,6 @@ public:
 	using EnumVector = Urho3D::Vector<EnumVariant>;
 	using EnumConstructorFunc = std::function<EnumVector()>;
 
-	struct ComplexStorage : public Urho3D::RefCounted
-	{
-		ComplexWriterFunc writer_;
-		Urho3D::VariantMap parameters_;
-		bool isEngine_;
-	};
-
 	explicit Config(Urho3D::Context* context);
 
 	void LoadXML(const Urho3D::XMLElement& source);
@@ -151,6 +144,14 @@ private:
 		const SimpleWriterFunc writer_;
 	};
 
+	struct ComplexStorage : public Urho3D::RefCounted
+	{
+		ComplexWriterFunc writer_;
+		Urho3D::VariantMap parameters_;
+		unsigned char parametersCount_;
+		bool isEngine_;
+	};
+
 	class ComplexWriter : public Writer
 	{
 	public:
@@ -158,7 +159,9 @@ private:
 			: storage_(storage)
 			, name_(name)
 		{
+			++storage_->parametersCount_;
 		}
+		~ComplexWriter() { --storage_->parametersCount_; }
 		void Write(const Urho3D::Variant& value) override { storage_->parameters_[name_] = value; }
 
 	private:
