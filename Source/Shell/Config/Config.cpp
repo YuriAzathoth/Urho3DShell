@@ -50,7 +50,13 @@ void Config::LoadXML(const Urho3D::XMLElement& source)
 	{
 		name = parameter.GetAttribute("name");
 		value = parameter.GetVariant();
-		if (!name.Empty() && !value.IsEmpty() && parameters_.Contains(name))
+		if (name.Empty())
+			URHO3D_LOGWARNING("Failed to setup config parameter: name is empty.");
+		else if (value.IsEmpty())
+			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: value is empty.", name.CString());
+		else if (!parameters_.Contains(name))
+			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: parameter is not registered yet.", name.CString());
+		else
 			changedParameters_[name] = value;
 	}
 }
@@ -121,23 +127,33 @@ void Config::Apply(bool engineToo)
 void Config::Clear()
 {
 	changedParameters_.Clear();
-	enumConstructors_.Clear();
 	for (auto& p : storages_)
 		p.second_->parameters_.Clear();
 }
 
 void Config::RegisterSettingsTab(const Urho3D::String& tabName)
 {
-	settings_[tabName]; // Create default constructed object in map
-	names_[tabName] = tabName;
+	if (!settings_.Contains(tabName))
+	{
+		settings_[tabName]; // Create default constructed object in map
+		names_[tabName] = tabName;
+	}
+	else
+		URHO3D_LOGWARNINGF("Failed to register already registered settings tab %s.", tabName.CString());
 }
 
 void Config::RemoveSettingsTab(Urho3D::StringHash tab)
 {
-	auto it = parameters_.Find(tab);
-	if (it == parameters_.End())
-		names_.Erase(tab);
-	settings_.Erase(tab);
+	auto itTab = settings_.Find(tab);
+	if (itTab != settings_.End())
+	{
+		const auto itParameter = parameters_.Find(tab);
+		if (itParameter == parameters_.End())
+			names_.Erase(tab);
+		settings_.Erase(itTab);
+	}
+	else
+		URHO3D_LOGWARNING("Failed to remove non-existent settings tab.");
 }
 
 Urho3D::StringVector Config::GetSettingsTabs() const
@@ -151,16 +167,21 @@ Urho3D::StringVector Config::GetSettingsTabs() const
 
 Urho3D::StringVector Config::GetSettings(Urho3D::StringHash settingsTab) const
 {
-	StringVector ret;
 	const auto it = settings_.Find(settingsTab);
 	if (it != settings_.End())
 	{
+		StringVector ret;
 		const SettingsTab& tab = it->second_;
 		ret.Reserve(tab.settings_.Size());
 		for (StringHash setting : tab.settings_)
 			ret.Push(*names_[setting]);
+		return ret;
 	}
-	return ret;
+	else
+	{
+		URHO3D_LOGERRORF("Failed to load unregistered settings tab parameters.");
+		return Variant::emptyStringVector;
+	}
 }
 
 bool Config::RegisterParameter(const Urho3D::String& parameterName,
@@ -185,7 +206,7 @@ bool Config::RegisterParameter(const Urho3D::String& parameterName,
 	}
 	else
 	{
-		URHO3D_LOGWARNINGF("Failed to register parameter %s: parameter is already registered.",
+		URHO3D_LOGWARNINGF("Failed to register config parameter %s: parameter is already registered.",
 						   parameterName.CString());
 		return false;
 	}
@@ -205,6 +226,8 @@ void Config::RemoveParameter(Urho3D::StringHash parameter)
 			enumConstructors_.Erase(itParameter->first_);
 		parameters_.Erase(itParameter);
 	}
+	else
+		URHO3D_LOGWARNING("Failed to remove non-existent config parameter.");
 }
 
 void Config::RegisterReader(Urho3D::StringHash parameter, SimpleReaderFunc reader)
@@ -212,6 +235,8 @@ void Config::RegisterReader(Urho3D::StringHash parameter, SimpleReaderFunc reade
 	auto it = parameters_.Find(parameter);
 	if (it != parameters_.End())
 		it->second_.reader_ = new SimpleReader(reader);
+	else
+		URHO3D_LOGWARNING("Failed to assign reader to non-existent config parameter.");
 }
 
 void Config::RegisterWriter(Urho3D::StringHash parameter, SimpleWriterFunc writer)
@@ -219,6 +244,8 @@ void Config::RegisterWriter(Urho3D::StringHash parameter, SimpleWriterFunc write
 	auto it = parameters_.Find(parameter);
 	if (it != parameters_.End())
 		it->second_.writer_ = new SimpleWriter(writer);
+	else
+		URHO3D_LOGWARNING("Failed to assign writer to non-existent config parameter.");
 }
 
 void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor)
@@ -229,6 +256,8 @@ void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enum
 		it->second_.flags_ |= ParameterFlags::ENUM;
 		enumConstructors_[parameter] = enumConstructor;
 	}
+	else
+		URHO3D_LOGWARNING("Failed to assign enum constructor to non-existent config parameter.");
 }
 
 bool Config::RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterFunc writer)
@@ -240,7 +269,10 @@ bool Config::RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterF
 		return true;
 	}
 	else
+	{
+		URHO3D_LOGWARNING("Failed to register already existent complex config storage.");
 		return false;
+	}
 }
 
 bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory)
@@ -254,7 +286,13 @@ bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringH
 		return true;
 	}
 	else
+	{
+		if (itParameter == parameters_.End())
+			URHO3D_LOGWARNING("Failed to assign writer to non-existent config parameter.");
+		if (itStorage == parameters_.End())
+			URHO3D_LOGWARNING("Failed to assign writer to non-existent complex config storage.");
 		return false;
+	}
 }
 
 void Config::GetDebugString(Urho3D::String& dst) const
