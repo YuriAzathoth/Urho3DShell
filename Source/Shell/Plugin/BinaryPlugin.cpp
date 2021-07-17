@@ -21,25 +21,16 @@ bool BinaryPlugin::Load(const Urho3D::String& fileName)
 	try
 	{
 		boost::dll::fs::path path(dllPath.CString());
+#ifndef _NDEBUG
+		dllName += "_d";
+#endif // _NDEBUG
 		path /= dllName.CString();
 		plugin_.load(path, boost::dll::load_mode::append_decorations);
 	}
 	catch (boost::system::system_error& e)
 	{
 		URHO3D_LOGERRORF("Failed to load binary plugin \"%s\": %s.", dllName.CString(), e.what());
-		URHO3D_LOGINFOF("Trying to load %s library debug version...", dllName.CString());
-		try
-		{
-			dllName += "_d";
-			boost::dll::fs::path path(dllPath.CString());
-			path /= dllName.CString();
-			plugin_.load(path, boost::dll::load_mode::append_decorations);
-		}
-		catch (boost::system::system_error& e)
-		{
-			URHO3D_LOGERRORF("Failed to load binary plugin \"%s\": %s.", dllName.CString(), e.what());
-			return false;
-		}
+		return false;
 	}
 
 	using PluginFactory = Urho3D::UniquePtr<PluginInterface>(Urho3D::Context*);
