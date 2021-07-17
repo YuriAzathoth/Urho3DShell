@@ -26,13 +26,14 @@
 #include <Urho3D/Container/FlagSet.h>
 #include <Urho3D/Core/Object.h>
 #include <functional>
+#include "Urho3DShellAPI.h"
 
 namespace Urho3D
 {
 class XMLElement;
 }
 
-class Config : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT Config : public Urho3D::Object
 {
 	URHO3D_OBJECT(Config, Urho3D::Object)
 
