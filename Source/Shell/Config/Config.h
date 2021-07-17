@@ -106,7 +106,6 @@ private:
 	{
 		Urho3D::SharedPtr<Reader> reader_;
 		Urho3D::SharedPtr<Writer> writer_;
-		Urho3D::String name_;
 		Urho3D::StringHash settingsTab_;
 		Urho3D::VariantType type_;
 		Urho3D::FlagSet<ParameterFlags> flags_;
@@ -115,7 +114,6 @@ private:
 	struct SettingsTab
 	{
 		Urho3D::PODVector<Urho3D::StringHash> settings_;
-		Urho3D::String name_;
 	};
 
 	class SimpleReader : public Reader
@@ -175,6 +173,7 @@ private:
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<ComplexStorage>> storages_;
 	Urho3D::VariantMap changedParameters_;
 	Urho3D::HashMap<Urho3D::StringHash, SettingsTab> settings_;
+	Urho3D::StringMap names_;
 };
 
 #endif // CONFIG_H

@@ -61,7 +61,7 @@ void Config::SaveXML(Urho3D::XMLElement& dst) const
 	for (const auto& p : parameters_)
 	{
 		parameter = dst.CreateChild("parameter");
-		parameter.SetAttribute("name", p.second_.name_);
+		parameter.SetAttribute("name", *names_[p.first_]);
 		parameter.SetVariant(p.second_.reader_->Read());
 	}
 }
@@ -126,16 +126,26 @@ void Config::Clear()
 		p.second_->parameters_.Clear();
 }
 
-void Config::RegisterSettingsTab(const Urho3D::String& tabName) { settings_[tabName].name_ = tabName; }
+void Config::RegisterSettingsTab(const Urho3D::String& tabName)
+{
+	settings_[tabName]; // Create default constructed object in map
+	names_[tabName] = tabName;
+}
 
-void Config::RemoveSettingsTab(Urho3D::StringHash tab) { settings_.Erase(tab); }
+void Config::RemoveSettingsTab(Urho3D::StringHash tab)
+{
+	auto it = parameters_.Find(tab);
+	if (it == parameters_.End())
+		names_.Erase(tab);
+	settings_.Erase(tab);
+}
 
 Urho3D::StringVector Config::GetSettingsTabs() const
 {
 	StringVector ret;
 	ret.Reserve(settings_.Size());
 	for (const auto& p : settings_)
-		ret.Push(p.second_.name_);
+		ret.Push(*names_[p.first_]);
 	return ret;
 }
 
@@ -148,7 +158,7 @@ Urho3D::StringVector Config::GetSettings(Urho3D::StringHash settingsTab) const
 		const SettingsTab& tab = it->second_;
 		ret.Reserve(tab.settings_.Size());
 		for (StringHash setting : tab.settings_)
-			ret.Push(parameters_[setting]->name_);
+			ret.Push(*names_[setting]);
 	}
 	return ret;
 }
@@ -163,7 +173,6 @@ bool Config::RegisterParameter(const Urho3D::String& parameterName,
 	if (!parameters_.Contains(parameterName) && it != settings_.End())
 	{
 		Parameter& parameter = parameters_[parameterName];
-		parameter.name_ = parameterName;
 		parameter.settingsTab_ = settingsTab;
 		parameter.type_ = type;
 		if (isEngine)
@@ -171,6 +180,7 @@ bool Config::RegisterParameter(const Urho3D::String& parameterName,
 		if (localized)
 			parameter.flags_ |= ParameterFlags::LOCALIZED;
 		it->second_.settings_.Push(parameterName);
+		names_[parameterName] = parameterName;
 		return true;
 	}
 	else
@@ -187,7 +197,9 @@ void Config::RemoveParameter(Urho3D::StringHash parameter)
 	if (itParameter != parameters_.End())
 	{
 		auto itSetting = settings_.Find(itParameter->second_.settingsTab_);
-		if (itSetting != settings_.End())
+		if (itSetting == settings_.End())
+			names_.Erase(parameter);
+		else
 			settings_.Erase(itSetting);
 		if (itParameter->second_.flags_ & ParameterFlags::ENUM)
 			enumConstructors_.Erase(itParameter->first_);
