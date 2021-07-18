@@ -40,7 +40,7 @@ bool ScriptPlugin::Load(const Urho3D::String& fileName)
 	if (!script_)
 		return false;
 
-	if (!Execute("void Setup()"))
+	if (Execute("void Setup()"))
 		Execute("void Start()");
 
 	script_->SetName(fileName);

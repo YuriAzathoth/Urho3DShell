@@ -28,7 +28,9 @@ using namespace Urho3D;
 
 bool PluginsRegistry::RegisterPlugin(const Urho3D::String& pluginName)
 {
-	const String fileName = pluginsPath_ + "/" + pluginName;
+	// TODO: Support loading from plugins path
+//	const String fileName = pluginsPath_ + "/" + pluginName;
+	const String fileName = pluginName;
 
 	SharedPtr<Plugin> plugin;
 	if (fileName.EndsWith(".as", false))

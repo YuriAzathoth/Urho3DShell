@@ -51,10 +51,17 @@ private:
 
 	Urho3D::String GetGameDataPath() const;
 
+	void ParseParameters(const Urho3D::StringVector& arguments);
+	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue);
+
+	void RegisterScriptAPI();
+
 	Urho3D::SharedPtr<ShellState> shellState_;
+	Urho3D::VariantMap shellParameters_;
 	Urho3D::String gameName_;
 	Urho3D::String profileName_;
 	Urho3D::String userDataPath_;
+	bool client_;
 };
 
 #endif // SHELL_H

@@ -21,10 +21,10 @@
 //
 
 #include <Urho3D/Audio/Audio.h>
-#include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/Graphics/Renderer.h>
+#include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Resource/Localization.h>
 #include <Urho3D/Resource/XMLElement.h>
@@ -35,12 +35,6 @@ using namespace Urho3D;
 
 static IntVector3 StrToRes(const String& str);
 static String ResToStr(const IntVector3& res);
-
-Config::Config(Urho3D::Context* context)
-	: Object(context)
-{
-	RegisterParameters();
-}
 
 void Config::LoadXML(const Urho3D::XMLElement& source)
 {
@@ -333,7 +327,7 @@ void Config::GetDebugString(Urho3D::String& dst) const
 	}
 }
 
-void Config::RegisterParameters()
+void Config::RegisterClientParameters()
 {
 	RegisterSettingsTab(ST_GAME);
 	{
@@ -629,6 +623,8 @@ void Config::RegisterParameters()
 	{
 	}
 }
+
+void Config::RegisterServerParameters() {}
 
 static IntVector3 StrToRes(const String& str)
 {

@@ -21,7 +21,6 @@
 //
 
 #include <algorithm>
-#include <array>
 #include <vector>
 #include <boost/dll/import.hpp>
 #include <boost/function.hpp>
@@ -71,7 +70,7 @@ int main(int argc, char** argv)
 			@LAUNCHER_ARGUMENTS@
 		};
 		std::vector<char*> result_args(console_args.size() + launcher_args.size());
-		std::merge(launcher_args.begin(), launcher_args.begin(), console_args.begin(), console_args.end(), result_args.begin());
+		std::merge(launcher_args.begin(), launcher_args.end(), console_args.begin(), console_args.end(), result_args.begin());
 		setupFunc(static_cast<int>(result_args.size()), static_cast<char**>(result_args.data()));
 	}
 	return launchFunc();

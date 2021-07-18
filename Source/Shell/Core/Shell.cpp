@@ -20,14 +20,23 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/AngelScript/Script.h>
 #include <Urho3D/Core/Context.h>
+#include <Urho3D/Core/ProcessUtils.h>
+#include <Urho3D/Engine/Console.h>
+#include <Urho3D/Engine/DebugHud.h>
+#include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
+#include <Urho3D/UI/UI.h>
 #include "Config/Config.h"
 #include "Plugin/PluginsRegistry.h"
+#include "ScriptAPI/ConfigAPI.h"
+#include "ScriptAPI/ShellAPI.h"
 #include "Shell.h"
 #include "ShellState/MainMenu.h"
 
@@ -36,17 +45,21 @@
 #define CONFIG_ROOT "config"
 #define DEFAULT_GAME_NAME "SampleGame"
 #define DEFAULT_PROFILE "Default"
-#define GP_GAME_NAME "GameName"
 #define INPUT_PATH "Input"
 #define PLUGINS_PATH "Plugins"
 #define PROFILE_FILENAME "Profile.txt"
+
+#define LP_NO_CLIENT "NoClient"
+#define LP_SCRIPT "Script"
 
 using namespace Urho3D;
 
 Shell::Shell(Urho3D::Context* context)
 	: Object(context)
 	, profileName_(DEFAULT_PROFILE)
+	, client_(true)
 {
+	context_->RegisterSubsystem<Script>();
 	context_->RegisterSubsystem<Config>();
 	context_->RegisterSubsystem<PluginsRegistry>();
 }
@@ -60,31 +73,54 @@ Shell::~Shell()
 
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
-	Variant gameName;
-	if (engineParameters.TryGetValue(GP_GAME_NAME, gameName))
-		gameName_ = gameName.GetString();
-	else
-	{
-		gameName_ = DEFAULT_GAME_NAME;
-		URHO3D_LOGWARNING("Using default game name because game name is not set.");
-	}
+	engineParameters[EP_FULL_SCREEN] = false;
+
+	ParseParameters(GetArguments());
+	client_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
+
+	// TODO: Game name parsing from file
+	gameName_ = DEFAULT_GAME_NAME;
 
 	FileSystem* fileSystem = GetSubsystem<FileSystem>();
-
 	const String& gameDataPath = GetGameDataPath();
 	if (!fileSystem->DirExists(gameDataPath))
 		fileSystem->CreateDir(gameDataPath);
 
+	Config* config = GetSubsystem<Config>();
+	config->RegisterServerParameters();
+	if (client_)
+		config->RegisterClientParameters();
+
 	LoadProfileName();
 	LoadProfile();
 
-	GetSubsystem<Config>()->ExtractEngineParameters(engineParameters);
+	config->ExtractEngineParameters(engineParameters);
 }
 
 void Shell::Initialize()
 {
+	if (client_)
+	{
+		ResourceCache* cache = GetSubsystem<ResourceCache>();
+
+		XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
+		GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(styleFile);
+
+		Engine* engine = GetSubsystem<Engine>();
+		Console* console = engine->CreateConsole();
+		console->SetDefaultStyle(styleFile);
+		DebugHud* debugHud = engine->CreateDebugHud();
+		debugHud->SetDefaultStyle(styleFile);
+	}
+
 	GetSubsystem<Config>()->Apply(false);
-	shellState_ = new ShellState(context_);
+
+	if (client_)
+		shellState_ = new ShellState(context_);
+
+	const auto itScript = shellParameters_.Find(LP_SCRIPT);
+	if (itScript != shellParameters_.End())
+		GetSubsystem<PluginsRegistry>()->RegisterPlugin(itScript->second_.GetString());
 }
 
 void Shell::LoadProfile(const Urho3D::String& profileName)
@@ -166,6 +202,42 @@ void Shell::SaveProfileName() const
 	{
 		File file(context_, profileFile, FileMode::FILE_WRITE);
 		file.WriteString(profileName_);
+	}
+}
+
+void Shell::ParseParameters(const Urho3D::StringVector& arguments)
+{
+	String argument, value;
+	for (unsigned i = 0; i < arguments.Size(); ++i)
+		if (arguments[i].Length() > 1 && arguments[i][0] == '-')
+		{
+            argument = arguments[i].Substring(1).ToLower();
+            value = i + 1 < arguments.Size() ? arguments[i + 1] : String::EMPTY;
+            if (argument == "noclient")
+				shellParameters_[LP_NO_CLIENT] = true;
+			else if (argument == "script")
+			{
+				shellParameters_[LP_SCRIPT] = value;
+				++i;
+			}
+		}
+}
+
+Urho3D::Variant Shell::GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue)
+{
+	const auto it = shellParameters_.Find(parameter);
+	return it != shellParameters_.End() ? it->second_ : defaultValue;
+}
+
+void Shell::RegisterScriptAPI()
+{
+	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
+
+	RegisterConfigAPI(engine);
+	RegisterShellAPI(engine);
+
+	if (!GetSubsystem<Engine>()->IsHeadless())
+	{
 	}
 }
 

@@ -65,7 +65,7 @@ public:
 	using EnumVector = Urho3D::Vector<EnumVariant>;
 	using EnumConstructorFunc = std::function<EnumVector()>;
 
-	explicit Config(Urho3D::Context* context);
+	using Urho3D::Object::Object;
 
 	void LoadXML(const Urho3D::XMLElement& source);
 	void SaveXML(Urho3D::XMLElement& dst) const;
@@ -94,6 +94,9 @@ public:
 	bool RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory);
 
 	void GetDebugString(Urho3D::String& dst) const;
+
+	void RegisterClientParameters();
+	void RegisterServerParameters();
 
 private:
 	enum class ParameterFlags : unsigned char
@@ -166,8 +169,6 @@ private:
 	};
 
 	using ParametersMap = Urho3D::HashMap<Urho3D::StringHash, Parameter>;
-
-	void RegisterParameters();
 
 	ParametersMap parameters_;
 	Urho3D::HashMap<Urho3D::StringHash, EnumConstructorFunc> enumConstructors_;
