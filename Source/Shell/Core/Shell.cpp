@@ -29,6 +29,7 @@
 #include "Config/Config.h"
 #include "Plugin/PluginsRegistry.h"
 #include "Shell.h"
+#include "ShellState/MainMenu.h"
 
 #define CONFIG_FILENAME "Config.xml"
 #define CONFIG_PATH "Config"
@@ -80,7 +81,11 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	GetSubsystem<Config>()->ExtractEngineParameters(engineParameters);
 }
 
-void Shell::Initialize() { GetSubsystem<Config>()->Apply(false); }
+void Shell::Initialize()
+{
+	GetSubsystem<Config>()->Apply(false);
+	shellState_ = new ShellState(context_);
+}
 
 void Shell::LoadProfile(const Urho3D::String& profileName)
 {
