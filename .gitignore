@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Temporary Directories
+.cache
+
+# Temporary Files
+compile_commands.json
