@@ -24,6 +24,7 @@
 #define SHELL_H
 
 #include <Urho3D/Core/Object.h>
+#include "ShellState/ShellState.h"
 #include "Urho3DShellAPI.h"
 
 class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
@@ -50,6 +51,7 @@ private:
 
 	Urho3D::String GetGameDataPath() const;
 
+	Urho3D::SharedPtr<ShellState> shellState_;
 	Urho3D::String gameName_;
 	Urho3D::String profileName_;
 	Urho3D::String userDataPath_;
