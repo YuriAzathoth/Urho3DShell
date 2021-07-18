@@ -1,0 +1,51 @@
+//
+// Copyright (c) 2021 Yuriy Zinchenko.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+#ifndef UIDIALOG_H
+#define UIDIALOG_H
+
+#include <Urho3D/Core/Object.h>
+#include <Urho3D/UI/UIElement.h>
+#include "UI/UIDialog.h"
+#include "Urho3DShellAPI.h"
+
+class URHO3DSHELLAPI_EXPORT UIDialog : public Urho3D::Object
+{
+	URHO3D_OBJECT(UIDialog, Urho3D::Object)
+
+public:
+	explicit UIDialog(Urho3D::Context* context);
+	virtual ~UIDialog();
+
+	virtual void OnActionDown(Urho3D::StringHash actionName) {}
+	virtual void OnActionUp(Urho3D::StringHash actionName) {}
+
+	void LoadLayout(const Urho3D::String& filename);
+
+	Urho3D::UIElement* GetRoot() { return root_.Get(); }
+	const Urho3D::UIElement* GetRoot() const { return root_.Get(); }
+
+private:
+	Urho3D::SharedPtr<Urho3D::UIElement> root_;
+};
+
+#endif // UIDIALOG_H
