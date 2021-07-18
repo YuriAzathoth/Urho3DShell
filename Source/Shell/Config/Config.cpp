@@ -72,34 +72,6 @@ void Config::SaveXML(Urho3D::XMLElement& dst) const
 	}
 }
 
-void Config::ExtractEngineParameters(Urho3D::VariantMap& dst)
-{
-	// TODO: Implement registrable engine parameters forwarding
-	auto it = changedParameters_.Find(ECP_RESOLUTION);
-	if (it != changedParameters_.End())
-	{
-		const IntVector3 resolution = StrToRes(it->second_.GetString());
-		dst[EP_WINDOW_WIDTH] = resolution.x_;
-		dst[EP_WINDOW_HEIGHT] = resolution.y_;
-		dst[EP_REFRESH_RATE] = resolution.z_;
-	}
-	it = changedParameters_.Find(ECP_WINDOW_MODE);
-	if (it != changedParameters_.End())
-	{
-		const int windowMode = it->second_.GetInt();
-		dst[EP_FULL_SCREEN] = windowMode >= 1;
-		dst[EP_BORDERLESS] = windowMode == 2;
-	}
-	for (it = changedParameters_.Begin(); it != changedParameters_.End();)
-		if (parameters_[it->first_].flags_ & ParameterFlags::ENGINE)
-		{
-			dst.Insert(it);
-			it = changedParameters_.Erase(it);
-		}
-		else
-			++it;
-}
-
 void Config::Apply(bool engineToo)
 {
 	if (!changedParameters_.Empty())
@@ -129,6 +101,34 @@ void Config::Clear()
 	changedParameters_.Clear();
 	for (auto& p : storages_)
 		p.second_->parameters_.Clear();
+}
+
+void Config::ExtractEngineParameters(Urho3D::VariantMap& dst)
+{
+	// TODO: Implement registrable engine parameters forwarding
+	auto it = changedParameters_.Find(ECP_RESOLUTION);
+	if (it != changedParameters_.End())
+	{
+		const IntVector3 resolution = StrToRes(it->second_.GetString());
+		dst[EP_WINDOW_WIDTH] = resolution.x_;
+		dst[EP_WINDOW_HEIGHT] = resolution.y_;
+		dst[EP_REFRESH_RATE] = resolution.z_;
+	}
+	it = changedParameters_.Find(ECP_WINDOW_MODE);
+	if (it != changedParameters_.End())
+	{
+		const int windowMode = it->second_.GetInt();
+		dst[EP_FULL_SCREEN] = windowMode >= 1;
+		dst[EP_BORDERLESS] = windowMode == 2;
+	}
+	for (it = changedParameters_.Begin(); it != changedParameters_.End();)
+		if (parameters_[it->first_].flags_ & ParameterFlags::ENGINE)
+		{
+			dst.Insert(it);
+			it = changedParameters_.Erase(it);
+		}
+		else
+			++it;
 }
 
 void Config::RegisterSettingsTab(const Urho3D::String& tabName)

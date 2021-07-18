@@ -70,9 +70,9 @@ public:
 	void LoadXML(const Urho3D::XMLElement& source);
 	void SaveXML(Urho3D::XMLElement& dst) const;
 
-	void ExtractEngineParameters(Urho3D::VariantMap& dst);
 	void Apply(bool engineToo = true);
 	void Clear();
+	void ExtractEngineParameters(Urho3D::VariantMap& dst);
 
 	void RegisterSettingsTab(const Urho3D::String& tabName);
 	void RemoveSettingsTab(Urho3D::StringHash tab);
