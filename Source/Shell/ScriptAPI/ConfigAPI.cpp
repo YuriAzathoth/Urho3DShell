@@ -31,63 +31,63 @@ static Config* GetConfig() { return GetScriptContext()->GetSubsystem<Config>(); 
 
 void RegisterConfigAPI(asIScriptEngine* engine)
 {
-    engine->RegisterGlobalFunction("Config@+ get_config()", AS_FUNCTION(GetConfig), AS_CALL_CDECL);
-
-	engine->RegisterObjectBehaviour("Config",
-									asBEHAVE_FACTORY,
-									"Config@+ f()",
-									AS_FUNCTION(CreateConfig),
-									AS_CALL_CDECL);
-
-	RegisterSubclass<Object, Config>(engine, "Object", "Config");
-	RegisterSubclass<RefCounted, Config>(engine, "RefCounted", "Config");
-
-	RegisterMembers_Object<Config>(engine, "Config");
-
-	engine->RegisterObjectMethod("Config",
-								 "void LoadXML(const XMLElement&)",
-								 AS_METHOD(Config, LoadXML),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "void SaveXML(XMLElement&) const",
-								 AS_METHOD(Config, SaveXML),
-								 AS_CALL_THISCALL);
-
-	engine->RegisterObjectMethod("Config", "void Apply(bool)", AS_METHOD(Config, Apply), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config", "void Clear()", AS_METHOD(Config, Clear), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "void ExtractEngineParameters(VariantMap&) const",
-								 AS_METHOD(Config, ExtractEngineParameters),
-								 AS_CALL_THISCALL);
-
-	engine->RegisterObjectMethod("Config",
-								 "void RegisterSettingsTab(const String&in)",
-								 AS_METHOD(Config, RegisterSettingsTab),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "void RemoveSettingsTab(StringHash)",
-								 AS_METHOD(Config, RemoveSettingsTab),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "Array<String>@+ GetSettingsTabs(StringHash)",
-								 AS_METHOD(Config, GetSettingsTabs),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "Array<String>@+ GetSettings(StringHash)",
-								 AS_METHOD(Config, GetSettings),
-								 AS_CALL_THISCALL);
-
-	engine->RegisterObjectMethod("Config",
-								 "bool RegisterParameter(const String&in, VariantType, StringHash, bool, bool)",
-								 AS_METHOD(Config, RegisterParameter),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "void RemoveParameter(StringHash)",
-								 AS_METHOD(Config, RemoveParameter),
-								 AS_CALL_THISCALL);
-
-	engine->RegisterObjectMethod("Config",
-								 "String GetDebugString()",
-								 AS_METHOD(Config, GetDebugString),
-								 AS_CALL_THISCALL);
+//    engine->RegisterGlobalFunction("Config@+ get_config()", AS_FUNCTION(GetConfig), AS_CALL_CDECL);
+//
+//	engine->RegisterObjectBehaviour("Config",
+//									asBEHAVE_FACTORY,
+//									"Config@+ f()",
+//									AS_FUNCTION(CreateConfig),
+//									AS_CALL_CDECL);
+//
+//	RegisterSubclass<Object, Config>(engine, "Object", "Config");
+//	RegisterSubclass<RefCounted, Config>(engine, "RefCounted", "Config");
+//
+//	RegisterMembers_Object<Config>(engine, "Config");
+//
+//	engine->RegisterObjectMethod("Config",
+//								 "void LoadXML(const XMLElement&)",
+//								 AS_METHOD(Config, LoadXML),
+//								 AS_CALL_THISCALL);
+//	engine->RegisterObjectMethod("Config",
+//								 "void SaveXML(XMLElement&) const",
+//								 AS_METHOD(Config, SaveXML),
+//								 AS_CALL_THISCALL);
+//
+//	engine->RegisterObjectMethod("Config", "void Apply(bool)", AS_METHOD(Config, Apply), AS_CALL_THISCALL);
+//	engine->RegisterObjectMethod("Config", "void Clear()", AS_METHOD(Config, Clear), AS_CALL_THISCALL);
+//	engine->RegisterObjectMethod("Config",
+//								 "void ExtractEngineParameters(VariantMap&) const",
+//								 AS_METHOD(Config, ExtractEngineParameters),
+//								 AS_CALL_THISCALL);
+//
+//	engine->RegisterObjectMethod("Config",
+//								 "void RegisterSettingsTab(const String&in)",
+//								 AS_METHOD(Config, RegisterSettingsTab),
+//								 AS_CALL_THISCALL);
+//	engine->RegisterObjectMethod("Config",
+//								 "void RemoveSettingsTab(StringHash)",
+//								 AS_METHOD(Config, RemoveSettingsTab),
+//								 AS_CALL_THISCALL);
+//	engine->RegisterObjectMethod("Config",
+//								 "Array<String>@+ GetSettingsTabs(StringHash)",
+//								 AS_METHOD(Config, GetSettingsTabs),
+//								 AS_CALL_THISCALL);
+//	engine->RegisterObjectMethod("Config",
+//								 "Array<String>@+ GetSettings(StringHash)",
+//								 AS_METHOD(Config, GetSettings),
+//								 AS_CALL_THISCALL);
+//
+//	engine->RegisterObjectMethod("Config",
+//								 "bool RegisterParameter(const String&in, VariantType, StringHash, bool, bool)",
+//								 AS_METHOD(Config, RegisterParameter),
+//								 AS_CALL_THISCALL);
+//	engine->RegisterObjectMethod("Config",
+//								 "void RemoveParameter(StringHash)",
+//								 AS_METHOD(Config, RemoveParameter),
+//								 AS_CALL_THISCALL);
+//
+//	engine->RegisterObjectMethod("Config",
+//								 "String GetDebugString()",
+//								 AS_METHOD(Config, GetDebugString),
+//								 AS_CALL_THISCALL);
 }
