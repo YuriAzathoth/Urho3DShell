@@ -176,6 +176,10 @@ private:
 	Urho3D::VariantMap changedParameters_;
 	Urho3D::HashMap<Urho3D::StringHash, SettingsTab> settings_;
 	Urho3D::StringMap names_;
+
+private:
+	static Urho3D::IntVector3 StrToRes(const Urho3D::String& str);
+	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);
 };
 
 #endif // CONFIG_H
