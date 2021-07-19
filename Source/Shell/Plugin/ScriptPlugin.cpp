@@ -40,8 +40,7 @@ bool ScriptPlugin::Load(const Urho3D::String& fileName)
 	if (!script_)
 		return false;
 
-	if (Execute("void Setup()"))
-		Execute("void Start()");
+	Execute("void Start()");
 
 	script_->SetName(fileName);
 	URHO3D_LOGINFOF("Script plugin \"%s\" loaded.", fileName.CString());
