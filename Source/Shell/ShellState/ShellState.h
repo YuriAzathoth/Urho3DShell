@@ -25,7 +25,7 @@
 
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Scene/Scene.h>
-#include "UI/UIDialog.h"
+#include "UI/Dialog.h"
 #include "Urho3DShellAPI.h"
 
 class URHO3DSHELLAPI_EXPORT ShellState : public Urho3D::Object
@@ -54,7 +54,7 @@ private:
 	void OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	Urho3D::Scene scene_;
-	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<UIDialog>> dialogs_;
+	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Dialog>> dialogs_;
 };
 
 template<typename T> T* ShellState::GetDialog(Urho3D::StringHash type)

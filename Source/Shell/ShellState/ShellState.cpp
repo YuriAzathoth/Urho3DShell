@@ -21,6 +21,7 @@
 //
 
 #include <Urho3D/Core/Context.h>
+#include <Urho3D/IO/Log.h>
 #include "ShellState.h"
 
 using namespace Urho3D;
@@ -42,13 +43,18 @@ void ShellState::Clear()
 void ShellState::CreateDialog(Urho3D::StringHash type)
 {
 	SharedPtr<Object> object = context_->CreateObject(type);
-	if (object.NotNull())
+	if (object.Null())
 	{
-		SharedPtr<UIDialog> dialog;
-		dialog.DynamicCast(object);
-		if (dialog.NotNull())
-			dialogs_[type] = dialog;
+		URHO3D_LOGERROR("Failed to create unregistered dialog.");
+		return;
 	}
+
+	SharedPtr<Dialog> dialog;
+	dialog.DynamicCast(object);
+	if (dialog.NotNull())
+		dialogs_[type] = dialog;
+	else
+		URHO3D_LOGERROR("Failed to create dialog: given type is not a dialog.");
 }
 
 void ShellState::RemoveDialog(Urho3D::StringHash type) { dialogs_.Erase(type); }

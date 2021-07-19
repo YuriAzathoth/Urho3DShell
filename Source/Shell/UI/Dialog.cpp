@@ -23,31 +23,41 @@
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
-#include "UIDialog.h"
+#include <Urho3D/UI/UIEvents.h>
+#include <functional>
+#include "Dialog.h"
+
+#define CLOSE_BUTTON_NAME "CloseButton"
 
 using namespace Urho3D;
 
-UIDialog::UIDialog(Urho3D::Context* context)
+Dialog::Dialog(Urho3D::Context* context)
 	: Object(context)
+	, flags_(0)
 {
 }
 
-UIDialog::~UIDialog()
+Dialog::~Dialog()
 {
-	if (root_.NotNull())
+	if (root_)
 		root_->Remove();
 }
 
-void UIDialog::LoadLayout(const Urho3D::String& filename)
+void Dialog::LoadLayout(const Urho3D::String& layoutName)
 {
 	UI* ui = GetSubsystem<UI>();
-	XMLFile* layoutFilePtr = GetSubsystem<ResourceCache>()->GetResource<XMLFile>(filename);
-	if (layoutFilePtr)
-		root_ = ui->LoadLayout(layoutFilePtr);
-	else
+	XMLFile* layout = GetSubsystem<ResourceCache>()->GetResource<XMLFile>(layoutName);
+	root_ = ui->LoadLayout(layout);
+	root_->SetStyleAuto();
+	ui->GetRoot()->AddChild(root_);
+	if (flags_ & Flags::DIALOG)
 	{
-		XMLFile layoutFile(context_);
-		if (layoutFile.LoadFile(filename))
-			root_ = ui->LoadLayout(&layoutFile);
+		UIElement* closeButton = root_->GetChild(CLOSE_BUTTON_NAME, true);
+		if (closeButton)
+			SubscribeToEvent(closeButton, E_PRESSED, std::bind(&Dialog::Close, this));
 	}
 }
+
+bool Dialog::IsFrontElement() const { return GetSubsystem<UI>()->GetFrontElement() == root_.Get(); }
+void Dialog::Close() { /*GetSubsystem<UIController>()->DestroyDialog(GetType());*/ }
+void Dialog::UpdateSize() { root_->SetSize(IntVector2(0, 0)); }

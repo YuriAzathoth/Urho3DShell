@@ -20,32 +20,58 @@
 // THE SOFTWARE.
 //
 
-#ifndef UIDIALOG_H
-#define UIDIALOG_H
+#ifndef DIALOG_H
+#define DIALOG_H
 
 #include <Urho3D/Core/Object.h>
+#include <Urho3D/Container/FlagSet.h>
 #include <Urho3D/UI/UIElement.h>
-#include "UI/UIDialog.h"
 #include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT UIDialog : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT Dialog : public Urho3D::Object
 {
-	URHO3D_OBJECT(UIDialog, Urho3D::Object)
+	URHO3D_OBJECT(Dialog, Urho3D::Object)
 
 public:
-	explicit UIDialog(Urho3D::Context* context);
-	virtual ~UIDialog();
+	enum class Flags : unsigned char
+	{
+		NONE = 0x0,
+		DIALOG = 0x1,
+		MAIN = 0x2
+	};
 
-	virtual void OnActionDown(Urho3D::StringHash actionName) {}
-	virtual void OnActionUp(Urho3D::StringHash actionName) {}
+	explicit Dialog(Urho3D::Context* context);
+	virtual ~Dialog();
 
-	void LoadLayout(const Urho3D::String& filename);
+	void LoadLayout(const Urho3D::String& layoutName);
 
-	Urho3D::UIElement* GetRoot() { return root_.Get(); }
-	const Urho3D::UIElement* GetRoot() const { return root_.Get(); }
+	bool IsFrontElement() const;
+
+	void SetFlags(Urho3D::FlagSet<Flags> flags) noexcept { flags_ = flags; }
+	Urho3D::FlagSet<Flags> GetFlags() const noexcept { return flags_; }
+	Urho3D::UIElement* GetRoot() const { return root_.Get(); }
+	bool IsDialog() const noexcept { return flags_ & Flags::DIALOG; }
+	bool IsCloseable() const noexcept { return IsDialog() && !(flags_ & Flags::MAIN); }
+
+protected:
+	void Close();
+	void UpdateSize();
+
+	Urho3D::UIElement* GetChild(const Urho3D::String& name, bool recurse) { return root_->GetChild(name, recurse); }
+
+	template <typename T> T* GetChildStaticCast(const Urho3D::String& name, bool recurse)
+	{
+		return root_->GetChildStaticCast<T>(name, recurse);
+	}
+
+	template <typename T> T* GetChildDynamicCast(const Urho3D::String& name, bool recurse)
+	{
+		return root_->GetChildDynamicCast<T>(name, recurse);
+	}
 
 private:
 	Urho3D::SharedPtr<Urho3D::UIElement> root_;
+	Urho3D::FlagSet<Flags> flags_;
 };
 
-#endif // UIDIALOG_H
+#endif // DIALOG_H
