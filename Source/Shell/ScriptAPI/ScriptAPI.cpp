@@ -20,12 +20,17 @@
 // THE SOFTWARE.
 //
 
-#include "MainMenu.h"
+#include "ScriptAPI.h"
 
-using namespace Urho3D;
+void RegisterConfigAPI(asIScriptEngine* engine);
+void RegisterShellAPI(asIScriptEngine* engine);
 
-MainMenu::MainMenu(Urho3D::Context* context)
-	: ShellState(context)
+void RegisterClientAPI(asIScriptEngine* engine)
 {
-	CreateDialog("MainMenuWindow");
+}
+
+void RegisterServerAPI(asIScriptEngine* engine)
+{
+	RegisterConfigAPI(engine);
+	RegisterShellAPI(engine);
 }

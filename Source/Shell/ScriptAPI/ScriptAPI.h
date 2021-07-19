@@ -20,12 +20,12 @@
 // THE SOFTWARE.
 //
 
-#include "MainMenu.h"
+#ifndef SHELLAPI_H
+#define SHELLAPI_H
 
-using namespace Urho3D;
+class asIScriptEngine;
 
-MainMenu::MainMenu(Urho3D::Context* context)
-	: ShellState(context)
-{
-	CreateDialog("MainMenuWindow");
-}
+void RegisterClientAPI(asIScriptEngine* engine);
+void RegisterServerAPI(asIScriptEngine* engine);
+
+#endif // SHELLAPI_H
