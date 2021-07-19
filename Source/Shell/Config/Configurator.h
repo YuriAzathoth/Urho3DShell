@@ -20,31 +20,48 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELL_H
-#define SHELL_H
+#ifndef CONFIGURATOR_H
+#define CONFIGURATOR_H
 
 #include <Urho3D/Core/Object.h>
-#include "ShellState/ShellState.h"
 #include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT Configurator : public Urho3D::Object
 {
-	URHO3D_OBJECT(Shell, Urho3D::Object)
+	URHO3D_OBJECT(Configurator, Urho3D::Object)
 
 public:
-	explicit Shell(Urho3D::Context* context);
-	~Shell();
+	explicit Configurator(Urho3D::Context* context);
+	~Configurator();
 
-	void Setup(Urho3D::VariantMap& engineParameters);
 	void Initialize();
 
-private:
-	void ParseParameters(const Urho3D::StringVector& arguments);
-	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue);
+	void LoadProfile(const Urho3D::String& profileName);
+	void SaveProfile() const;
+	void CreateProfile(const Urho3D::String& profileName);
+	void RemoveProfile(const Urho3D::String& profileName);
 
-	Urho3D::SharedPtr<ShellState> shellState_;
-	Urho3D::VariantMap shellParameters_;
-	bool client_;
+	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
+
+	Urho3D::String GetConfigFilename() const;
+	Urho3D::String GetConfigPath() const;
+	Urho3D::String GetInputPath() const;
+	Urho3D::String GetLogsFilename() const;
+	Urho3D::String GetLogsPath() const;
+	Urho3D::String GetPluginsPath() const;
+	Urho3D::String GetProfileFilename() const;
+
+private:
+	void LoadProfile();
+	void LoadProfileName();
+	void SaveProfileName();
+
+	Urho3D::String GetGameDataPath() const;
+
+	Urho3D::String appName_;
+	Urho3D::String gameName_;
+	Urho3D::String profileName_;
+	Urho3D::String userDataPath_;
 };
 
-#endif // SHELL_H
+#endif // CONFIGURATOR_H
