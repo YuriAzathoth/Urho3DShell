@@ -156,7 +156,7 @@ class TerrainEditor
             checkbox.enabled = true;
         }
     }
-	
+
     // Hide the window
     void Hide()
     {
@@ -429,16 +429,28 @@ class TerrainEditor
                 break;
         }
 
-        if (brushesFileLocation.empty)
-            return;
-
-        Array<String> files = fileSystem.ScanDir(brushesFileLocation, "*.*", SCAN_FILES, false);
-
-        for (uint i = 0; i < files.length; ++i)
+        if (!brushesFileLocation.empty)
         {
-            UIElement@ brush = LoadBrush(brushPath + files[i]);
-            if (brush !is null)
-                terrainBrushes.AddItem(brush);
+            Array<String> files = fileSystem.ScanDir(brushesFileLocation, "*.*", SCAN_FILES, false);            
+            for (uint i = 0; i < files.length; ++i)
+            {
+                UIElement@ brush = LoadBrush(brushPath + files[i]);
+                if (brush !is null)
+                    terrainBrushes.AddItem(brush);
+            }
+        }
+
+        Array<PackageFile@>@ packages = cache.packageFiles;
+        for (uint i = 0; i < packages.length; ++i)
+        {
+            Array<String>@ resources = packages[i].GetEntryNames();
+            for (uint j = 0; j < resources.length; ++j)
+                if (resources[j].StartsWith(brushPath))
+                {
+                    UIElement@ brush = LoadBrush(resources[j]);
+                    if (brush !is null)
+                        terrainBrushes.AddItem(brush);
+                }
         }
     }
 
