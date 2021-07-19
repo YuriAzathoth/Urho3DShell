@@ -46,6 +46,8 @@
 #define DEFAULT_GAME_NAME "SampleGame"
 #define DEFAULT_PROFILE "Default"
 #define INPUT_PATH "Input"
+#define LOGS_FILENAME "Error.log"
+#define LOGS_PATH "Errorlogs"
 #define PLUGINS_PATH "Plugins"
 #define PROFILE_FILENAME "Profile.txt"
 
@@ -73,8 +75,6 @@ Shell::~Shell()
 
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
-	engineParameters[EP_FULL_SCREEN] = false;
-
 	ParseParameters(GetArguments());
 	client_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
 
@@ -94,6 +94,8 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	LoadProfileName();
 	LoadProfile();
 
+	engineParameters[EP_LOG_NAME] = userDataPath_ + LOGS_PATH + "/" + LOGS_FILENAME;
+
 	config->ExtractEngineParameters(engineParameters);
 }
 
@@ -111,16 +113,15 @@ void Shell::Initialize()
 		console->SetDefaultStyle(styleFile);
 		DebugHud* debugHud = engine->CreateDebugHud();
 		debugHud->SetDefaultStyle(styleFile);
-	}
 
-	GetSubsystem<Config>()->Apply(false);
-
-	if (client_)
 		shellState_ = new ShellState(context_);
+	}
 
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
 	if (itScript != shellParameters_.End())
 		GetSubsystem<PluginsRegistry>()->RegisterPlugin(itScript->second_.GetString());
+
+	GetSubsystem<Config>()->Apply(false);
 }
 
 void Shell::LoadProfile(const Urho3D::String& profileName)
@@ -148,6 +149,10 @@ void Shell::LoadProfile()
 		config->LoadXML(file.GetRoot(CONFIG_ROOT));
 
 	path = userDataPath_ + INPUT_PATH + "/";
+	if (!fileSystem->DirExists(path))
+		fileSystem->CreateDir(path);
+
+	path = userDataPath_ + LOGS_PATH + "/";
 	if (!fileSystem->DirExists(path))
 		fileSystem->CreateDir(path);
 
