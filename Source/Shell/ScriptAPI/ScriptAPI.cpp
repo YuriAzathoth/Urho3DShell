@@ -22,15 +22,10 @@
 
 #include "ScriptAPI.h"
 
-void RegisterConfigAPI(asIScriptEngine* engine);
-void RegisterShellAPI(asIScriptEngine* engine);
-
 void RegisterClientAPI(asIScriptEngine* engine)
 {
 }
 
 void RegisterServerAPI(asIScriptEngine* engine)
 {
-	RegisterConfigAPI(engine);
-	RegisterShellAPI(engine);
 }
