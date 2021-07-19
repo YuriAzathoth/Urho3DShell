@@ -27,8 +27,8 @@ SETUP_GAME_LAUNCHER(NAME Editor
 					ARGUMENTS
 					-noclient
 					-script Scripts/Editor.as
-					#~ -s
-					#~ -w
+					-s
+					-w
 					)
 
 SETUP_GAME_LAUNCHER(NAME Server ARGUMENTS
