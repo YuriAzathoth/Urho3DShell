@@ -20,20 +20,18 @@
 # THE SOFTWARE.
 #
 
-SETUP_GAME_LAUNCHER(NAME Client)
+SETUP_GAME_LAUNCHER(NAME Client RESOURCES Data CoreData Editor)
 
 SETUP_GAME_LAUNCHER(NAME Editor
 					RESOURCES CoreData Editor
-					AUTOLOAD Data
 					ARGUMENTS
 					-noclient
 					-script Scripts/Editor.as
-					-s
-					-w
+					#~ -s
+					#~ -w
 					)
 
 SETUP_GAME_LAUNCHER(NAME Server ARGUMENTS
 					-noclient
-					-pf Data.pak;CoreData.pak
 					-headless
 					)
