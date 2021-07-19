@@ -46,7 +46,6 @@
 
 int main(int argc, char** argv)
 {
-	setlocale(LC_ALL, "");
 	using SetupFunc = void(int, char**);
 	using LaunchFunc = int();
 	boost::function<SetupFunc> setupFunc;
