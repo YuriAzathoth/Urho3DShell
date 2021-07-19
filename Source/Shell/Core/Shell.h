@@ -54,8 +54,6 @@ private:
 	void ParseParameters(const Urho3D::StringVector& arguments);
 	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue);
 
-	void RegisterScriptAPI();
-
 	Urho3D::SharedPtr<ShellState> shellState_;
 	Urho3D::VariantMap shellParameters_;
 	Urho3D::String gameName_;

@@ -21,7 +21,6 @@
 //
 
 #include <Urho3D/AngelScript/Generated_Members.h>
-#include "ShellAPI.h"
 #include "Core/Shell.h"
 
 using namespace Urho3D;

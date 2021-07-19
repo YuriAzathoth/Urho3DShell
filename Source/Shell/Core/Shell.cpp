@@ -35,8 +35,7 @@
 #include <Urho3D/UI/UI.h>
 #include "Config/Config.h"
 #include "Plugin/PluginsRegistry.h"
-#include "ScriptAPI/ConfigAPI.h"
-#include "ScriptAPI/ShellAPI.h"
+#include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
 #include "ShellState/MainMenu.h"
 
@@ -53,6 +52,8 @@
 
 #define LP_NO_CLIENT "NoClient"
 #define LP_SCRIPT "Script"
+
+void RegisterMainMenuWindow(Urho3D::Context* context);
 
 using namespace Urho3D;
 
@@ -91,6 +92,11 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	if (client_)
 		config->RegisterClientParameters();
 
+	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
+	RegisterServerAPI(engine);
+	if (!GetSubsystem<Engine>()->IsHeadless())
+		RegisterClientAPI(engine);
+
 	LoadProfileName();
 	LoadProfile();
 
@@ -114,7 +120,9 @@ void Shell::Initialize()
 		DebugHud* debugHud = engine->CreateDebugHud();
 		debugHud->SetDefaultStyle(styleFile);
 
-		shellState_ = new ShellState(context_);
+		RegisterMainMenuWindow(context_);
+
+		shellState_ = new MainMenu(context_);
 	}
 
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
@@ -232,18 +240,6 @@ Urho3D::Variant Shell::GetParameter(Urho3D::StringHash parameter, const Urho3D::
 {
 	const auto it = shellParameters_.Find(parameter);
 	return it != shellParameters_.End() ? it->second_ : defaultValue;
-}
-
-void Shell::RegisterScriptAPI()
-{
-	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
-
-	RegisterConfigAPI(engine);
-	RegisterShellAPI(engine);
-
-	if (!GetSubsystem<Engine>()->IsHeadless())
-	{
-	}
 }
 
 #ifdef _WIN32

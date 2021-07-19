@@ -22,7 +22,6 @@
 
 #include <Urho3D/AngelScript/Generated_Members.h>
 #include "Config/Config.h"
-#include "ConfigAPI.h"
 
 using namespace Urho3D;
 
