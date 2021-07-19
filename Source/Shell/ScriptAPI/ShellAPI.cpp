@@ -28,8 +28,12 @@ using namespace Urho3D;
 
 static Shell* CreateShell() { return new Shell(GetScriptContext()); }
 
+static Shell* GetShell() { return GetScriptContext()->GetSubsystem<Shell>(); }
+
 void RegisterShellAPI(asIScriptEngine* engine)
 {
+    engine->RegisterGlobalFunction("Shell@+ get_shell()", AS_FUNCTION(GetShell), AS_CALL_CDECL);
+
 	engine->RegisterObjectBehaviour("Shell",
 									asBEHAVE_FACTORY,
 									"Shell@+ f()",

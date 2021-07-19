@@ -28,8 +28,12 @@ using namespace Urho3D;
 
 static Config* CreateConfig() { return new Config(GetScriptContext()); }
 
+static Config* GetConfig() { return GetScriptContext()->GetSubsystem<Config>(); }
+
 void RegisterConfigAPI(asIScriptEngine* engine)
 {
+    engine->RegisterGlobalFunction("Config@+ get_config()", AS_FUNCTION(GetConfig), AS_CALL_CDECL);
+
 	engine->RegisterObjectBehaviour("Config",
 									asBEHAVE_FACTORY,
 									"Config@+ f()",
