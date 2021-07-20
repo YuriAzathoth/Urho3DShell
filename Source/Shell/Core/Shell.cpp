@@ -119,9 +119,9 @@ void Shell::ParseParameters(const Urho3D::StringVector& arguments)
 	for (unsigned i = 0; i < arguments.Size(); ++i)
 		if (arguments[i].Length() > 1 && arguments[i][0] == '-')
 		{
-            argument = arguments[i].Substring(1).ToLower();
-            value = i + 1 < arguments.Size() ? arguments[i + 1] : String::EMPTY;
-            if (argument == "noclient")
+			argument = arguments[i].Substring(1).ToLower();
+			value = i + 1 < arguments.Size() ? arguments[i + 1] : String::EMPTY;
+			if (argument == "noclient")
 				shellParameters_[LP_NO_CLIENT] = true;
 			else if (argument == "script")
 			{

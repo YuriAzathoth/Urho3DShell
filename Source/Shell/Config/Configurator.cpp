@@ -44,7 +44,7 @@ using namespace Urho3D;
 
 Configurator::Configurator(Urho3D::Context* context)
 	: Object(context)
-	, appName_ (DEFAULT_GAME_NAME)
+	, appName_(DEFAULT_GAME_NAME)
 	, gameName_(DEFAULT_GAME_NAME)
 	, profileName_(DEFAULT_PROFILE)
 	, userDataPath_("./")
