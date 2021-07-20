@@ -191,10 +191,9 @@ void Config::RegisterClientParameters()
 
 		RegisterParameter(EP_MATERIAL_QUALITY, VAR_INT, ST_VIDEO, true, true);
 		RegisterReader(EP_MATERIAL_QUALITY, [this]() { return GetSubsystem<Renderer>()->GetMaterialQuality(); });
-		RegisterWriter(
-			EP_MATERIAL_QUALITY,
-			[this](const Variant& value)
-			{ return GetSubsystem<Renderer>()->SetMaterialQuality(static_cast<MaterialQuality>(value.GetInt())); });
+		RegisterWriter(EP_MATERIAL_QUALITY,
+					   [this](const Variant& value)
+					   { GetSubsystem<Renderer>()->SetMaterialQuality(static_cast<MaterialQuality>(value.GetInt())); });
 		RegisterEnum(EP_MATERIAL_QUALITY,
 					 [this]() -> EnumVector
 					 {
@@ -205,10 +204,9 @@ void Config::RegisterClientParameters()
 
 		RegisterParameter(EP_TEXTURE_QUALITY, VAR_INT, ST_VIDEO, true, true);
 		RegisterReader(EP_TEXTURE_QUALITY, [this]() { return GetSubsystem<Renderer>()->GetTextureQuality(); });
-		RegisterWriter(
-			EP_TEXTURE_QUALITY,
-			[this](const Variant& value)
-			{ return GetSubsystem<Renderer>()->SetTextureQuality(static_cast<MaterialQuality>(value.GetInt())); });
+		RegisterWriter(EP_TEXTURE_QUALITY,
+					   [this](const Variant& value)
+					   { GetSubsystem<Renderer>()->SetTextureQuality(static_cast<MaterialQuality>(value.GetInt())); });
 		RegisterEnum(EP_TEXTURE_QUALITY,
 					 [this]() -> EnumVector
 					 {
@@ -222,7 +220,7 @@ void Config::RegisterClientParameters()
 		RegisterWriter(
 			EP_TEXTURE_FILTER_MODE,
 			[this](const Variant& value)
-			{ return GetSubsystem<Renderer>()->SetTextureFilterMode(static_cast<TextureFilterMode>(value.GetInt())); });
+			{ GetSubsystem<Renderer>()->SetTextureFilterMode(static_cast<TextureFilterMode>(value.GetInt())); });
 		RegisterEnum(EP_TEXTURE_FILTER_MODE,
 					 [this]() -> EnumVector
 					 {
@@ -235,33 +233,31 @@ void Config::RegisterClientParameters()
 
 		RegisterParameter(EP_TEXTURE_ANISOTROPY, VAR_INT, ST_VIDEO, true, false);
 		RegisterReader(EP_TEXTURE_ANISOTROPY, [this]() { return GetSubsystem<Renderer>()->GetTextureAnisotropy(); });
-		RegisterWriter(
-			EP_TEXTURE_ANISOTROPY,
-			[this](const Variant& value)
-			{ return GetSubsystem<Renderer>()->SetTextureAnisotropy(static_cast<MaterialQuality>(value.GetInt())); });
+		RegisterWriter(EP_TEXTURE_ANISOTROPY,
+					   [this](const Variant& value) {
+						   GetSubsystem<Renderer>()->SetTextureAnisotropy(static_cast<MaterialQuality>(value.GetInt()));
+					   });
 		RegisterEnum(EP_TEXTURE_ANISOTROPY,
 					 [this]() -> EnumVector
 					 {
 						 constexpr int stages[] = {2, 4, 6, 8, 12, 16};
 						 EnumVector ret;
 						 ret.Reserve(6);
-						 for (int i = 0; i < 6; ++i)
-							 ret.EmplaceBack(ToString("%d", i), i);
+						 for (int stage : stages)
+							 ret.EmplaceBack(ToString("%d", stage), stage);
 						 return ret;
 					 });
 
 		RegisterParameter(EP_SHADOWS, VAR_BOOL, ST_VIDEO, true, false);
 		RegisterReader(EP_SHADOWS, [this]() { return GetSubsystem<Renderer>()->GetDrawShadows(); });
 		RegisterWriter(EP_SHADOWS,
-					   [this](const Variant& value)
-					   { return GetSubsystem<Renderer>()->SetDrawShadows(value.GetBool()); });
+					   [this](const Variant& value) { GetSubsystem<Renderer>()->SetDrawShadows(value.GetBool()); });
 
 		RegisterParameter(CP_SHADOW_QUALITY, VAR_INT, ST_VIDEO, false, false);
 		RegisterReader(CP_SHADOW_QUALITY, [this]() { return GetSubsystem<Renderer>()->GetShadowQuality(); });
-		RegisterWriter(
-			CP_SHADOW_QUALITY,
-			[this](const Variant& value)
-			{ return GetSubsystem<Renderer>()->SetShadowQuality(static_cast<ShadowQuality>(value.GetInt())); });
+		RegisterWriter(CP_SHADOW_QUALITY,
+					   [this](const Variant& value)
+					   { GetSubsystem<Renderer>()->SetShadowQuality(static_cast<ShadowQuality>(value.GetInt())); });
 		RegisterEnum(CP_SHADOW_QUALITY,
 					 [this]() -> EnumVector
 					 {
@@ -275,10 +271,9 @@ void Config::RegisterClientParameters()
 
 		RegisterParameter(CP_SHADOW_RESOLUTION, VAR_INT, ST_VIDEO, false, false);
 		RegisterReader(CP_SHADOW_RESOLUTION, [this]() { return GetSubsystem<Renderer>()->GetShadowMapSize(); });
-		RegisterWriter(
-			CP_SHADOW_RESOLUTION,
-			[this](const Variant& value)
-			{ return GetSubsystem<Renderer>()->SetShadowMapSize(static_cast<ShadowQuality>(value.GetInt())); });
+		RegisterWriter(CP_SHADOW_RESOLUTION,
+					   [this](const Variant& value)
+					   { GetSubsystem<Renderer>()->SetShadowMapSize(static_cast<ShadowQuality>(value.GetInt())); });
 		RegisterEnum(CP_SHADOW_RESOLUTION,
 					 [this]() -> EnumVector
 					 {

@@ -20,28 +20,33 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Core/Context.h>
-#include <Urho3D/UI/UIEvents.h>
-#include "MainMenuWindow.h"
-#include "ShellState/ShellState.h"
+#ifndef SETTINGSWINDOW_H
+#define SETTINGSWINDOW_H
 
-using namespace Urho3D;
+#include "Widget.h"
 
-MainMenuWindow::MainMenuWindow(Urho3D::Context* context)
-	: Widget(context)
+namespace Urho3D
 {
-	LoadLayout("UI/MainMenu.xml");
-	SetInteractive(true);
-
-	SubscribeToEvent(root_->GetChild("Settings", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnSettings));
-	SubscribeToEvent(root_->GetChild("Exit", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnExit));
+class ListView;
 }
 
-void MainMenuWindow::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&)
+class SettingsWindow : public Widget
 {
-	parentState_->CreateDialog("SettingsWindow");
-}
+	URHO3D_OBJECT(SettingsWindow, Widget)
 
-void MainMenuWindow::OnExit(Urho3D::StringHash, Urho3D::VariantMap&) {}
+public:
+	explicit SettingsWindow(Urho3D::Context* context);
 
-void RegisterMainMenuWindow(Urho3D::Context* context) { context->RegisterFactory<MainMenuWindow>(); }
+private:
+	void ShowSettingsTab(Urho3D::StringHash settingsTab);
+
+	void OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&);
+
+	Urho3D::ListView* settings_;
+};
+
+void RegisterSettingsWindow(Urho3D::Context* context);
+
+#endif // SETTINGSWINDOW_H

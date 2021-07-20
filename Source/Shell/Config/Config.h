@@ -30,8 +30,9 @@
 
 namespace Urho3D
 {
+class UIElement;
 class XMLElement;
-}
+} // namespace Urho3D
 
 class URHO3DSHELLAPI_EXPORT Config : public Urho3D::Object
 {
@@ -52,9 +53,15 @@ public:
 	{
 		Urho3D::String caption_;
 		Urho3D::Variant value_;
+		EnumVariant() = default;
 		EnumVariant(Urho3D::String caption, Urho3D::Variant value)
 			: caption_(caption)
 			, value_(value)
+		{
+		}
+		EnumVariant(const EnumVariant& src) // = default;
+			: caption_(src.caption_)
+			, value_(src.value_)
 		{
 		}
 	};
@@ -94,6 +101,8 @@ public:
 	bool RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory);
 
 	void GetDebugString(Urho3D::String& dst) const;
+
+	void CreateParameterControl(Urho3D::StringHash parameter, Urho3D::UIElement* parent);
 
 	void RegisterClientParameters();
 	void RegisterServerParameters();
@@ -169,6 +178,22 @@ private:
 	};
 
 	using ParametersMap = Urho3D::HashMap<Urho3D::StringHash, Parameter>;
+
+	void CreateParameterBool(const Urho3D::String& parameterName, bool value, Urho3D::UIElement* parent);
+	void CreateParameterFloat(const Urho3D::String& parameterName, float value, Urho3D::UIElement* parent);
+	void
+	CreateParameterString(const Urho3D::String& parameterName, const Urho3D::String& value, Urho3D::UIElement* parent);
+	void CreateParameterEnum(const Urho3D::String& parameterName,
+							 const EnumVector& items,
+							 const Urho3D::Variant& value,
+							 Urho3D::UIElement* parent,
+							 bool localized);
+
+	void OnBoolChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnEnumChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnFloatSliderChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnFloatTextChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnStringChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	ParametersMap parameters_;
 	Urho3D::HashMap<Urho3D::StringHash, EnumConstructorFunc> enumConstructors_;

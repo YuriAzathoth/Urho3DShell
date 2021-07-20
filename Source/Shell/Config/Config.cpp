@@ -24,8 +24,16 @@
 #include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Resource/XMLElement.h>
+#include <Urho3D/UI/CheckBox.h>
+#include <Urho3D/UI/DropDownList.h>
+#include <Urho3D/UI/LineEdit.h>
+#include <Urho3D/UI/Slider.h>
+#include <Urho3D/UI/Text.h>
+#include <Urho3D/UI/UIEvents.h>
 #include "Config.h"
 #include "ConfigDefs.h"
+
+#define CB_ITEM_VALUE "Item"
 
 using namespace Urho3D;
 
@@ -70,11 +78,11 @@ void Config::Apply(bool engineToo)
 	}
 	changedParameters_.Clear();
 
-	SharedPtr<ComplexStorage> storage;
+	ComplexStorage* storage;
 	for (auto& p : storages_)
 	{
-		storage = p.second_;
-		if (!storage->parameters_.Empty() && !(engineToo && storage->isEngine_))
+		storage = p.second_.Get();
+		if (!storage->parameters_.Empty() && (engineToo || !(engineToo || storage->isEngine_)))
 		{
 			storage->writer_(p.second_->parameters_);
 			storage->parameters_.Clear();
@@ -250,9 +258,9 @@ bool Config::RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterF
 {
 	if (!storages_.Contains(cathegory))
 	{
-		SharedPtr<ComplexStorage> storage = MakeShared<ComplexStorage>();
+		SharedPtr<ComplexStorage>& storage = storages_[cathegory];
+		storage = MakeShared<ComplexStorage>();
 		storage->writer_ = writer;
-		storages_[cathegory] = storage;
 		return true;
 	}
 	else
@@ -318,4 +326,165 @@ void Config::GetDebugString(Urho3D::String& dst) const
 			}
 		}
 	}
+}
+
+void Config::CreateParameterControl(Urho3D::StringHash parameter, Urho3D::UIElement* parent)
+{
+	const auto it = parameters_.Find(parameter);
+	if (it == parameters_.End())
+	{
+		URHO3D_LOGWARNING("Failed to construct settings control for unregistered parameter.");
+		return;
+	}
+
+	const String parameterName = names_[parameter];
+	const Variant value = it->second_.reader_->Read();
+
+	EnumVector items;
+	if (it->second_.flags_ & ParameterFlags::ENUM)
+	{
+		const bool localized = it->second_.flags_ & ParameterFlags::LOCALIZED;
+		items = enumConstructors_[it->first_]();
+		CreateParameterEnum(parameterName, items, value, parent, localized);
+		items.Clear();
+	}
+	else
+		switch (it->second_.type_)
+		{
+		case VAR_BOOL:
+			CreateParameterBool(parameterName, value.GetBool(), parent);
+			break;
+		case VAR_FLOAT:
+			CreateParameterFloat(parameterName, value.GetFloat(), parent);
+			break;
+		case VAR_STRING:
+			CreateParameterString(parameterName, value.GetString(), parent);
+			break;
+		default:
+			URHO3D_LOGWARNING("Failed to construct settings control for parameter with unsupported type.");
+		}
+}
+
+void Config::CreateParameterBool(const Urho3D::String& parameterName, bool value, Urho3D::UIElement* parent)
+{
+	CheckBox* checkBox = parent->CreateChild<CheckBox>();
+	checkBox->SetName(parameterName);
+	checkBox->SetChecked(value);
+	checkBox->SetStyleAuto();
+	checkBox->SubscribeToEvent(checkBox, E_TOGGLED, URHO3D_HANDLER(Config, OnBoolChanged));
+}
+
+void Config::CreateParameterFloat(const Urho3D::String& parameterName, float value, Urho3D::UIElement* parent)
+{
+	UIElement* group = parent->CreateChild<UIElement>();
+	group->SetLayout(LM_HORIZONTAL, 4, IntRect::ZERO);
+	group->SetStyleAuto();
+
+	Slider* slider = group->CreateChild<Slider>();
+	slider->SetName(parameterName);
+	slider->SetValue(value);
+	slider->SetStyleAuto();
+	slider->SubscribeToEvent(slider, E_SLIDERCHANGED, URHO3D_HANDLER(Config, OnFloatSliderChanged));
+
+	LineEdit* lineEdit = group->CreateChild<LineEdit>();
+	lineEdit->SetText(ToString("%f", value).Substring(0, 4));
+	lineEdit->SetStyleAuto();
+	lineEdit->SubscribeToEvent(lineEdit, E_TEXTCHANGED, URHO3D_HANDLER(Config, OnFloatTextChanged));
+}
+
+void Config::CreateParameterString(const Urho3D::String& parameterName,
+								   const Urho3D::String& value,
+								   Urho3D::UIElement* parent)
+{
+	LineEdit* lineEdit = parent->CreateChild<LineEdit>();
+	lineEdit->SetName(parameterName);
+	lineEdit->SetText(value);
+	lineEdit->SetStyleAuto();
+	lineEdit->SubscribeToEvent(lineEdit, E_TEXTFINISHED, URHO3D_HANDLER(Config, OnStringChanged));
+}
+
+void Config::CreateParameterEnum(const Urho3D::String& parameterName,
+								 const EnumVector& items,
+								 const Urho3D::Variant& value,
+								 Urho3D::UIElement* parent,
+								 bool localized)
+{
+	DropDownList* dropDownList = parent->CreateChild<DropDownList>();
+	dropDownList->SetName(parameterName);
+	dropDownList->SetLayout(LM_HORIZONTAL, 0, {4, 4, 4, 4});
+	dropDownList->SetResizePopup(true);
+	dropDownList->SetStyleAuto();
+	dropDownList->SubscribeToEvent(dropDownList, E_ITEMSELECTED, URHO3D_HANDLER(Config, OnEnumChanged));
+
+	SharedPtr<UIElement> item;
+	Text* text;
+	unsigned itemId = 0;
+	for (const EnumVariant& p : items)
+	{
+		item = MakeShared<UIElement>(context_);
+		dropDownList->AddItem(item);
+		item->SetLayout(LM_HORIZONTAL, 0, {4, 4, 4, 4});
+		item->SetVar(CB_ITEM_VALUE, p.value_);
+		item->SetStyleAuto();
+
+		text = item->CreateChild<Text>();
+		text->SetVerticalAlignment(VA_CENTER);
+		text->SetText(p.caption_);
+		text->SetAutoLocalizable(localized);
+		text->SetStyleAuto();
+
+		if (p.value_ == value)
+			dropDownList->SetSelection(itemId);
+		++itemId;
+	}
+}
+
+void Config::OnBoolChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace Toggled;
+	const CheckBox* checkBox = static_cast<const CheckBox*>(eventData[P_ELEMENT].GetPtr());
+	const String& name = checkBox->GetName();
+	changedParameters_[name] = eventData[P_STATE].GetBool();
+}
+
+void Config::OnEnumChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace ItemSelected;
+	const DropDownList* dropDownList = static_cast<const DropDownList*>(eventData[P_ELEMENT].GetPtr());
+	const String& name = dropDownList->GetName();
+	const int itemId = eventData[P_SELECTION].GetInt();
+	const UIElement* item = dropDownList->GetItem(itemId);
+	const Variant& value = item->GetVar(CB_ITEM_VALUE);
+	changedParameters_[name] = value;
+}
+
+void Config::OnFloatSliderChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace SliderChanged;
+	const Slider* slider = static_cast<const Slider*>(eventData[P_ELEMENT].GetPtr());
+	const String& name = slider->GetName();
+	const float value = eventData[P_VALUE].GetFloat();
+	changedParameters_[name] = value;
+	LineEdit* lineEdit = slider->GetParent()->GetChildStaticCast<LineEdit>(1);
+	lineEdit->SetText(ToString("%f", value).Substring(0, 4));
+}
+
+void Config::OnFloatTextChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace TextChanged;
+	const LineEdit* lineEdit = static_cast<const LineEdit*>(eventData[P_ELEMENT].GetPtr());
+	Slider* slider = lineEdit->GetParent()->GetChildStaticCast<Slider>(0);
+	const String& name = slider->GetName();
+	const String& value = eventData[P_TEXT].GetString();
+	slider->SetValue(ToFloat(value));
+}
+
+void Config::OnStringChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace TextFinished;
+	const LineEdit* lineEdit = static_cast<const LineEdit*>(eventData[P_ELEMENT].GetPtr());
+	Slider* slider = lineEdit->GetParent()->GetChildStaticCast<Slider>(0);
+	const String& name = slider->GetName();
+	const String& value = eventData[P_TEXT].GetString();
+	changedParameters_[name] = value;
 }

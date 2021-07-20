@@ -44,6 +44,7 @@
 #define LP_SCRIPT "Script"
 
 void RegisterMainMenuWindow(Urho3D::Context* context);
+void RegisterSettingsWindow(Urho3D::Context* context);
 
 using namespace Urho3D;
 
@@ -102,6 +103,7 @@ void Shell::Initialize()
 		debugHud->SetDefaultStyle(styleFile);
 
 		RegisterMainMenuWindow(context_);
+		RegisterSettingsWindow(context_);
 
 		shellState_ = new MainMenu(context_);
 	}

@@ -62,5 +62,10 @@ void Widget::LoadLayout(const Urho3D::String& layoutName)
 }
 
 void Widget::ShrinkSize() { root_->SetSize(IntVector2(0, 0)); }
-void Widget::Close() { parentState_->RemoveDialog(GetType()); }
 bool Widget::IsFrontElement() const { return GetSubsystem<UI>()->GetFrontElement() == root_.Get(); }
+void Widget::Close() { parentState_->RemoveDialog(GetType()); }
+
+void Widget::BindButtonToClose(Urho3D::UIElement* button)
+{
+	SubscribeToEvent(button, E_PRESSED, std::bind(&Widget::Close, this));
+}

@@ -52,6 +52,7 @@ public:
 
 protected:
 	void Close();
+	void BindButtonToClose(Urho3D::UIElement* button);
 
 	Urho3D::SharedPtr<Urho3D::UIElement> root_;
 	ShellState* parentState_;

@@ -31,6 +31,10 @@ class MainMenuWindow : public Widget
 
 public:
 	explicit MainMenuWindow(Urho3D::Context* context);
+
+private:
+	void OnSettings(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnExit(Urho3D::StringHash, Urho3D::VariantMap&);
 };
 
 void RegisterMainMenuWindow(Urho3D::Context* context);
