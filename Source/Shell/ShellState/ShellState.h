@@ -64,8 +64,8 @@ private:
 
 	Urho3D::Scene scene_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Widget>> widgets_;
-	unsigned closeables_;
-	unsigned interactives_;
+	unsigned char closeables_;
+	unsigned char interactives_;
 	bool pausable_;
 };
 
