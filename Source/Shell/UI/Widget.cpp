@@ -35,6 +35,7 @@ using namespace Urho3D;
 Widget::Widget(Urho3D::Context* context)
 	: Object(context)
 	, parentState_(nullptr)
+	, closeable_(false)
 	, interactive_(false)
 {
 }
@@ -52,7 +53,7 @@ void Widget::LoadLayout(const Urho3D::String& layoutName)
 	root_ = ui->LoadLayout(layout);
 	root_->SetStyleAuto();
 	ui->GetRoot()->AddChild(root_);
-	if (flags_ & Flags::DIALOG)
+	if (closeable_)
 	{
 		UIElement* closeButton = root_->GetChild(CLOSE_BUTTON_NAME, true);
 		if (closeButton)

@@ -42,6 +42,7 @@ public:
 
 	void SetUpdate(bool update);
 
+	unsigned GetInteractivesCount() const noexcept { return interactives_; }
 	Urho3D::Scene& GetScene() noexcept { return scene_; }
 	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
 	bool GetUpdate() const { return scene_.IsUpdateEnabled(); }
@@ -52,9 +53,11 @@ private:
 	void IncInteractives();
 	void DecInteractives();
 	void SetMouseVisible(bool visible) const;
+	void CloseFrontDialog();
 
 	void OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	Urho3D::Scene scene_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Widget>> widgets_;

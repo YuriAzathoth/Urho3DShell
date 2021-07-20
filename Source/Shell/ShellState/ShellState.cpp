@@ -23,6 +23,7 @@
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Input.h>
+#include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/UI/Cursor.h>
 #include <Urho3D/UI/UI.h>
 #include "ShellState.h"
@@ -34,6 +35,7 @@ ShellState::ShellState(Urho3D::Context* context)
 	, scene_(context)
 	, interactives_(0)
 {
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ShellState, OnKeyDown));
 }
 
 ShellState::~ShellState() {}
@@ -106,6 +108,29 @@ void ShellState::SetMouseVisible(bool visible) const
 	GetSubsystem<UI>()->SetCursor(cursor);
 }
 
+void ShellState::CloseFrontDialog()
+{
+	Widget* widget;
+	for (auto it = widgets_.Begin(); it != widgets_.End(); ++it)
+	{
+		widget = it->second_.Get();
+		if (widget->IsFrontElement() && widget->IsCloseable())
+		{
+			if (widget->IsInteractive())
+				DecInteractives();
+			widgets_.Erase(it);
+			return;
+		}
+	}
+}
+
 void ShellState::OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData) {}
 
 void ShellState::OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData) {}
+
+void ShellState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace KeyDown;
+	if (eventData[P_KEY].GetInt() == Key::KEY_ESCAPE)
+		CloseFrontDialog();
+}
