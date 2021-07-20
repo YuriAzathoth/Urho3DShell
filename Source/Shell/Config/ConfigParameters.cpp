@@ -86,7 +86,7 @@ void Config::RegisterClientParameters()
 
 				it = values.Find(ECP_RESOLUTION);
 				const IntVector3 res = StrToRes(
-					(it != values.End() ? it->second_ : parameters_[ECP_WINDOW_MODE].reader_->Read()).GetString());
+					(it != values.End() ? it->second_ : parameters_[ECP_RESOLUTION].reader_->Read()).GetString());
 				const int width = res.x_;
 				const int height = res.y_;
 				const int refreshRate = res.z_;
