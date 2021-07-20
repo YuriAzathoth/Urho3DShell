@@ -45,16 +45,18 @@ void ShellState::CreateDialog(Urho3D::StringHash type)
 	SharedPtr<Object> object = context_->CreateObject(type);
 	if (object.Null())
 	{
-		URHO3D_LOGERROR("Failed to create unregistered dialog.");
+		URHO3D_LOGERROR("Failed to create unregistered UI widget.");
 		return;
 	}
-
-	SharedPtr<Widget> dialog;
-	dialog.DynamicCast(object);
-	if (dialog.NotNull())
-		widgets_[type] = dialog;
+	SharedPtr<Widget> widget;
+	widget.DynamicCast(object);
+	if (widget.NotNull())
+	{
+		widget->SetParentState(this);
+		widgets_[type] = widget;
+	}
 	else
-		URHO3D_LOGERROR("Failed to create dialog: given type is not a dialog.");
+		URHO3D_LOGERROR("Failed to create UI widget: given type is not a widget.");
 }
 
 void ShellState::RemoveDialog(Urho3D::StringHash type) { widgets_.Erase(type); }
