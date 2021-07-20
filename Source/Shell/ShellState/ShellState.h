@@ -60,7 +60,7 @@ private:
 template<typename T> T* ShellState::GetDialog(Urho3D::StringHash type)
 {
 	auto it = dialogs_.Find(type);
-	return it != dialogs_.End() ? it->second_.Get() : nullptr;
+	return it != dialogs_.End() ? it->second_.Get()->Cast<T>() : nullptr;
 }
 
 #endif // GAMESTATE_H
