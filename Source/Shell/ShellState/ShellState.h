@@ -49,11 +49,16 @@ public:
 	template<typename T> T* GetDialog(Urho3D::StringHash type);
 
 private:
+	void IncInteractives();
+	void DecInteractives();
+	void SetMouseVisible(bool visible) const;
+
 	void OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	Urho3D::Scene scene_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Widget>> widgets_;
+	unsigned interactives_;
 };
 
 template<typename T> T* ShellState::GetDialog(Urho3D::StringHash type)

@@ -22,6 +22,9 @@
 
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Input/Input.h>
+#include <Urho3D/UI/Cursor.h>
+#include <Urho3D/UI/UI.h>
 #include "ShellState.h"
 
 using namespace Urho3D;
@@ -29,6 +32,7 @@ using namespace Urho3D;
 ShellState::ShellState(Urho3D::Context* context)
 	: Urho3D::Object(context)
 	, scene_(context)
+	, interactives_(0)
 {
 }
 
@@ -44,24 +48,63 @@ void ShellState::CreateDialog(Urho3D::StringHash type)
 	}
 	SharedPtr<Widget> widget;
 	widget.DynamicCast(object);
-	if (widget.NotNull())
+	if (widget.Null())
 	{
-		widget->SetParentState(this);
-		widgets_[type] = widget;
-	}
-	else
 		URHO3D_LOGERROR("Failed to create UI widget: given type is not a widget.");
+		return;
+	}
+	widget->SetParentState(this);
+	if (widget->IsInteractive())
+		IncInteractives();
+	widgets_[type] = widget;
 }
 
-void ShellState::RemoveDialog(Urho3D::StringHash type) { widgets_.Erase(type); }
+void ShellState::RemoveDialog(Urho3D::StringHash type)
+{
+	auto it = widgets_.Find(type);
+	if (it != widgets_.End())
+	{
+		if (it->second_->IsInteractive())
+			DecInteractives();
+		widgets_.Erase(it);
+	}
+}
 
 void ShellState::Clear()
 {
-	widgets_.Clear();
+	SetUpdate(true);
 	scene_.Clear();
+	widgets_.Clear();
+	interactives_ = 0;
 }
 
 void ShellState::SetUpdate(bool update) { scene_.SetUpdateEnabled(update); }
+
+void ShellState::IncInteractives()
+{
+	if (interactives_ == 0)
+		SetMouseVisible(true);
+	++interactives_;
+}
+
+void ShellState::DecInteractives()
+{
+	if (interactives_ == 1)
+		SetMouseVisible(false);
+	--interactives_;
+}
+
+void ShellState::SetMouseVisible(bool visible) const
+{
+	Cursor* cursor = nullptr;
+	if (visible)
+	{
+		cursor = new Cursor(context_);
+		cursor->SetPosition(GetSubsystem<Input>()->GetMousePosition());
+		cursor->SetStyleAuto();
+	}
+	GetSubsystem<UI>()->SetCursor(cursor);
+}
 
 void ShellState::OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData) {}
 
