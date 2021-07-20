@@ -41,17 +41,20 @@ public:
 	void Clear();
 
 	void SetUpdate(bool update);
+	void SetPausable(bool pausable) noexcept { pausable_ = pausable; }
 
+	unsigned GetCloseablesCount() const noexcept { return closeables_; }
 	unsigned GetInteractivesCount() const noexcept { return interactives_; }
 	Urho3D::Scene& GetScene() noexcept { return scene_; }
 	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
-	bool GetUpdate() const { return scene_.IsUpdateEnabled(); }
+	bool IsUpdate() const { return scene_.IsUpdateEnabled(); }
+	bool IsPausable() const { return pausable_; }
 
-	template<typename T> T* GetDialog(Urho3D::StringHash type);
+	template <typename T> T* GetDialog(Urho3D::StringHash type);
 
 private:
-	void IncInteractives();
-	void DecInteractives();
+	void PostWidgetAdd(Widget* widget);
+	void PreWidgetRemove(Widget* widget);
 	void SetMouseVisible(bool visible) const;
 	void CloseFrontDialog();
 
@@ -61,10 +64,12 @@ private:
 
 	Urho3D::Scene scene_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Widget>> widgets_;
+	unsigned closeables_;
 	unsigned interactives_;
+	bool pausable_;
 };
 
-template<typename T> T* ShellState::GetDialog(Urho3D::StringHash type)
+template <typename T> T* ShellState::GetDialog(Urho3D::StringHash type)
 {
 	auto it = widgets_.Find(type);
 	return it != widgets_.End() ? it->second_.Get()->Cast<T>() : nullptr;

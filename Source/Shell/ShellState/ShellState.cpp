@@ -55,10 +55,9 @@ void ShellState::CreateDialog(Urho3D::StringHash type)
 		URHO3D_LOGERROR("Failed to create UI widget: given type is not a widget.");
 		return;
 	}
-	widget->SetParentState(this);
-	if (widget->IsInteractive())
-		IncInteractives();
 	widgets_[type] = widget;
+	widget->SetParentState(this);
+	PostWidgetAdd(widget);
 }
 
 void ShellState::RemoveDialog(Urho3D::StringHash type)
@@ -66,8 +65,7 @@ void ShellState::RemoveDialog(Urho3D::StringHash type)
 	auto it = widgets_.Find(type);
 	if (it != widgets_.End())
 	{
-		if (it->second_->IsInteractive())
-			DecInteractives();
+		PreWidgetRemove(it->second_);
 		widgets_.Erase(it);
 	}
 }
@@ -82,18 +80,28 @@ void ShellState::Clear()
 
 void ShellState::SetUpdate(bool update) { scene_.SetUpdateEnabled(update); }
 
-void ShellState::IncInteractives()
+void ShellState::PostWidgetAdd(Widget* widget)
 {
-	if (interactives_ == 0)
-		SetMouseVisible(true);
-	++interactives_;
+	if (widget->IsCloseable())
+		++closeables_;
+	if (widget->IsInteractive())
+	{
+		if (interactives_ == 0)
+			SetMouseVisible(true);
+		++interactives_;
+	}
 }
 
-void ShellState::DecInteractives()
+void ShellState::PreWidgetRemove(Widget* widget)
 {
-	if (interactives_ == 1)
-		SetMouseVisible(false);
-	--interactives_;
+	if (widget->IsCloseable())
+		++closeables_;
+	if (widget->IsInteractive())
+	{
+		if (interactives_ == 1)
+			SetMouseVisible(false);
+		--interactives_;
+	}
 }
 
 void ShellState::SetMouseVisible(bool visible) const
@@ -110,18 +118,13 @@ void ShellState::SetMouseVisible(bool visible) const
 
 void ShellState::CloseFrontDialog()
 {
-	Widget* widget;
 	for (auto it = widgets_.Begin(); it != widgets_.End(); ++it)
-	{
-		widget = it->second_.Get();
-		if (widget->IsFrontElement() && widget->IsCloseable())
+		if (it->second_->IsFrontElement() && it->second_->IsCloseable())
 		{
-			if (widget->IsInteractive())
-				DecInteractives();
+			PreWidgetRemove(it->second_);
 			widgets_.Erase(it);
 			return;
 		}
-	}
 }
 
 void ShellState::OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData) {}

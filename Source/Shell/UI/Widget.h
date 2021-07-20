@@ -24,7 +24,6 @@
 #define WIDGET_H
 
 #include <Urho3D/Core/Object.h>
-#include <Urho3D/Container/FlagSet.h>
 #include <Urho3D/UI/UIElement.h>
 #include "Urho3DShellAPI.h"
 
