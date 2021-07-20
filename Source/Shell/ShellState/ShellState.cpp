@@ -34,12 +34,6 @@ ShellState::ShellState(Urho3D::Context* context)
 
 ShellState::~ShellState() {}
 
-void ShellState::Clear()
-{
-	widgets_.Clear();
-	scene_.Clear();
-}
-
 void ShellState::CreateDialog(Urho3D::StringHash type)
 {
 	SharedPtr<Object> object = context_->CreateObject(type);
@@ -60,6 +54,12 @@ void ShellState::CreateDialog(Urho3D::StringHash type)
 }
 
 void ShellState::RemoveDialog(Urho3D::StringHash type) { widgets_.Erase(type); }
+
+void ShellState::Clear()
+{
+	widgets_.Clear();
+	scene_.Clear();
+}
 
 void ShellState::SetUpdate(bool update) { scene_.SetUpdateEnabled(update); }
 

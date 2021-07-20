@@ -36,12 +36,11 @@ public:
 	explicit ShellState(Urho3D::Context* context);
 	virtual ~ShellState();
 
+	void CreateDialog(Urho3D::StringHash type);
+	void RemoveDialog(Urho3D::StringHash type);
 	void Clear();
 
 	void SetUpdate(bool update);
-
-	void CreateDialog(Urho3D::StringHash type);
-	void RemoveDialog(Urho3D::StringHash type);
 
 	Urho3D::Scene& GetScene() noexcept { return scene_; }
 	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
