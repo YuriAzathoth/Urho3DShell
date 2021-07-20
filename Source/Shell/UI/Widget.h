@@ -35,49 +35,26 @@ class URHO3DSHELLAPI_EXPORT Widget : public Urho3D::Object
 	URHO3D_OBJECT(Widget, Urho3D::Object)
 
 public:
-	enum class Flags : unsigned char
-	{
-		NONE = 0x0,
-		DIALOG = 0x1,
-		MAIN = 0x2
-	};
-
 	explicit Widget(Urho3D::Context* context);
 	virtual ~Widget();
 
 	void LoadLayout(const Urho3D::String& layoutName);
 	void ShrinkSize();
 
+	void SetInteractive(bool interactive) noexcept { interactive_ = interactive; }
 	void SetParentState(ShellState* parentState) noexcept { parentState_ = parentState; }
-	void SetFlags(Urho3D::FlagSet<Flags> flags) noexcept { flags_ = flags; }
 
-	Urho3D::FlagSet<Flags> GetFlags() const noexcept { return flags_; }
 	ShellState* GetParentState() const noexcept { return parentState_; }
 	Urho3D::UIElement* GetRoot() const { return root_.Get(); }
-
-	bool IsCloseable() const noexcept { return IsDialog() && !(flags_ & Flags::MAIN); }
-	bool IsDialog() const noexcept { return flags_ & Flags::DIALOG; }
 	bool IsFrontElement() const;
+	bool IsInteractive() const noexcept { return interactive_; }
 
 protected:
 	void Close();
 
-	Urho3D::UIElement* GetChild(const Urho3D::String& name, bool recurse) { return root_->GetChild(name, recurse); }
-
-	template <typename T> T* GetChildStaticCast(const Urho3D::String& name, bool recurse)
-	{
-		return root_->GetChildStaticCast<T>(name, recurse);
-	}
-
-	template <typename T> T* GetChildDynamicCast(const Urho3D::String& name, bool recurse)
-	{
-		return root_->GetChildDynamicCast<T>(name, recurse);
-	}
-
-private:
 	Urho3D::SharedPtr<Urho3D::UIElement> root_;
-	Urho3D::FlagSet<Flags> flags_;
 	ShellState* parentState_;
+	bool interactive_;
 };
 
 #endif // WIDGET_H

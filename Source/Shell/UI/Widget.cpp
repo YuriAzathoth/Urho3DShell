@@ -34,7 +34,8 @@ using namespace Urho3D;
 
 Widget::Widget(Urho3D::Context* context)
 	: Object(context)
-	, flags_(Flags::NONE)
+	, parentState_(nullptr)
+	, interactive_(false)
 {
 }
 
