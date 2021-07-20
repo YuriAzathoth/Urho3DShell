@@ -29,6 +29,7 @@ MainMenuWindow::MainMenuWindow(Urho3D::Context* context)
 	: Widget(context)
 {
 	LoadLayout("UI/MainMenu.xml");
+	SetInteractive(true);
 }
 
 void RegisterMainMenuWindow(Urho3D::Context* context) { context->RegisterFactory<MainMenuWindow>(); }
