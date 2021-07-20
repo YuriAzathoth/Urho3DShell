@@ -25,6 +25,7 @@
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
 #include <functional>
+#include "ShellState/ShellState.h"
 #include "Widget.h"
 
 #define CLOSE_BUTTON_NAME "CloseButton"
@@ -33,7 +34,7 @@ using namespace Urho3D;
 
 Widget::Widget(Urho3D::Context* context)
 	: Object(context)
-	, flags_(0)
+	, flags_(Flags::NONE)
 {
 }
 
@@ -58,6 +59,6 @@ void Widget::LoadLayout(const Urho3D::String& layoutName)
 	}
 }
 
+void Widget::ShrinkSize() { root_->SetSize(IntVector2(0, 0)); }
+void Widget::Close() { parentState_->RemoveDialog(GetType()); }
 bool Widget::IsFrontElement() const { return GetSubsystem<UI>()->GetFrontElement() == root_.Get(); }
-void Widget::Close() { /*GetSubsystem<UIController>()->DestroyDialog(GetType());*/ }
-void Widget::UpdateSize() { root_->SetSize(IntVector2(0, 0)); }

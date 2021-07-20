@@ -28,6 +28,8 @@
 #include <Urho3D/UI/UIElement.h>
 #include "Urho3DShellAPI.h"
 
+class ShellState;
+
 class URHO3DSHELLAPI_EXPORT Widget : public Urho3D::Object
 {
 	URHO3D_OBJECT(Widget, Urho3D::Object)
@@ -44,18 +46,21 @@ public:
 	virtual ~Widget();
 
 	void LoadLayout(const Urho3D::String& layoutName);
+	void ShrinkSize();
 
-	bool IsFrontElement() const;
-
+	void SetParentState(ShellState* parentState) noexcept { parentState_ = parentState; }
 	void SetFlags(Urho3D::FlagSet<Flags> flags) noexcept { flags_ = flags; }
+
 	Urho3D::FlagSet<Flags> GetFlags() const noexcept { return flags_; }
+	ShellState* GetParentState() const noexcept { return parentState_; }
 	Urho3D::UIElement* GetRoot() const { return root_.Get(); }
-	bool IsDialog() const noexcept { return flags_ & Flags::DIALOG; }
+
 	bool IsCloseable() const noexcept { return IsDialog() && !(flags_ & Flags::MAIN); }
+	bool IsDialog() const noexcept { return flags_ & Flags::DIALOG; }
+	bool IsFrontElement() const;
 
 protected:
 	void Close();
-	void UpdateSize();
 
 	Urho3D::UIElement* GetChild(const Urho3D::String& name, bool recurse) { return root_->GetChild(name, recurse); }
 
@@ -72,6 +77,7 @@ protected:
 private:
 	Urho3D::SharedPtr<Urho3D::UIElement> root_;
 	Urho3D::FlagSet<Flags> flags_;
+	ShellState* parentState_;
 };
 
 #endif // WIDGET_H
