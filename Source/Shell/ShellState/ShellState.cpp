@@ -36,7 +36,7 @@ ShellState::~ShellState() {}
 
 void ShellState::Clear()
 {
-	dialogs_.Clear();
+	widgets_.Clear();
 	scene_.Clear();
 }
 
@@ -49,15 +49,15 @@ void ShellState::CreateDialog(Urho3D::StringHash type)
 		return;
 	}
 
-	SharedPtr<Dialog> dialog;
+	SharedPtr<Widget> dialog;
 	dialog.DynamicCast(object);
 	if (dialog.NotNull())
-		dialogs_[type] = dialog;
+		widgets_[type] = dialog;
 	else
 		URHO3D_LOGERROR("Failed to create dialog: given type is not a dialog.");
 }
 
-void ShellState::RemoveDialog(Urho3D::StringHash type) { dialogs_.Erase(type); }
+void ShellState::RemoveDialog(Urho3D::StringHash type) { widgets_.Erase(type); }
 
 void ShellState::SetUpdate(bool update) { scene_.SetUpdateEnabled(update); }
 

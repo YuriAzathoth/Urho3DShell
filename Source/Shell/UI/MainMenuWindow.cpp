@@ -26,7 +26,7 @@
 using namespace Urho3D;
 
 MainMenuWindow::MainMenuWindow(Urho3D::Context* context)
-	: Dialog(context)
+	: Widget(context)
 {
 	LoadLayout("UI/MainMenu.xml");
 }

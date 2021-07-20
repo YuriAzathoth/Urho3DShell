@@ -20,17 +20,17 @@
 // THE SOFTWARE.
 //
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef WIDGET_H
+#define WIDGET_H
 
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Container/FlagSet.h>
 #include <Urho3D/UI/UIElement.h>
 #include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT Dialog : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT Widget : public Urho3D::Object
 {
-	URHO3D_OBJECT(Dialog, Urho3D::Object)
+	URHO3D_OBJECT(Widget, Urho3D::Object)
 
 public:
 	enum class Flags : unsigned char
@@ -40,8 +40,8 @@ public:
 		MAIN = 0x2
 	};
 
-	explicit Dialog(Urho3D::Context* context);
-	virtual ~Dialog();
+	explicit Widget(Urho3D::Context* context);
+	virtual ~Widget();
 
 	void LoadLayout(const Urho3D::String& layoutName);
 
@@ -74,4 +74,4 @@ private:
 	Urho3D::FlagSet<Flags> flags_;
 };
 
-#endif // DIALOG_H
+#endif // WIDGET_H
