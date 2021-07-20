@@ -61,20 +61,19 @@ void Config::SaveXML(Urho3D::XMLElement& dst) const
 
 void Config::Apply(bool engineToo)
 {
-	if (!changedParameters_.Empty())
+	Parameter* parameter;
+	for (const auto& p : changedParameters_)
 	{
-		ParametersMap::Iterator it;
-		for (const auto& p : changedParameters_)
-		{
-			it = parameters_.Find(p.first_);
-			if (it != parameters_.End() && !(engineToo && it->second_.flags_ & ParameterFlags::ENGINE))
-				it->second_.writer_->Write(p.second_);
-		}
-		changedParameters_.Clear();
+		parameter = &parameters_[p.first_];
+		if (engineToo || !(engineToo || parameter->flags_ & ParameterFlags::ENGINE))
+			parameter->writer_->Write(p.second_);
 	}
+	changedParameters_.Clear();
+
+	SharedPtr<ComplexStorage> storage;
 	for (auto& p : storages_)
 	{
-		SharedPtr<ComplexStorage> storage = p.second_;
+		storage = p.second_;
 		if (!storage->parameters_.Empty() && !(engineToo && storage->isEngine_))
 		{
 			storage->writer_(p.second_->parameters_);
@@ -253,6 +252,7 @@ bool Config::RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterF
 	{
 		SharedPtr<ComplexStorage> storage = MakeShared<ComplexStorage>();
 		storage->writer_ = writer;
+		storages_[cathegory] = storage;
 		return true;
 	}
 	else
@@ -276,7 +276,7 @@ bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringH
 	{
 		if (itParameter == parameters_.End())
 			URHO3D_LOGWARNING("Failed to assign writer to non-existent config parameter.");
-		if (itStorage == parameters_.End())
+		if (itStorage == storages_.End())
 			URHO3D_LOGWARNING("Failed to assign writer to non-existent complex config storage.");
 		return false;
 	}
