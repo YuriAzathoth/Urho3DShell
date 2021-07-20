@@ -72,14 +72,16 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	config->RegisterServerParameters();
 	if (client_)
 		config->RegisterClientParameters();
-	GetSubsystem<Configurator>()->Initialize();
+
+	Configurator* configurator = GetSubsystem<Configurator>();
+	configurator->Initialize();
 
 	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
 	RegisterServerAPI(engine);
-	if (!GetSubsystem<Engine>()->IsHeadless())
+	if (client_)
 		RegisterClientAPI(engine);
 
-	engineParameters[EP_LOG_NAME] = GetSubsystem<Configurator>()->GetLogsFilename();
+	engineParameters[EP_LOG_NAME] = configurator->GetLogsFilename();
 
 	config->ExtractEngineParameters(engineParameters);
 }
