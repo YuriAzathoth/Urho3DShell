@@ -37,6 +37,6 @@ INCLUDE (UrhoCommon REQUIRED)
 
 INCLUDE ("${CMAKE_CURRENT_LIST_DIR}/Urho3DShellTargets.cmake")
 INCLUDE ("${CMAKE_CURRENT_LIST_DIR}/Urho3DShellConfigVersion.cmake")
-INCLUDE ("${CMAKE_CURRENT_LIST_DIR}/UrhoCoreCommon.cmake")
+INCLUDE ("${CMAKE_CURRENT_LIST_DIR}/UrhoShellCommon.cmake")
 
 CHECK_REQUIRED_COMPONENTS (Urho3DShell)
