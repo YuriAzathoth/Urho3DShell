@@ -20,4 +20,5 @@
 # THE SOFTWARE.
 #
 
-SETUP_GAME_LIBRARY (Urho3DShell RESOURCES CoreData Data Editor)
+SETUP_GAME_LIBRARY (Urho3DShell)
+SETUP_GAME_RESOURCES (CoreData Data Editor)
