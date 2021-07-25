@@ -52,7 +52,6 @@ public:
 	Urho3D::String GetProfileFilename() const;
 
 private:
-	bool ConfigureGame();
 	void LoadProfile();
 	void LoadProfileName();
 	void SaveProfileName();
