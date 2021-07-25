@@ -36,6 +36,11 @@ MACRO (SETUP_GAME_PROJECT)
 	SET (CMAKE_CONFIG_OUTPUT_DIRECTORY
 		${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/${CMAKE_PROJECT_NAME}
 	)
+	
+	# Dropped lib prefix on MINGW to avoid library names inconsistency
+	IF (WIN32)
+		SET (CMAKE_SHARED_LIBRARY_PREFIX "")
+	ENDIF ()
 
 	OPTION (URHO3DSHELL_LTO "Enable linking-time optimisations" OFF)
 	OPTION (URHO3DSHELL_WARNINGS "Enable project warnings" OFF)
