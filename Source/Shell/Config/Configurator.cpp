@@ -33,6 +33,7 @@
 #include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
+#include <boost/filesystem.hpp>
 #include "Config.h"
 #include "Configurator.h"
 #include "Plugin/PluginsRegistry.h"
@@ -129,7 +130,8 @@ void Configurator::CreateProfile(const Urho3D::String& profileName)
 
 void Configurator::RemoveProfile(const Urho3D::String& profileName)
 {
-	// TODO: Recursive profile path removing
+	const String path = GetGameDataPath() + profileName;
+	boost::filesystem::remove_all(path.CString());
 }
 
 bool Configurator::ConfigureGame()
