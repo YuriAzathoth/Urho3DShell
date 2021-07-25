@@ -30,6 +30,7 @@
 #include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include "Config.h"
@@ -37,20 +38,25 @@
 #include "Plugin/PluginsRegistry.h"
 
 #define CONFIG_ROOT "config"
-#define DEFAULT_GAME_NAME "SampleGame"
 #define DEFAULT_PROFILE "Default"
+#define GAME_FILE "Game.json"
 
 using namespace Urho3D;
 
 Configurator::Configurator(Urho3D::Context* context)
 	: Object(context)
-	, appName_(DEFAULT_GAME_NAME)
-	, gameName_(DEFAULT_GAME_NAME)
+	, appName_("SampleGame")
 	, profileName_(DEFAULT_PROFILE)
 	, userDataPath_("./")
 {
+	if (!ConfigureGame())
+	{
+		GetSubsystem<Engine>()->Exit();
+		return;
+	}
+
 	FileSystem* fileSystem = GetSubsystem<FileSystem>();
-	const String path = GetGameDataPath();
+	String path = GetGameDataPath();
 	if (!fileSystem->DirExists(path))
 		fileSystem->CreateDir(path);
 }
@@ -124,6 +130,22 @@ void Configurator::CreateProfile(const Urho3D::String& profileName)
 void Configurator::RemoveProfile(const Urho3D::String& profileName)
 {
 	// TODO: Recursive profile path removing
+}
+
+bool Configurator::ConfigureGame()
+{
+	JSONFile file(context_);
+	if (!file.LoadFile(GetSubsystem<FileSystem>()->GetProgramDir() + GAME_FILE))
+		return false;
+	const JSONValue& root = file.GetRoot();
+	if (root.IsNull())
+		return false;
+	gameName_ = root.Get("name").GetString("");
+	const String gameDll = root.Get("lib").GetString("");
+	if (!gameName_.Empty())
+		return true;
+	else
+		return false;
 }
 
 void Configurator::LoadProfileName()

@@ -1,0 +1,4 @@
+{
+	"name": "${URHO3DSHELL_GAME_NAME}",
+	"lib": "${URHO3DSHELL_LIBRARY_NAME}"
+}
