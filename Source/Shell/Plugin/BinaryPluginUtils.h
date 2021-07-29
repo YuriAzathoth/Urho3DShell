@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef BINARYPLUGIN_H
-#define BINARYPLUGIN_H
+#ifndef BINARYPLUGINUTILS_H
+#define BINARYPLUGINUTILS_H
 
 #define BOOST_DLL_FORCE_ALIAS_INSTANTIATION
 #include <boost/config.hpp>
@@ -35,4 +35,4 @@
 	}                                                                                                                  \
 	BOOST_DLL_ALIAS(CLASS::Create, CreatePlugin)
 
-#endif // BINARYPLUGIN_H
+#endif // BINARYPLUGINUTILS_H
