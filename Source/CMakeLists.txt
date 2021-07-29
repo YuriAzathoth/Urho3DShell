@@ -21,4 +21,3 @@
 #
 
 ADD_SUBDIRECTORY (Shell)
-ADD_SUBDIRECTORY (Launcher)
