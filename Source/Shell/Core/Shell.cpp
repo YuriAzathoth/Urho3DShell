@@ -41,9 +41,10 @@
 #include "ShellState/MainMenu.h"
 
 #define CONFIG_ROOT "config"
-#define DEFAULT_GAME_NAME "SampleGame"
+#define DEFAULT_APP_NAME "Unknown"
 #define DEFAULT_PROFILE "Default"
 
+#define LP_GAME_LIB "GameLib"
 #define LP_NO_CLIENT "NoClient"
 #define LP_SCRIPT "Script"
 
@@ -54,8 +55,7 @@ using namespace Urho3D;
 
 Shell::Shell(Urho3D::Context* context)
 	: Object(context)
-	, appName_(DEFAULT_GAME_NAME)
-	, gameName_(DEFAULT_GAME_NAME)
+	, appName_(DEFAULT_APP_NAME)
 	, profileName_(DEFAULT_PROFILE)
 	, userDataPath_("./")
 	, client_(true)
@@ -75,6 +75,15 @@ Shell::~Shell()
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
 	ParseParameters(GetArguments());
+
+	const auto gameLibIt = shellParameters_[LP_GAME_LIB];
+	if (gameLibIt == shellParameters_.End())
+	{
+		URHO3D_LOGERRORF("Failed to load game: library is not specifyed.");
+		GetSubsystem<Engine>()->Exit();
+		return;
+	}
+
 	client_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
 
 	Config* config = GetSubsystem<Config>();
@@ -123,6 +132,8 @@ void Shell::Initialize()
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
 	if (itScript != shellParameters_.End())
 		GetSubsystem<PluginsRegistry>()->RegisterPlugin(itScript->second_.GetString());
+
+	shellParameters_.Clear();
 
 	GetSubsystem<Config>()->Apply(false);
 }
@@ -243,6 +254,8 @@ void Shell::ParseParameters(const Urho3D::StringVector& arguments)
 			value = i + 1 < arguments.Size() ? arguments[i + 1] : String::EMPTY;
 			if (argument == "appname")
 				appName_ = value;
+			else if (argument == "gamelib")
+				shellParameters_[LP_GAME_LIB] = value;
 			else if (argument == "noclient")
 				shellParameters_[LP_NO_CLIENT] = true;
 			else if (argument == "script")

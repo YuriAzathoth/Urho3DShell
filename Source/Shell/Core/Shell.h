@@ -66,7 +66,6 @@ private:
 	Urho3D::SharedPtr<ShellState> shellState_;
 	Urho3D::VariantMap shellParameters_;
 	Urho3D::String appName_;
-	Urho3D::String gameName_;
 	Urho3D::String profileName_;
 	Urho3D::String userDataPath_;
 	bool client_;
