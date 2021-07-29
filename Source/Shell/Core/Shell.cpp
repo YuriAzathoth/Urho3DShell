@@ -74,11 +74,6 @@ Shell::~Shell()
 
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
-	FileSystem* fileSystem = GetSubsystem<FileSystem>();
-	const String path = GetGameDataPath();
-	if (!fileSystem->DirExists(path))
-		fileSystem->CreateDir(path);
-
 	ParseParameters(GetArguments());
 	client_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
 
@@ -86,18 +81,22 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	config->RegisterServerParameters();
 	if (client_)
 		config->RegisterClientParameters();
+	config->ExtractEngineParameters(engineParameters);
 
 	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
 	RegisterServerAPI(engine);
 	if (client_)
 		RegisterClientAPI(engine);
 
-	engineParameters[EP_LOG_NAME] = GetLogsFilename();
-
-	config->ExtractEngineParameters(engineParameters);
+	FileSystem* fileSystem = GetSubsystem<FileSystem>();
+	const String path = GetGameDataPath();
+	if (!fileSystem->DirExists(path))
+		fileSystem->CreateDir(path);
 
 	LoadProfileName();
 	LoadProfile();
+
+	engineParameters[EP_LOG_NAME] = GetLogsFilename();
 }
 
 void Shell::Initialize()
