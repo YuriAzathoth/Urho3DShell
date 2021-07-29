@@ -1,3 +1,4 @@
 {
-	"lib":"@TARGET_NAME@"
+	"lib":"@TARGET_NAME@",
+	"dir":"@DIRECTORY_NAME@"
 }

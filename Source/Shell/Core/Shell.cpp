@@ -42,7 +42,6 @@
 #include "ShellState/MainMenu.h"
 
 #define CONFIG_ROOT "config"
-#define DEFAULT_APP_NAME "Unknown"
 #define DEFAULT_PROFILE "Default"
 
 #define LP_GAME_LIB "GameLib"
@@ -56,7 +55,6 @@ using namespace Urho3D;
 
 Shell::Shell(Urho3D::Context* context)
 	: Object(context)
-	, appName_(DEFAULT_APP_NAME)
 	, profileName_(DEFAULT_PROFILE)
 	, userDataPath_("./")
 	, client_(true)
@@ -156,6 +154,17 @@ bool Shell::PreconfigureEngine()
 		return false;
 
 	const String& libraryName = libraryNameValue.GetString();
+	if (libraryName.Empty())
+		return false;
+
+	const JSONValue& dirNameValue = root.Get("dir");
+	if (dirNameValue.IsNull())
+		return false;
+
+	gameName_ = dirNameValue.GetString();
+	if (gameName_.Empty())
+		return false;
+
 	return GetSubsystem<PluginsRegistry>()->RegisterPlugin(libraryName);
 }
 
@@ -261,7 +270,7 @@ Urho3D::String Shell::GetGameDataPath() const
 #ifdef _WIN32
 	ret.Append("My Games/");
 #endif // _WIN32
-	ret.Append("SampleGame").Append('/');
+	ret.Append(gameName_).Append('/');
 	return ret;
 }
 
