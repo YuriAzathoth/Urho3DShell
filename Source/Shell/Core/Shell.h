@@ -38,12 +38,37 @@ public:
 	void Setup(Urho3D::VariantMap& engineParameters);
 	void Initialize();
 
+	void LoadProfile(const Urho3D::String& profileName);
+	void SaveProfile() const;
+	void CreateProfile(const Urho3D::String& profileName);
+	void RemoveProfile(const Urho3D::String& profileName);
+
+	Urho3D::String GetConfigFilename() const;
+	Urho3D::String GetConfigPath() const;
+	Urho3D::String GetInputPath() const;
+	Urho3D::String GetLogsFilename() const;
+	Urho3D::String GetLogsPath() const;
+	Urho3D::String GetPluginsPath() const;
+	Urho3D::String GetProfileFilename() const;
+
+	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
+
 private:
+	void LoadProfile();
+	void LoadProfileName();
+	void SaveProfileName();
+
+	Urho3D::String GetGameDataPath() const;
+
 	void ParseParameters(const Urho3D::StringVector& arguments);
 	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue);
 
 	Urho3D::SharedPtr<ShellState> shellState_;
 	Urho3D::VariantMap shellParameters_;
+	Urho3D::String appName_;
+	Urho3D::String gameName_;
+	Urho3D::String profileName_;
+	Urho3D::String userDataPath_;
 	bool client_;
 };
 

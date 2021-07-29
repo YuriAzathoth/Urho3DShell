@@ -33,12 +33,16 @@
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
+#include <boost/filesystem.hpp>
 #include "Config/Config.h"
-#include "Config/Configurator.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
 #include "ShellState/MainMenu.h"
+
+#define CONFIG_ROOT "config"
+#define DEFAULT_GAME_NAME "SampleGame"
+#define DEFAULT_PROFILE "Default"
 
 #define LP_NO_CLIENT "NoClient"
 #define LP_SCRIPT "Script"
@@ -50,22 +54,31 @@ using namespace Urho3D;
 
 Shell::Shell(Urho3D::Context* context)
 	: Object(context)
+	, appName_(DEFAULT_GAME_NAME)
+	, gameName_(DEFAULT_GAME_NAME)
+	, profileName_(DEFAULT_PROFILE)
+	, userDataPath_("./")
 	, client_(true)
 {
 	context_->RegisterSubsystem<Script>();
-	context_->RegisterSubsystem<Configurator>();
 	context_->RegisterSubsystem<Config>();
 	context_->RegisterSubsystem<PluginsRegistry>();
 }
 
 Shell::~Shell()
 {
+	SaveProfile();
+	SaveProfileName();
 	context_->RemoveSubsystem<PluginsRegistry>();
-	context_->RemoveSubsystem<Configurator>();
 }
 
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
+	FileSystem* fileSystem = GetSubsystem<FileSystem>();
+	const String path = GetGameDataPath();
+	if (!fileSystem->DirExists(path))
+		fileSystem->CreateDir(path);
+
 	ParseParameters(GetArguments());
 	client_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
 
@@ -74,17 +87,17 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	if (client_)
 		config->RegisterClientParameters();
 
-	Configurator* configurator = GetSubsystem<Configurator>();
-	configurator->Initialize();
-
 	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
 	RegisterServerAPI(engine);
 	if (client_)
 		RegisterClientAPI(engine);
 
-	engineParameters[EP_LOG_NAME] = configurator->GetLogsFilename();
+	engineParameters[EP_LOG_NAME] = GetLogsFilename();
 
 	config->ExtractEngineParameters(engineParameters);
+
+	LoadProfileName();
+	LoadProfile();
 }
 
 void Shell::Initialize()
@@ -113,6 +126,112 @@ void Shell::Initialize()
 		GetSubsystem<PluginsRegistry>()->RegisterPlugin(itScript->second_.GetString());
 
 	GetSubsystem<Config>()->Apply(false);
+}
+
+void Shell::LoadProfile(const Urho3D::String& profileName)
+{
+	profileName_ = profileName;
+	LoadProfile();
+}
+
+void Shell::LoadProfile()
+{
+	FileSystem* fileSystem = GetSubsystem<FileSystem>();
+
+	userDataPath_ = GetGameDataPath() + profileName_ + "/";
+	if (!fileSystem->DirExists(userDataPath_))
+		fileSystem->CreateDir(userDataPath_);
+
+	String path = GetConfigPath();
+	if (fileSystem->DirExists(path))
+	{
+		path = GetConfigFilename();
+		Config* config = GetSubsystem<Config>();
+		XMLFile file(context_);
+		if (fileSystem->FileExists(path) && file.LoadFile(path))
+			config->LoadXML(file.GetRoot(CONFIG_ROOT));
+	}
+	else
+		fileSystem->CreateDir(path);
+
+	path = GetInputPath();
+	if (!fileSystem->DirExists(path))
+		fileSystem->CreateDir(path);
+
+	path = GetLogsPath();
+	if (!fileSystem->DirExists(path))
+		fileSystem->CreateDir(path);
+
+	path = GetPluginsPath();
+	if (!fileSystem->DirExists(path))
+		fileSystem->CreateDir(path);
+	GetSubsystem<PluginsRegistry>()->SetPluginsPath(path);
+}
+
+void Shell::SaveProfile() const
+{
+	XMLFile file(context_);
+	XMLElement root = file.CreateRoot(CONFIG_ROOT);
+	GetSubsystem<Config>()->SaveXML(root);
+	file.SaveFile(GetConfigFilename());
+}
+
+void Shell::CreateProfile(const Urho3D::String& profileName)
+{
+	GetSubsystem<FileSystem>()->CreateDir(GetGameDataPath() + profileName);
+	LoadProfile(profileName);
+}
+
+void Shell::RemoveProfile(const Urho3D::String& profileName)
+{
+	const String path = GetGameDataPath() + profileName;
+	boost::filesystem::remove_all(path.CString());
+}
+
+void Shell::LoadProfileName()
+{
+	File file(context_);
+	if (file.Open(GetProfileFilename(), FileMode::FILE_READ))
+		profileName_ = file.ReadString();
+}
+
+void Shell::SaveProfileName()
+{
+	bool replaceFile = false;
+
+	const String profileFile = GetProfileFilename();
+	if (GetSubsystem<FileSystem>()->FileExists(profileFile))
+	{
+		File file(context_, profileFile, FILE_READ);
+		if (file.ReadString() != profileName_)
+			replaceFile = true;
+	}
+	else
+		replaceFile = true;
+
+	if (replaceFile)
+	{
+		File file(context_, profileFile, FileMode::FILE_WRITE);
+		file.WriteString(profileName_);
+	}
+}
+
+Urho3D::String Shell::GetConfigFilename() const { return GetConfigPath() + appName_ + ".xml"; }
+Urho3D::String Shell::GetConfigPath() const { return userDataPath_ + "Config/"; }
+Urho3D::String Shell::GetInputPath() const { return userDataPath_ + "Input/"; }
+Urho3D::String Shell::GetLogsFilename() const { return GetLogsPath() + appName_ + ".log"; }
+Urho3D::String Shell::GetLogsPath() const { return userDataPath_ + "Errorlogs/"; }
+Urho3D::String Shell::GetPluginsPath() const { return userDataPath_ + "Plugins/"; }
+Urho3D::String Shell::GetProfileFilename() const { return GetGameDataPath() + "Profile.txt"; }
+
+Urho3D::String Shell::GetGameDataPath() const
+{
+	String ret = GetSubsystem<FileSystem>()->GetUserDocumentsDir();
+#ifdef _WIN32
+	ret.Append("My Games/");
+#endif // _WIN32
+	ret.Append(gameName_).Append('/');
+	return ret;
 }
 
 void Shell::ParseParameters(const Urho3D::StringVector& arguments)
