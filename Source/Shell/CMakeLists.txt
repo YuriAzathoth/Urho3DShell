@@ -21,3 +21,13 @@
 #
 
 SETUP_GAME_LIBRARY (NAME Urho3DShell RESOURCES CoreData Data Editor)
+
+SETUP_GAME_LAUNCHER(NAME Client RESOURCES Data CoreData Editor)
+
+SETUP_GAME_LAUNCHER(NAME Editor
+					RESOURCES CoreData Editor
+					ARGUMENTS -noclient -script Scripts/Editor.as -s -w)
+
+SETUP_GAME_LAUNCHER(NAME Server
+					RESOURCES Data CoreData Editor
+					ARGUMENTS -noclient -headless)
