@@ -30,6 +30,7 @@
 #include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
@@ -76,10 +77,9 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
 	ParseParameters(GetArguments());
 
-	const auto paramIt = shellParameters_.Find(LP_GAME_LIB);
-	if (paramIt == shellParameters_.End())
+	if (!PreconfigureEngine())
 	{
-		URHO3D_LOGERRORF("Failed to load game: library is not specifyed.");
+		URHO3D_LOGERRORF("Failed to load game library.");
 		GetSubsystem<Engine>()->Exit();
 		return;
 	}
@@ -136,6 +136,27 @@ void Shell::Initialize()
 	shellParameters_.Clear();
 
 	GetSubsystem<Config>()->Apply(false);
+}
+
+bool Shell::PreconfigureEngine()
+{
+	if (shellParameters_.Contains(LP_GAME_LIB))
+		return true;
+
+	JSONFile file(context_);
+	if (!file.LoadFile(GetSubsystem<FileSystem>()->GetProgramDir() + "/Engine.dat"))
+		return false;
+
+	const JSONValue& root = file.GetRoot();
+	if (root.IsNull())
+		return false;
+
+	const JSONValue& libraryNameValue = root.Get("lib");
+	if (libraryNameValue.IsNull())
+		return false;
+
+	const String& libraryName = libraryNameValue.GetString();
+	return GetSubsystem<PluginsRegistry>()->RegisterPlugin(libraryName);
 }
 
 void Shell::LoadProfile(const Urho3D::String& profileName)

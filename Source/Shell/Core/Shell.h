@@ -54,6 +54,7 @@ public:
 	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
 
 private:
+	bool PreconfigureEngine();
 	void LoadProfile();
 	void LoadProfileName();
 	void SaveProfileName();
