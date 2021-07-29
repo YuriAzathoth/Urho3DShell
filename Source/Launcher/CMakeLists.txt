@@ -20,8 +20,18 @@
 # THE SOFTWARE.
 #
 
-ADD_SUBDIRECTORY (Shell)
-ADD_SUBDIRECTORY (Launcher)
-IF (URHO3DSHELL_SAMPLE)
-	ADD_SUBDIRECTORY (Sample)
-ENDIF ()
+SETUP_GAME_LAUNCHER(NAME Client RESOURCES Data CoreData Editor)
+
+SETUP_GAME_LAUNCHER(NAME Editor
+					RESOURCES CoreData Editor
+					ARGUMENTS
+					-noclient
+					-script Scripts/Editor.as
+					-s
+					-w
+					)
+
+SETUP_GAME_LAUNCHER(NAME Server ARGUMENTS
+					-noclient
+					-headless
+					)
