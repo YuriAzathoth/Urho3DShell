@@ -76,8 +76,8 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
 	ParseParameters(GetArguments());
 
-	const auto gameLibIt = shellParameters_[LP_GAME_LIB];
-	if (gameLibIt == shellParameters_.End())
+	const auto paramIt = shellParameters_.Find(LP_GAME_LIB);
+	if (paramIt == shellParameters_.End())
 	{
 		URHO3D_LOGERRORF("Failed to load game: library is not specifyed.");
 		GetSubsystem<Engine>()->Exit();
@@ -240,7 +240,7 @@ Urho3D::String Shell::GetGameDataPath() const
 #ifdef _WIN32
 	ret.Append("My Games/");
 #endif // _WIN32
-	ret.Append(gameName_).Append('/');
+	ret.Append("SampleGame").Append('/');
 	return ret;
 }
 
