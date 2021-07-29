@@ -20,7 +20,6 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Core/Context.h>
 #include <Urho3D/UI/Button.h>
 #include <Urho3D/UI/ListView.h>
 #include <Urho3D/UI/Text.h>
@@ -106,5 +105,3 @@ void SettingsWindow::OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&)
 	GetSubsystem<Config>()->Clear();
 	Close();
 }
-
-void RegisterSettingsWindow(Urho3D::Context* context) { context->RegisterFactory<SettingsWindow>(); }

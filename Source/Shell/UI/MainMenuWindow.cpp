@@ -20,7 +20,6 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Core/Context.h>
 #include <Urho3D/UI/UIEvents.h>
 #include "MainMenuWindow.h"
 #include "ShellState/ShellState.h"
@@ -37,11 +36,6 @@ MainMenuWindow::MainMenuWindow(Urho3D::Context* context)
 	SubscribeToEvent(root_->GetChild("Exit", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnExit));
 }
 
-void MainMenuWindow::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-	parentState_->CreateDialog("SettingsWindow");
-}
+void MainMenuWindow::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("SettingsWindow"); }
 
 void MainMenuWindow::OnExit(Urho3D::StringHash, Urho3D::VariantMap&) {}
-
-void RegisterMainMenuWindow(Urho3D::Context* context) { context->RegisterFactory<MainMenuWindow>(); }

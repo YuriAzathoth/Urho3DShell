@@ -39,7 +39,8 @@
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
-#include "ShellState/MainMenu.h"
+#include "ShellState/ShellState.h"
+#include "UI/UIController.h"
 
 #define CONFIG_ROOT "config"
 #define DEFAULT_PROFILE "Default"
@@ -47,9 +48,6 @@
 #define LP_GAME_LIB "GameLib"
 #define LP_NO_CLIENT "NoClient"
 #define LP_SCRIPT "Script"
-
-void RegisterMainMenuWindow(Urho3D::Context* context);
-void RegisterSettingsWindow(Urho3D::Context* context);
 
 using namespace Urho3D;
 
@@ -104,6 +102,12 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	LoadProfile();
 
 	engineParameters[EP_LOG_NAME] = GetLogsFilename();
+
+	if (client_)
+	{
+		context_->RegisterSubsystem<UIController>();
+		context_->RegisterSubsystem<ShellState>();
+	}
 }
 
 void Shell::Initialize()
@@ -120,11 +124,6 @@ void Shell::Initialize()
 		console->SetDefaultStyle(styleFile);
 		DebugHud* debugHud = engine->CreateDebugHud();
 		debugHud->SetDefaultStyle(styleFile);
-
-		RegisterMainMenuWindow(context_);
-		RegisterSettingsWindow(context_);
-
-		shellState_ = new MainMenu(context_);
 	}
 
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);

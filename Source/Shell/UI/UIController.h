@@ -20,20 +20,46 @@
 // THE SOFTWARE.
 //
 
-#ifndef MAINMENU_H
-#define MAINMENU_H
+#ifndef UICONTROLLER_H
+#define UICONTROLLER_H
 
-#include "ShellState.h"
+#include <Urho3D/Core/Object.h>
+#include "UI/Widget.h"
 #include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT MainMenu : public ShellState
+class URHO3DSHELLAPI_EXPORT UIController : public Urho3D::Object
 {
-	URHO3D_OBJECT(MainMenu, ShellState)
+	URHO3D_OBJECT(UIController, Urho3D::Object)
 
 public:
-	explicit MainMenu(Urho3D::Context* context);
+	explicit UIController(Urho3D::Context* context);
+
+	void CreateDialog(Urho3D::StringHash type);
+	void RemoveDialog(Urho3D::StringHash type);
+	void RemoveAllDialogs();
+
+	unsigned GetCloseablesCount() const noexcept { return closeables_; }
+	unsigned GetInteractivesCount() const noexcept { return interactives_; }
+
+	template <typename T> T* GetDialog(Urho3D::StringHash type);
 
 private:
+	void PostWidgetAdd(Widget* widget);
+	void PreWidgetRemove(Widget* widget);
+	void SetMouseVisible(bool visible) const;
+	void CloseFrontDialog();
+
+	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+
+	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Widget>> widgets_;
+	unsigned char closeables_;
+	unsigned char interactives_;
 };
 
-#endif // MAINMENU_H
+template <typename T> T* UIController::GetDialog(Urho3D::StringHash type)
+{
+	const auto it = widgets_.Find(type);
+	return it != widgets_.End() ? it->second_.Get()->Cast<T>() : nullptr;
+}
+
+#endif // UICONTROLLER_H

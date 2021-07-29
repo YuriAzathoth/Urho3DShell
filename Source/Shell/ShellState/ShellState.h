@@ -25,7 +25,6 @@
 
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Scene/Scene.h>
-#include "UI/Widget.h"
 #include "Urho3DShellAPI.h"
 
 class URHO3DSHELLAPI_EXPORT ShellState : public Urho3D::Object
@@ -36,43 +35,25 @@ public:
 	explicit ShellState(Urho3D::Context* context);
 	virtual ~ShellState();
 
-	void CreateDialog(Urho3D::StringHash type);
-	void RemoveDialog(Urho3D::StringHash type);
-	void Clear();
+	void ActivateMainMenu();
 
-	void SetUpdate(bool update);
-	void SetPausable(bool pausable) noexcept { pausable_ = pausable; }
-
-	unsigned GetCloseablesCount() const noexcept { return closeables_; }
-	unsigned GetInteractivesCount() const noexcept { return interactives_; }
-	Urho3D::Scene& GetScene() noexcept { return scene_; }
-	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
-	bool IsUpdate() const { return scene_.IsUpdateEnabled(); }
-	bool IsPausable() const { return pausable_; }
-
-	template <typename T> T* GetDialog(Urho3D::StringHash type);
-
-private:
-	void PostWidgetAdd(Widget* widget);
-	void PreWidgetRemove(Widget* widget);
-	void SetMouseVisible(bool visible) const;
-	void CloseFrontDialog();
-
-	void OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-
-	Urho3D::Scene scene_;
-	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Widget>> widgets_;
-	unsigned char closeables_;
-	unsigned char interactives_;
-	bool pausable_;
+//	void Clear();
+//
+//	void SetUpdate(bool update);
+//	void SetPausable(bool pausable) noexcept { pausable_ = pausable; }
+//
+//	Urho3D::Scene& GetScene() noexcept { return scene_; }
+//	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
+//
+//	bool IsUpdate() const { return scene_.IsUpdateEnabled(); }
+//	bool IsPausable() const { return pausable_; }
+//
+//private:
+//	void OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+//	void OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+//
+//	Urho3D::Scene scene_;
+//	bool pausable_;
 };
-
-template <typename T> T* ShellState::GetDialog(Urho3D::StringHash type)
-{
-	auto it = widgets_.Find(type);
-	return it != widgets_.End() ? it->second_.Get()->Cast<T>() : nullptr;
-}
 
 #endif // GAMESTATE_H

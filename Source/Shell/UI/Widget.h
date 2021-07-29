@@ -27,8 +27,6 @@
 #include <Urho3D/UI/UIElement.h>
 #include "Urho3DShellAPI.h"
 
-class ShellState;
-
 class URHO3DSHELLAPI_EXPORT Widget : public Urho3D::Object
 {
 	URHO3D_OBJECT(Widget, Urho3D::Object)
@@ -42,20 +40,20 @@ public:
 
 	void SetCloseable(bool closeable) noexcept { closeable_ = closeable; }
 	void SetInteractive(bool interactive) noexcept { interactive_ = interactive; }
-	void SetParentState(ShellState* parentState) noexcept { parentState_ = parentState; }
 
-	ShellState* GetParentState() const noexcept { return parentState_; }
 	Urho3D::UIElement* GetRoot() const { return root_.Get(); }
 	bool IsCloseable() const noexcept { return closeable_; }
 	bool IsFrontElement() const;
 	bool IsInteractive() const noexcept { return interactive_; }
+
+	void CreateDialog(Urho3D::StringHash type);
+	void RemoveDialog(Urho3D::StringHash type);
 
 protected:
 	void Close();
 	void BindButtonToClose(Urho3D::UIElement* button);
 
 	Urho3D::SharedPtr<Urho3D::UIElement> root_;
-	ShellState* parentState_;
 	bool closeable_;
 	bool interactive_;
 };

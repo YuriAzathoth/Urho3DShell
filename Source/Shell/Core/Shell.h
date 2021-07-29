@@ -24,7 +24,6 @@
 #define SHELL_H
 
 #include <Urho3D/Core/Object.h>
-#include "ShellState/ShellState.h"
 #include "Urho3DShellAPI.h"
 
 class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
@@ -64,7 +63,6 @@ private:
 	void ParseParameters(const Urho3D::StringVector& arguments);
 	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue);
 
-	Urho3D::SharedPtr<ShellState> shellState_;
 	Urho3D::VariantMap shellParameters_;
 	Urho3D::String appName_;
 	Urho3D::String gameName_;

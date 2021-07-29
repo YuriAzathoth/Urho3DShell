@@ -24,8 +24,7 @@
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
-#include <functional>
-#include "ShellState/ShellState.h"
+#include "UI/UIController.h"
 #include "Widget.h"
 
 #define CLOSE_BUTTON_NAME "CloseButton"
@@ -34,7 +33,6 @@ using namespace Urho3D;
 
 Widget::Widget(Urho3D::Context* context)
 	: Object(context)
-	, parentState_(nullptr)
 	, closeable_(false)
 	, interactive_(false)
 {
@@ -63,9 +61,12 @@ void Widget::LoadLayout(const Urho3D::String& layoutName)
 
 void Widget::ShrinkSize() { root_->SetSize(IntVector2(0, 0)); }
 bool Widget::IsFrontElement() const { return GetSubsystem<UI>()->GetFrontElement() == root_.Get(); }
-void Widget::Close() { parentState_->RemoveDialog(GetType()); }
+void Widget::Close() { RemoveDialog(GetType()); }
 
 void Widget::BindButtonToClose(Urho3D::UIElement* button)
 {
-	SubscribeToEvent(button, E_PRESSED, std::bind(&Widget::Close, this));
+	SubscribeToEvent(button, E_PRESSED, [this](StringHash, VariantMap&) { Close(); });
 }
+
+void Widget::CreateDialog(Urho3D::StringHash type) { GetSubsystem<UIController>()->CreateDialog(type); }
+void Widget::RemoveDialog(Urho3D::StringHash type) { GetSubsystem<UIController>()->RemoveDialog(type); }
