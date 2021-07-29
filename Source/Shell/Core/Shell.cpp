@@ -242,7 +242,9 @@ void Shell::ParseParameters(const Urho3D::StringVector& arguments)
 		{
 			argument = arguments[i].Substring(1).ToLower();
 			value = i + 1 < arguments.Size() ? arguments[i + 1] : String::EMPTY;
-			if (argument == "noclient")
+			if (argument == "appname")
+				appName_ = value;
+			else if (argument == "noclient")
 				shellParameters_[LP_NO_CLIENT] = true;
 			else if (argument == "script")
 			{
