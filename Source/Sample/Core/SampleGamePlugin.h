@@ -20,19 +20,21 @@
 // THE SOFTWARE.
 //
 
-#ifndef BINARYPLUGINUTILS_H
-#define BINARYPLUGINUTILS_H
+#ifndef SAMPLEGAMEPLUGIN_H
+#define SAMPLEGAMEPLUGIN_H
 
-#define BOOST_DLL_FORCE_ALIAS_INSTANTIATION
-#include <boost/config.hpp>
-#include <boost/dll/alias.hpp>
+#include "Plugin/BinaryPluginUtils.h"
+#include "Plugin/PluginInterface.h"
 
-#define URHO3DSHELL_PLUGIN() static Urho3D::UniquePtr<PluginInterface> Create(Urho3D::Context* context);
-#define URHO3DSHELL_PLUGIN_REGISTER(CLASS)                                                                                         \
-	Urho3D::UniquePtr<PluginInterface> CLASS::Create(Urho3D::Context* context)                                         \
-	{                                                                                                                  \
-		return UniquePtr<PluginInterface>(new CLASS(context));                                                         \
-	}                                                                                                                  \
-	BOOST_DLL_ALIAS(CLASS::Create, CreatePlugin)
+class SampleGamePlugin : public PluginInterface
+{
+	URHO3D_OBJECT(SampleGamePlugin, PluginInterface)
+	URHO3DSHELL_PLUGIN()
 
-#endif // BINARYPLUGINUTILS_H
+public:
+	explicit SampleGamePlugin(Urho3D::Context* context);
+
+	const Urho3D::String& GetName() const override;
+};
+
+#endif // SAMPLEGAMEPLUGIN_H
