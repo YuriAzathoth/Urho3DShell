@@ -37,6 +37,4 @@ private:
 	void OnExit(Urho3D::StringHash, Urho3D::VariantMap&);
 };
 
-void RegisterMainMenuWindow(Urho3D::Context* context);
-
 #endif // MAINMENUWINDOW_H

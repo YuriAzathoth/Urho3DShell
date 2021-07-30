@@ -47,6 +47,4 @@ private:
 	Urho3D::ListView* settings_;
 };
 
-void RegisterSettingsWindow(Urho3D::Context* context);
-
 #endif // SETTINGSWINDOW_H
