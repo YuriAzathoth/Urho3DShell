@@ -22,7 +22,6 @@
 
 #include <Urho3D/UI/UIEvents.h>
 #include "MainMenuWindow.h"
-#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 
