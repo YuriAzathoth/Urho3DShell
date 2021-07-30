@@ -34,7 +34,7 @@ class URHO3DSHELLAPI_EXPORT PluginsRegistry : public Urho3D::Object
 public:
 	using Urho3D::Object::Object;
 
-	bool RegisterPlugin(const Urho3D::String& pluginName);
+	bool RegisterPlugin(Urho3D::String pluginName);
 	void RemovePlugin(Urho3D::StringHash plugin);
 	Urho3D::StringVector GetPlugins() const;
 	void ClearAllPlugins();

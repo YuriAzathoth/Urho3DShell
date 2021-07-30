@@ -26,25 +26,23 @@
 
 using namespace Urho3D;
 
-bool PluginsRegistry::RegisterPlugin(const Urho3D::String& pluginName)
+bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
 {
-	// TODO: Support loading from plugins path
-	//	const String fileName = pluginsPath_ + "/" + pluginName;
-	const String fileName = pluginName;
-
 	SharedPtr<Plugin> plugin;
-	if (fileName.EndsWith(".as", false))
+	if (pluginName.EndsWith(".as", false))
 		plugin.StaticCast(MakeShared<ScriptPlugin>(context_));
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
 
-	if (plugin.NotNull() && plugin->Load(fileName))
-	{
-		plugins_[pluginName] = plugin;
-		return true;
-	}
-	else
+	if (plugin.Null())
 		return false;
+
+	if (!plugin->Load(pluginName))
+		if (!plugin->Load(pluginsPath_ + "/" + pluginName))
+			return false;
+
+	plugins_[pluginName] = plugin;
+	return true;
 }
 
 void PluginsRegistry::RemovePlugin(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
