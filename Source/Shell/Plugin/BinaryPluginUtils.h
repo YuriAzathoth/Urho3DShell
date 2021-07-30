@@ -24,7 +24,6 @@
 #define BINARYPLUGINUTILS_H
 
 #define BOOST_DLL_FORCE_ALIAS_INSTANTIATION
-#include <boost/config.hpp>
 #include <boost/dll/alias.hpp>
 
 #define URHO3DSHELL_PLUGIN() static Urho3D::UniquePtr<PluginInterface> Create(Urho3D::Context* context);
