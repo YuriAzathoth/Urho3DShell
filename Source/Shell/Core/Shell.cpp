@@ -102,12 +102,6 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	LoadProfile();
 
 	engineParameters[EP_LOG_NAME] = GetLogsFilename();
-
-	if (client_)
-	{
-		context_->RegisterSubsystem<UIController>();
-		context_->RegisterSubsystem<ShellState>();
-	}
 }
 
 void Shell::Initialize()
@@ -124,6 +118,9 @@ void Shell::Initialize()
 		console->SetDefaultStyle(styleFile);
 		DebugHud* debugHud = engine->CreateDebugHud();
 		debugHud->SetDefaultStyle(styleFile);
+
+		context_->RegisterSubsystem<UIController>();
+		context_->RegisterSubsystem<ShellState>();
 	}
 
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
