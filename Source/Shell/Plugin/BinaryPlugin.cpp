@@ -43,9 +43,9 @@ bool BinaryPlugin::Load(const Urho3D::String& fileName)
 	try
 	{
 		boost::dll::fs::path path(dllPath.CString());
-#ifndef _NDEBUG
+#ifndef NDEBUG
 		dllName += "_d";
-#endif // _NDEBUG
+#endif // NDEBUG
 		path /= dllName.CString();
 		plugin_.load(path, boost::dll::load_mode::append_decorations);
 	}
