@@ -27,8 +27,8 @@
 
 URHO3D_EVENT(E_SERVERSIDESPAWNED, ServerSideSpawned)
 {
-    URHO3D_PARAM(P_CONNECTION, Connection); // Connection ptr
-    URHO3D_PARAM(P_NODE, Node); // int
+	URHO3D_PARAM(P_CONNECTION, Connection); // Connection ptr
+	URHO3D_PARAM(P_NODE, Node);				// int
 }
 
 #endif // SERVERDEFS_H
