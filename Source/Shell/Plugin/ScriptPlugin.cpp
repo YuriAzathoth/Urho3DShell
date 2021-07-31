@@ -57,7 +57,7 @@ bool ScriptPlugin::Execute(const Urho3D::String& functionName,
 	if (script_)
 	{
 		asIScriptFunction* functionPtr = script_->GetFunction(functionName);
-		return functionPtr ? script_->Execute(functionPtr) : false;
+		return functionPtr ? script_->Execute(functionPtr, parameters, returnVar) : false;
 	}
 	else
 		return false;
