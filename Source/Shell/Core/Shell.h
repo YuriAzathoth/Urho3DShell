@@ -49,6 +49,7 @@ public:
 	Urho3D::String GetLogsPath() const;
 	Urho3D::String GetPluginsPath() const;
 	Urho3D::String GetProfileFilename() const;
+	Urho3D::String GetSavesPath() const;
 
 	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
 

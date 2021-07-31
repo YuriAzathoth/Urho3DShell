@@ -202,6 +202,10 @@ void Shell::LoadProfile()
 	if (!fileSystem->DirExists(path))
 		fileSystem->CreateDir(path);
 	GetSubsystem<PluginsRegistry>()->SetPluginsPath(path);
+
+	path = GetSavesPath();
+	if (!fileSystem->DirExists(path))
+		fileSystem->CreateDir(path);
 }
 
 void Shell::SaveProfile() const
@@ -259,6 +263,7 @@ Urho3D::String Shell::GetLogsFilename() const { return GetLogsPath() + appName_ 
 Urho3D::String Shell::GetLogsPath() const { return userDataPath_ + "Errorlogs/"; }
 Urho3D::String Shell::GetPluginsPath() const { return userDataPath_ + "Plugins/"; }
 Urho3D::String Shell::GetProfileFilename() const { return GetGameDataPath() + "Profile.txt"; }
+Urho3D::String Shell::GetSavesPath() const { return userDataPath_ + "Saves/"; }
 
 Urho3D::String Shell::GetGameDataPath() const
 {
