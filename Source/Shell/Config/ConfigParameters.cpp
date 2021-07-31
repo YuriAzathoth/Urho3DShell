@@ -162,7 +162,7 @@ void Config::RegisterClientParameters()
 						   return graphics->GetBorderless() ? 2 : graphics->GetFullscreen() ? 1 : 0;
 					   });
 		RegisterComplexWriter(ECP_WINDOW_MODE, ECP_VIDEO_MODE);
-		RegisterEnum(ECP_RESOLUTION,
+		RegisterEnum(ECP_WINDOW_MODE,
 					 [this]() -> EnumVector {
 						 return {{"Windowed", 0}, {"FullScreen", 1}, {"Borderless", 2}};
 					 });
