@@ -20,24 +20,43 @@
 // THE SOFTWARE.
 //
 
-#ifndef MAINMENUWINDOW_H
-#define MAINMENUWINDOW_H
+#ifndef StartGameWindow_H
+#define StartGameWindow_H
 
 #include "Widget.h"
 
-class MainMenuWindow : public Widget
+namespace Urho3D
 {
-	URHO3D_OBJECT(MainMenuWindow, Widget)
+class LineEdit;
+class ListView;
+}
+
+class StartGameWindow : public Widget
+{
+	URHO3D_OBJECT(StartGameWindow, Widget)
 
 public:
-	explicit MainMenuWindow(Urho3D::Context* context);
+	explicit StartGameWindow(Urho3D::Context* context);
 
 private:
-	void OnStartGame(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnConnect(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnMods(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnSettings(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnExit(Urho3D::StringHash, Urho3D::VariantMap&);
+	void ShowNewGameTab();
+	void ShowLoadGameTab();
+	void FillScenesList(const Urho3D::StringVector& scenes);
+	void ClearScenesList();
+	void SetServerPanelVisible(bool visible);
+	Urho3D::StringVector ScanScenesInPackages() const;
+	Urho3D::StringVector ScanScenesInPath(const Urho3D::String& path) const;
+
+	void OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+
+	Urho3D::ListView* levelsList_;
+	Urho3D::UIElement* serverPanel_;
+	Urho3D::UIElement* spawnedControls_;
+	Urho3D::LineEdit* serverName_;
+	Urho3D::LineEdit* serverPass_;
 };
 
-#endif // MAINMENUWINDOW_H
+#endif // StartGameWindow_H

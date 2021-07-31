@@ -28,6 +28,7 @@
 #include <Urho3D/UI/UI.h>
 #include "MainMenuWindow.h"
 #include "SettingsWindow.h"
+#include "StartGameWindow.h"
 #include "UIController.h"
 
 using namespace Urho3D;
@@ -38,6 +39,7 @@ UIController::UIController(Urho3D::Context* context)
 {
 	context->RegisterFactory<MainMenuWindow>();
 	context->RegisterFactory<SettingsWindow>();
+	context->RegisterFactory<StartGameWindow>();
 
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(UIController, OnKeyDown));
 }
@@ -76,7 +78,6 @@ void UIController::RemoveAllDialogs()
 	widgets_.Clear();
 	interactives_ = 0;
 }
-
 
 void UIController::PostWidgetAdd(Widget* widget)
 {
