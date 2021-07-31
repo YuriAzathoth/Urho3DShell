@@ -474,7 +474,6 @@ void Config::OnFloatTextChanged(Urho3D::StringHash, Urho3D::VariantMap& eventDat
 	using namespace TextChanged;
 	const LineEdit* lineEdit = static_cast<const LineEdit*>(eventData[P_ELEMENT].GetPtr());
 	Slider* slider = lineEdit->GetParent()->GetChildStaticCast<Slider>(0);
-	const String& name = slider->GetName();
 	const String& value = eventData[P_TEXT].GetString();
 	slider->SetValue(ToFloat(value));
 }
