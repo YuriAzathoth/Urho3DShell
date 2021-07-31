@@ -25,13 +25,14 @@
 #include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/Graphics/Renderer.h>
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Resource/Localization.h>
 #include "Config.h"
 #include "ConfigDefs.h"
 
 using namespace Urho3D;
 
-#if defined (__GNUC__) || defined(__GNUG__)
+#if defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-promo"
 #endif // defined (__GNUC__) || defined(__GNUG__)
@@ -64,6 +65,21 @@ void Config::RegisterClientParameters()
 							 ret.EmplaceBack(language, language);
 						 }
 						 return ret;
+					 });
+
+		RegisterParameter(CP_LOG_LEVEL, VAR_INT, ST_GAME, true, true);
+		RegisterReader(CP_LOG_LEVEL, [this]() { return GetSubsystem<Log>()->GetLevel(); });
+		RegisterWriter(CP_LOG_LEVEL,
+					   [this](const Urho3D::Variant& value) { GetSubsystem<Log>()->SetLevel(value.GetInt()); });
+		RegisterEnum(CP_LOG_LEVEL,
+					 []() -> EnumVector
+					 {
+						 return {{"None", LOG_NONE},
+								 {"Error", LOG_ERROR},
+								 {"Warning", LOG_WARNING},
+								 {"Info", LOG_INFO},
+								 {"Debug", LOG_DEBUG},
+								 {"Trace", LOG_TRACE}};
 					 });
 	}
 
@@ -333,7 +349,7 @@ void Config::RegisterClientParameters()
 	}
 }
 
-#if defined (__GNUC__) || defined(__GNUG__)
+#if defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic pop
 #endif // defined (__GNUC__) || defined(__GNUG__)
 
