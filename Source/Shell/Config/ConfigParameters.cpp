@@ -31,6 +31,16 @@
 
 using namespace Urho3D;
 
+#if defined (__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-promo"
+#endif // defined (__GNUC__) || defined(__GNUG__)
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-promo"
+#endif // defined(__clang__)
+
 void Config::RegisterClientParameters()
 {
 	RegisterSettingsTab(ST_GAME);
@@ -322,6 +332,14 @@ void Config::RegisterClientParameters()
 	{
 	}
 }
+
+#if defined (__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#endif // defined (__GNUC__) || defined(__GNUG__)
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // defined(__clang__)
 
 void Config::RegisterServerParameters() {}
 
