@@ -20,7 +20,16 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/Graphics/Camera.h>
+#include <Urho3D/Graphics/Renderer.h>
+#include <Urho3D/Graphics/Viewport.h>
+#include <Urho3D/IO/Log.h>
+#include <Urho3D/Network/Connection.h>
+#include <Urho3D/Network/NetworkEvents.h>
+#include <Urho3D/Scene/Scene.h>
+#include "Core/ShellEvents.h"
 #include "SampleGamePlugin.h"
+#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 
@@ -29,8 +38,39 @@ static const String s_pluginName = "Sample game";
 SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	: PluginInterface(context)
 {
+	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(SampleGamePlugin, OnClientSceneLoaded));
+	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(SampleGamePlugin, OnServerSideSpawned));
 }
 
 const Urho3D::String& SampleGamePlugin::GetName() const { return s_pluginName; }
+
+void SampleGamePlugin::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	URHO3D_LOGTRACE("SampleGamePlugin::OnClientSceneLoaded");
+
+	using namespace ClientSceneLoaded;
+	Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
+	Scene& scene = GetSubsystem<ShellState>()->GetServer()->GetScene();
+	Node* node = scene.CreateChild();
+	node->SetPosition({0.0f, 4.0f, 0.0f});
+	node->Pitch(30.0f);
+
+	using namespace ServerSideSpawned;
+	eventData[P_NODE] = node->GetID();
+	connection->SendEvent(E_SERVERSIDESPAWNED, eventData);
+}
+
+void SampleGamePlugin::OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	URHO3D_LOGTRACE("SampleGamePlugin::OnServerSideSpawned");
+	using namespace ServerSideSpawned;
+	const unsigned nodeId = eventData[P_NODE].GetInt();
+	Scene& scene = GetSubsystem<ShellState>()->GetServer()->GetScene();
+	Node* node = scene.GetNode(nodeId);
+	Camera* camera = node->CreateComponent<Camera>();
+	SharedPtr<Viewport> viewport = MakeShared<Viewport>(context_, &scene, camera);
+	Renderer* renderer = GetSubsystem<Renderer>();
+	renderer->SetViewport(0, viewport);
+}
 
 URHO3DSHELL_PLUGIN_REGISTER(SampleGamePlugin)

@@ -35,6 +35,10 @@ public:
 	explicit SampleGamePlugin(Urho3D::Context* context);
 
 	const Urho3D::String& GetName() const override;
+
+private:
+	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
 #endif // SAMPLEGAMEPLUGIN_H
