@@ -35,19 +35,16 @@ ShellState::ShellState(Urho3D::Context* context)
 
 ShellState::~ShellState() {}
 
-void ShellState::ActivateMainMenu()
-{
-	GetSubsystem<UIController>()->CreateDialog("MainMenuWindow");
-}
+void ShellState::ActivateMainMenu() { GetSubsystem<UIController>()->CreateDialog("MainMenuWindow"); }
 
-//void ShellState::Clear()
+// void ShellState::Clear()
 //{
 //	SetUpdate(true);
 //	scene_.Clear();
 //}
 //
-//void ShellState::SetUpdate(bool update) { scene_.SetUpdateEnabled(update); }
+// void ShellState::SetUpdate(bool update) { scene_.SetUpdateEnabled(update); }
 //
-//void ShellState::OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData) {}
+// void ShellState::OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData) {}
 //
-//void ShellState::OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData) {}
+// void ShellState::OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData) {}

@@ -37,23 +37,23 @@ public:
 
 	void ActivateMainMenu();
 
-//	void Clear();
-//
-//	void SetUpdate(bool update);
-//	void SetPausable(bool pausable) noexcept { pausable_ = pausable; }
-//
-//	Urho3D::Scene& GetScene() noexcept { return scene_; }
-//	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
-//
-//	bool IsUpdate() const { return scene_.IsUpdateEnabled(); }
-//	bool IsPausable() const { return pausable_; }
-//
-//private:
-//	void OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-//	void OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-//
-//	Urho3D::Scene scene_;
-//	bool pausable_;
+	//	void Clear();
+	//
+	//	void SetUpdate(bool update);
+	//	void SetPausable(bool pausable) noexcept { pausable_ = pausable; }
+	//
+	//	Urho3D::Scene& GetScene() noexcept { return scene_; }
+	//	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
+	//
+	//	bool IsUpdate() const { return scene_.IsUpdateEnabled(); }
+	//	bool IsPausable() const { return pausable_; }
+	//
+	// private:
+	//	void OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	//	void OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	//
+	//	Urho3D::Scene scene_;
+	//	bool pausable_;
 };
 
 #endif // GAMESTATE_H

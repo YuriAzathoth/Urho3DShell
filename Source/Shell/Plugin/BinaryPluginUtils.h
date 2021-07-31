@@ -27,7 +27,7 @@
 #include <boost/dll/alias.hpp>
 
 #define URHO3DSHELL_PLUGIN() static Urho3D::UniquePtr<PluginInterface> Create(Urho3D::Context* context);
-#define URHO3DSHELL_PLUGIN_REGISTER(CLASS)                                                                                         \
+#define URHO3DSHELL_PLUGIN_REGISTER(CLASS)                                                                             \
 	Urho3D::UniquePtr<PluginInterface> CLASS::Create(Urho3D::Context* context)                                         \
 	{                                                                                                                  \
 		return UniquePtr<PluginInterface>(new CLASS(context));                                                         \
