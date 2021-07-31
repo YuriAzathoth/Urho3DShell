@@ -71,37 +71,34 @@ Shell::~Shell()
 
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
-	ParseParameters(GetArguments());
-
 	if (!PreconfigureEngine())
 	{
-		URHO3D_LOGERRORF("Failed to load game library.");
+		URHO3D_LOGERRORF("Failed to load and configure game library.");
 		GetSubsystem<Engine>()->Exit();
 		return;
 	}
 
+	ParseParameters(GetArguments());
 	client_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
-
-	Config* config = GetSubsystem<Config>();
-	config->RegisterServerParameters();
-	if (client_)
-		config->RegisterClientParameters();
-	config->ExtractEngineParameters(engineParameters);
-
-	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
-	RegisterServerAPI(engine);
-	if (client_)
-		RegisterClientAPI(engine);
 
 	FileSystem* fileSystem = GetSubsystem<FileSystem>();
 	const String path = GetGameDataPath();
 	if (!fileSystem->DirExists(path))
 		fileSystem->CreateDir(path);
 
+	Config* config = GetSubsystem<Config>();
+	config->RegisterServerParameters();
+	if (client_)
+		config->RegisterClientParameters();
 	LoadProfileName();
 	LoadProfile();
-
+	config->ExtractEngineParameters(engineParameters);
 	engineParameters[EP_LOG_NAME] = GetLogsFilename();
+
+	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
+	RegisterServerAPI(engine);
+	if (client_)
+		RegisterClientAPI(engine);
 }
 
 void Shell::Initialize()
