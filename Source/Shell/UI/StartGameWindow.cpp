@@ -28,6 +28,7 @@
 #include <Urho3D/UI/ListView.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIEvents.h>
+#include "ShellState/ShellState.h"
 #include "StartGameWindow.h"
 
 using namespace Urho3D;
@@ -64,16 +65,13 @@ void StartGameWindow::ShowNewGameTab()
 	FillScenesList(ScanScenesInPackages());
 }
 
-void StartGameWindow::ShowLoadGameTab()
-{
-	ClearScenesList();
-}
+void StartGameWindow::ShowLoadGameTab() { ClearScenesList(); }
 
 void StartGameWindow::FillScenesList(const Urho3D::StringVector& scenes)
 {
 	SharedPtr<UIElement> item;
 	Text* text;
-	for (const String& filename : ScanScenesInPackages())
+	for (const String& filename : scenes)
 	{
 		item = MakeShared<UIElement>(context_);
 		levelsList_->AddItem(item);
@@ -131,23 +129,30 @@ void StartGameWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap& eve
 	using namespace ItemSelected;
 	const int selection = eventData[P_SELECTION].GetInt();
 	UIElement* selectedItem = levelsList_->GetItem(selection);
-	const String& sceneName = selectedItem->GetName();
 
 	Button* button = selectedItem->CreateChild<Button>();
 	button->SetLayout(LM_VERTICAL, 0, {4, 4, 4, 4});
 	button->SetStyleAuto();
 	spawnedControls_ = button;
-	button->SubscribeToEvent(button, E_PRESSED, [sceneName](StringHash, VariantMap&) {});
 
 	Text* caption = button->CreateChild<Text>();
 	caption->SetText("Start");
 	caption->SetTextAlignment(HA_CENTER);
 	caption->SetAutoLocalizable(true);
 	caption->SetStyleAuto();
+
+	button->SubscribeToEvent(button, E_PRESSED, URHO3D_HANDLER(StartGameWindow, OnStart));
 }
 
 void StartGameWindow::OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
 	using namespace Toggled;
 	SetServerPanelVisible(eventData[P_STATE].GetBool());
+}
+
+void StartGameWindow::OnStart(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	const UIElement* item = spawnedControls_->GetParent();
+	const String& sceneName = item->GetName();
+	GetSubsystem<ShellState>()->StartLocalServer(sceneName);
 }

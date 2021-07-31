@@ -20,42 +20,12 @@
 // THE SOFTWARE.
 //
 
-// IMPLEMENTATION ATTENTION!
-// Do not remove all UI widgets before any usage of strings' references!
-// Removing all widgets will cause references to null objects.
+#ifndef SERVERDEFS_H
+#define SERVERDEFS_H
 
-#include <Urho3D/Core/Context.h>
-#include "ShellState.h"
-#include "UI/UIController.h"
+static Urho3D::String CL_NAME = "Name";
+static Urho3D::String CL_PASSWORD = "Password";
 
-using namespace Urho3D;
+static Urho3D::String SV_NAME = "Name";
 
-ShellState::ShellState(Urho3D::Context* context)
-	: Urho3D::Object(context)
-{
-	StartMainMenu();
-}
-
-void ShellState::StartMainMenu()
-{
-	client_.Reset();
-	server_.Reset();
-
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
-	uiController->CreateDialog("MainMenuWindow");
-}
-
-void ShellState::StartLocalServer(const Urho3D::String& sceneName)
-{
-	server_ = MakeUnique<Server>(context_);
-	server_->Start();
-	server_->LoadScene(sceneName);
-	server_->SetPausable(true);
-
-	client_ = MakeUnique<Client>(context_);
-	client_->Connect();
-
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
-}
+#endif // SERVERDEFS_H

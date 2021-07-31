@@ -66,6 +66,7 @@ Shell::~Shell()
 {
 	SaveProfile();
 	SaveProfileName();
+	context_->RemoveSubsystem<ShellState>();
 	context_->RemoveSubsystem<PluginsRegistry>();
 }
 

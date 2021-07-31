@@ -20,42 +20,27 @@
 // THE SOFTWARE.
 //
 
-// IMPLEMENTATION ATTENTION!
-// Do not remove all UI widgets before any usage of strings' references!
-// Removing all widgets will cause references to null objects.
+#ifndef CLIENT_H
+#define CLIENT_H
 
-#include <Urho3D/Core/Context.h>
-#include "ShellState.h"
-#include "UI/UIController.h"
+#include <Urho3D/Core/Object.h>
+#include <Urho3D/Network/Connection.h>
+#include <Urho3D/Scene/Scene.h>
+#include "Urho3DShellAPI.h"
 
-using namespace Urho3D;
-
-ShellState::ShellState(Urho3D::Context* context)
-	: Urho3D::Object(context)
+class URHO3DSHELLAPI_EXPORT Client : public Urho3D::Object
 {
-	StartMainMenu();
-}
+	URHO3D_OBJECT(Client, Urho3D::Object)
 
-void ShellState::StartMainMenu()
-{
-	client_.Reset();
-	server_.Reset();
+public:
+	explicit Client(Urho3D::Context* context);
 
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
-	uiController->CreateDialog("MainMenuWindow");
-}
+	void Connect();
 
-void ShellState::StartLocalServer(const Urho3D::String& sceneName)
-{
-	server_ = MakeUnique<Server>(context_);
-	server_->Start();
-	server_->LoadScene(sceneName);
-	server_->SetPausable(true);
+private:
+	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
 
-	client_ = MakeUnique<Client>(context_);
-	client_->Connect();
+	Urho3D::Scene scene_;
+};
 
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
-}
+#endif // CLIENT_H

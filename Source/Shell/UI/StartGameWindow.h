@@ -29,7 +29,7 @@ namespace Urho3D
 {
 class LineEdit;
 class ListView;
-}
+} // namespace Urho3D
 
 class StartGameWindow : public Widget
 {
@@ -51,6 +51,7 @@ private:
 	void OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnStart(Urho3D::StringHash, Urho3D::VariantMap&);
 
 	Urho3D::ListView* levelsList_;
 	Urho3D::UIElement* serverPanel_;

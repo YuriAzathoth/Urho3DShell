@@ -24,7 +24,8 @@
 #define GAMESTATE_H
 
 #include <Urho3D/Core/Object.h>
-#include <Urho3D/Scene/Scene.h>
+#include "Network/Client.h"
+#include "Network/Server.h"
 #include "Urho3DShellAPI.h"
 
 class URHO3DSHELLAPI_EXPORT ShellState : public Urho3D::Object
@@ -33,27 +34,16 @@ class URHO3DSHELLAPI_EXPORT ShellState : public Urho3D::Object
 
 public:
 	explicit ShellState(Urho3D::Context* context);
-	virtual ~ShellState();
 
-	void ActivateMainMenu();
+	void StartMainMenu();
+	void StartLocalServer(const Urho3D::String& sceneName);
 
-	//	void Clear();
-	//
-	//	void SetUpdate(bool update);
-	//	void SetPausable(bool pausable) noexcept { pausable_ = pausable; }
-	//
-	//	Urho3D::Scene& GetScene() noexcept { return scene_; }
-	//	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
-	//
-	//	bool IsUpdate() const { return scene_.IsUpdateEnabled(); }
-	//	bool IsPausable() const { return pausable_; }
-	//
-	// private:
-	//	void OnActionUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	//	void OnActionDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	//
-	//	Urho3D::Scene scene_;
-	//	bool pausable_;
+	Client* GetClient() const { return client_.Get(); }
+	Server* GetServer() const { return server_.Get(); }
+
+private:
+	Urho3D::UniquePtr<Server> server_;
+	Urho3D::UniquePtr<Client> client_;
 };
 
 #endif // GAMESTATE_H

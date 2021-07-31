@@ -20,42 +20,25 @@
 // THE SOFTWARE.
 //
 
-// IMPLEMENTATION ATTENTION!
-// Do not remove all UI widgets before any usage of strings' references!
-// Removing all widgets will cause references to null objects.
-
-#include <Urho3D/Core/Context.h>
-#include "ShellState.h"
-#include "UI/UIController.h"
+#include <Urho3D/Network/Network.h>
+#include <Urho3D/Scene/SceneEvents.h>
+#include "Client.h"
+#include "ServerDefs.h"
 
 using namespace Urho3D;
 
-ShellState::ShellState(Urho3D::Context* context)
-	: Urho3D::Object(context)
+Client::Client(Urho3D::Context* context)
+	: Object(context)
+	, scene_(context)
 {
-	StartMainMenu();
 }
 
-void ShellState::StartMainMenu()
+void Client::Connect()
 {
-	client_.Reset();
-	server_.Reset();
+	VariantMap identity;
+	identity[CL_NAME] = "SimpleName";
+	identity[CL_PASSWORD] = "";
 
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
-	uiController->CreateDialog("MainMenuWindow");
-}
-
-void ShellState::StartLocalServer(const Urho3D::String& sceneName)
-{
-	server_ = MakeUnique<Server>(context_);
-	server_->Start();
-	server_->LoadScene(sceneName);
-	server_->SetPausable(true);
-
-	client_ = MakeUnique<Client>(context_);
-	client_->Connect();
-
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
+	Network* network = GetSubsystem<Network>();
+	network->Connect("localhost", 27500, &scene_, identity);
 }
