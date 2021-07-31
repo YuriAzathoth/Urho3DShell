@@ -249,7 +249,7 @@ else ()
     else ()
         # All Urho3D downstream projects require Urho3D library, so find Urho3D library here now
         find_package (Urho3D REQUIRED)
-        include_directories (${URHO3D_INCLUDE_DIRS})
+        include_directories (SYSTEM ${URHO3D_INCLUDE_DIRS})
     endif ()
 endif ()
 cmake_dependent_option (URHO3D_PACKAGING "Enable resources packaging support" FALSE "NOT WEB" TRUE)
