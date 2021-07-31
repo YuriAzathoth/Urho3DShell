@@ -189,7 +189,7 @@ void Config::RegisterClientParameters()
 					   });
 		RegisterComplexWriter(ECP_WINDOW_MODE, ECP_VIDEO_MODE);
 		RegisterEnum(ECP_WINDOW_MODE,
-					 [this]() -> EnumVector {
+					 []() -> EnumVector {
 						 return {{"Windowed", 0}, {"FullScreen", 1}, {"Borderless", 2}};
 					 });
 
@@ -221,7 +221,7 @@ void Config::RegisterClientParameters()
 					   [this](const Variant& value)
 					   { GetSubsystem<Renderer>()->SetMaterialQuality(static_cast<MaterialQuality>(value.GetInt())); });
 		RegisterEnum(EP_MATERIAL_QUALITY,
-					 [this]() -> EnumVector
+					 []() -> EnumVector
 					 {
 						 return {{"Low", MaterialQuality::QUALITY_LOW},
 								 {"Medium", MaterialQuality::QUALITY_MEDIUM},
@@ -234,7 +234,7 @@ void Config::RegisterClientParameters()
 					   [this](const Variant& value)
 					   { GetSubsystem<Renderer>()->SetTextureQuality(static_cast<MaterialQuality>(value.GetInt())); });
 		RegisterEnum(EP_TEXTURE_QUALITY,
-					 [this]() -> EnumVector
+					 []() -> EnumVector
 					 {
 						 return {{"Low", MaterialQuality::QUALITY_LOW},
 								 {"Medium", MaterialQuality::QUALITY_MEDIUM},
@@ -248,7 +248,7 @@ void Config::RegisterClientParameters()
 			[this](const Variant& value)
 			{ GetSubsystem<Renderer>()->SetTextureFilterMode(static_cast<TextureFilterMode>(value.GetInt())); });
 		RegisterEnum(EP_TEXTURE_FILTER_MODE,
-					 [this]() -> EnumVector
+					 []() -> EnumVector
 					 {
 						 return {{"Nearest", TextureFilterMode::FILTER_NEAREST},
 								 {"Bilinear", TextureFilterMode::FILTER_BILINEAR},
@@ -264,7 +264,7 @@ void Config::RegisterClientParameters()
 						   GetSubsystem<Renderer>()->SetTextureAnisotropy(static_cast<MaterialQuality>(value.GetInt()));
 					   });
 		RegisterEnum(EP_TEXTURE_ANISOTROPY,
-					 [this]() -> EnumVector
+					 []() -> EnumVector
 					 {
 						 constexpr int stages[] = {2, 4, 6, 8, 12, 16};
 						 EnumVector ret;
@@ -285,7 +285,7 @@ void Config::RegisterClientParameters()
 					   [this](const Variant& value)
 					   { GetSubsystem<Renderer>()->SetShadowQuality(static_cast<ShadowQuality>(value.GetInt())); });
 		RegisterEnum(CP_SHADOW_QUALITY,
-					 [this]() -> EnumVector
+					 []() -> EnumVector
 					 {
 						 return {{"Simple16", ShadowQuality::SHADOWQUALITY_SIMPLE_16BIT},
 								 {"Simple24", ShadowQuality::SHADOWQUALITY_SIMPLE_24BIT},
@@ -301,7 +301,7 @@ void Config::RegisterClientParameters()
 					   [this](const Variant& value)
 					   { GetSubsystem<Renderer>()->SetShadowMapSize(static_cast<ShadowQuality>(value.GetInt())); });
 		RegisterEnum(CP_SHADOW_RESOLUTION,
-					 [this]() -> EnumVector
+					 []() -> EnumVector
 					 {
 						 EnumVector ret;
 						 ret.Reserve(5);
