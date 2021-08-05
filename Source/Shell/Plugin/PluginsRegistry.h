@@ -37,7 +37,7 @@ public:
 	bool RegisterPlugin(Urho3D::String pluginName);
 	void RemovePlugin(Urho3D::StringHash plugin);
 	Urho3D::StringVector GetPlugins() const;
-	void ClearAllPlugins();
+	void RemoveAllPlugins();
 
 	void SetPluginsPath(const Urho3D::String& pluginsPath) { pluginsPath_ = pluginsPath; }
 	const Urho3D::String& GetPluginsPath() const noexcept { return pluginsPath_; }

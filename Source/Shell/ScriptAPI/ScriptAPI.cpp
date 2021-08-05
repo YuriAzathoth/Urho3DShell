@@ -23,6 +23,7 @@
 #include "ScriptAPI.h"
 
 void RegisterConfigAPI(asIScriptEngine* engine);
+void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
 void RegisterShellAPI(asIScriptEngine* engine);
 
 void RegisterClientAPI(asIScriptEngine* /*engine*/) {}
@@ -30,5 +31,6 @@ void RegisterClientAPI(asIScriptEngine* /*engine*/) {}
 void RegisterServerAPI(asIScriptEngine* engine)
 {
 	RegisterConfigAPI(engine);
+	RegisterPluginsRegistryAPI(engine);
 	RegisterShellAPI(engine);
 }

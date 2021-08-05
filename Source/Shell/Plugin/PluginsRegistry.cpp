@@ -56,4 +56,4 @@ Urho3D::StringVector PluginsRegistry::GetPlugins() const
 	return ret;
 }
 
-void PluginsRegistry::ClearAllPlugins() { plugins_.Clear(); }
+void PluginsRegistry::RemoveAllPlugins() { plugins_.Clear(); }
