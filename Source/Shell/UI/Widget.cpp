@@ -27,8 +27,6 @@
 #include "UI/UIController.h"
 #include "Widget.h"
 
-#define CLOSE_BUTTON_NAME "CloseButton"
-
 using namespace Urho3D;
 
 Widget::Widget(Urho3D::Context* context)
@@ -53,7 +51,7 @@ void Widget::LoadLayout(const Urho3D::String& layoutName)
 	ui->GetRoot()->AddChild(root_);
 	if (closeable_)
 	{
-		UIElement* closeButton = root_->GetChild(CLOSE_BUTTON_NAME, true);
+		UIElement* closeButton = root_->GetChild("CloseButton", true);
 		if (closeButton)
 			SubscribeToEvent(closeButton, E_PRESSED, std::bind(&Widget::Close, this));
 	}
