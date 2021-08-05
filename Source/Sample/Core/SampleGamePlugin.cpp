@@ -29,7 +29,6 @@
 #include <Urho3D/Scene/Scene.h>
 #include "Core/ShellEvents.h"
 #include "SampleGamePlugin.h"
-#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 
@@ -50,9 +49,8 @@ void SampleGamePlugin::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMa
 
 	using namespace ClientSceneLoaded;
 	Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-
-	Scene& scene = GetSubsystem<ShellState>()->GetServer()->GetScene();
-	Node* node = scene.CreateChild();
+	Scene* scene = connection->GetScene();
+	Node* node = scene->CreateChild();
 	node->SetPosition({0.0f, 4.0f, 0.0f});
 	node->Pitch(30.0f);
 
@@ -64,12 +62,15 @@ void SampleGamePlugin::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMa
 void SampleGamePlugin::OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
 	URHO3D_LOGTRACE("SampleGamePlugin::OnServerSideSpawned");
+
 	using namespace ServerSideSpawned;
+	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
 	const unsigned nodeId = eventData[P_NODE].GetInt();
-	Scene& scene = GetSubsystem<ShellState>()->GetClient()->GetScene();
-	Node* node = scene.GetNode(nodeId);
+	Scene* scene = connection->GetScene();
+	Node* node = scene->GetNode(nodeId);
+
 	Camera* camera = node->CreateComponent<Camera>();
-	SharedPtr<Viewport> viewport = MakeShared<Viewport>(context_, &scene, camera);
+	SharedPtr<Viewport> viewport = MakeShared<Viewport>(context_, scene, camera);
 	Renderer* renderer = GetSubsystem<Renderer>();
 	renderer->SetViewport(0, viewport);
 }
