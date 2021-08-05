@@ -29,6 +29,18 @@ static Config* CreateConfig() { return new Config(GetScriptContext()); }
 
 static Config* GetConfig() { return GetScriptContext()->GetSubsystem<Config>(); }
 
+template <typename T> static CScriptArray* GetConfigTabs(T* _ptr)
+{
+	const StringVector& result = _ptr->GetSettingsTabs();
+	return VectorToArray<String>(result, "Array<String>");
+}
+
+template <typename T> static CScriptArray* GetConfigSettings(T* _ptr, StringHash tab)
+{
+	const StringVector& result = _ptr->GetSettings(tab);
+	return VectorToArray<String>(result, "Array<String>");
+}
+
 void RegisterConfigAPI(asIScriptEngine* engine)
 {
 	engine->RegisterObjectType("Config", 0, asOBJ_REF);
@@ -71,13 +83,13 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_METHOD(Config, RemoveSettingsTab),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config",
-								 "Array<String>@+ get_tabs(StringHash)",
-								 AS_METHOD(Config, GetSettingsTabs),
-								 AS_CALL_THISCALL);
+								 "Array<String>@ get_tabs() const",
+								 AS_FUNCTION_OBJFIRST(GetConfigTabs<Config>),
+								 AS_CALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Config",
-								 "Array<String>@+ GetSettings(StringHash)",
-								 AS_METHOD(Config, GetSettings),
-								 AS_CALL_THISCALL);
+								 "Array<String>@ GetSettings(StringHash)",
+								 AS_FUNCTION_OBJFIRST(GetConfigSettings<Config>),
+								 AS_CALL_CDECL_OBJFIRST);
 
 	engine->RegisterObjectMethod("Config",
 								 "bool RegisterParameter(const String&in, VariantType, StringHash, bool, bool)",
