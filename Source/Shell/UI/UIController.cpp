@@ -56,7 +56,7 @@ void UIController::CreateDialog(Urho3D::StringHash type)
 		URHO3D_LOGERROR("Failed to create unregistered UI widget.");
 		return;
 	}
-	SharedPtr<Widget> widget;
+	SharedPtr<Dialog> widget;
 	widget.DynamicCast(object);
 	if (widget.Null())
 	{
@@ -83,7 +83,7 @@ void UIController::RemoveAllDialogs()
 	interactives_ = 0;
 }
 
-void UIController::PostWidgetAdd(Widget* widget)
+void UIController::PostWidgetAdd(Dialog* widget)
 {
 	if (widget->IsCloseable())
 		++closeables_;
@@ -95,7 +95,7 @@ void UIController::PostWidgetAdd(Widget* widget)
 	}
 }
 
-void UIController::PreWidgetRemove(Widget* widget)
+void UIController::PreWidgetRemove(Dialog* widget)
 {
 	if (widget->IsCloseable())
 		++closeables_;

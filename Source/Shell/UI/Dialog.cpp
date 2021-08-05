@@ -24,25 +24,25 @@
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
+#include "Dialog.h"
 #include "UI/UIController.h"
-#include "Widget.h"
 
 using namespace Urho3D;
 
-Widget::Widget(Urho3D::Context* context)
+Dialog::Dialog(Urho3D::Context* context)
 	: Object(context)
 	, closeable_(false)
 	, interactive_(false)
 {
 }
 
-Widget::~Widget()
+Dialog::~Dialog()
 {
 	if (root_)
 		root_->Remove();
 }
 
-void Widget::LoadLayout(const Urho3D::String& layoutName)
+void Dialog::LoadLayout(const Urho3D::String& layoutName)
 {
 	UI* ui = GetSubsystem<UI>();
 	XMLFile* layout = GetSubsystem<ResourceCache>()->GetResource<XMLFile>(layoutName);
@@ -53,18 +53,18 @@ void Widget::LoadLayout(const Urho3D::String& layoutName)
 	{
 		UIElement* closeButton = root_->GetChild("CloseButton", true);
 		if (closeButton)
-			SubscribeToEvent(closeButton, E_PRESSED, std::bind(&Widget::Close, this));
+			SubscribeToEvent(closeButton, E_PRESSED, std::bind(&Dialog::Close, this));
 	}
 }
 
-void Widget::ShrinkSize() { root_->SetSize(IntVector2(0, 0)); }
-bool Widget::IsFrontElement() const { return GetSubsystem<UI>()->GetFrontElement() == root_.Get(); }
-void Widget::Close() { RemoveDialog(GetType()); }
+void Dialog::ShrinkSize() { root_->SetSize(IntVector2(0, 0)); }
+bool Dialog::IsFrontElement() const { return GetSubsystem<UI>()->GetFrontElement() == root_.Get(); }
+void Dialog::Close() { RemoveDialog(GetType()); }
 
-void Widget::BindButtonToClose(Urho3D::UIElement* button)
+void Dialog::BindButtonToClose(Urho3D::UIElement* button)
 {
 	SubscribeToEvent(button, E_PRESSED, [this](StringHash, VariantMap&) { Close(); });
 }
 
-void Widget::CreateDialog(Urho3D::StringHash type) { GetSubsystem<UIController>()->CreateDialog(type); }
-void Widget::RemoveDialog(Urho3D::StringHash type) { GetSubsystem<UIController>()->RemoveDialog(type); }
+void Dialog::CreateDialog(Urho3D::StringHash type) { GetSubsystem<UIController>()->CreateDialog(type); }
+void Dialog::RemoveDialog(Urho3D::StringHash type) { GetSubsystem<UIController>()->RemoveDialog(type); }

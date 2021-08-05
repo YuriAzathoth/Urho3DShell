@@ -30,7 +30,7 @@
 using namespace Urho3D;
 
 SettingsDialog::SettingsDialog(Urho3D::Context* context)
-	: Widget(context)
+	: Dialog(context)
 {
 	LoadLayout("UI/Settings.xml");
 	SetCloseable(true);

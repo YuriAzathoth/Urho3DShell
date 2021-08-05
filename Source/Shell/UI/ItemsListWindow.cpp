@@ -33,7 +33,7 @@ using namespace Urho3D;
 static const StringHash VAR_GAMENAME = "GameName";
 
 ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
-	: Widget(context)
+	: Dialog(context)
 	, spawnedButton_(nullptr)
 {
 	LoadLayout("UI/GamesMenu.xml");

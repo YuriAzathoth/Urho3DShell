@@ -23,16 +23,16 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include "Widget.h"
+#include "Dialog.h"
 
 namespace Urho3D
 {
 class ListView;
 }
 
-class SettingsDialog : public Widget
+class SettingsDialog : public Dialog
 {
-	URHO3D_OBJECT(SettingsDialog, Widget)
+	URHO3D_OBJECT(SettingsDialog, Dialog)
 
 public:
 	explicit SettingsDialog(Urho3D::Context* context);

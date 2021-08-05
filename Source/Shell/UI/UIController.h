@@ -24,7 +24,7 @@
 #define UICONTROLLER_H
 
 #include <Urho3D/Core/Object.h>
-#include "UI/Widget.h"
+#include "UI/Dialog.h"
 #include "Urho3DShellAPI.h"
 
 class URHO3DSHELLAPI_EXPORT UIController : public Urho3D::Object
@@ -44,14 +44,14 @@ public:
 	template <typename T> T* GetDialog(Urho3D::StringHash type);
 
 private:
-	void PostWidgetAdd(Widget* widget);
-	void PreWidgetRemove(Widget* widget);
+	void PostWidgetAdd(Dialog* widget);
+	void PreWidgetRemove(Dialog* widget);
 	void SetMouseVisible(bool visible) const;
 	void CloseFrontDialog();
 
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
-	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Widget>> widgets_;
+	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Dialog>> widgets_;
 	unsigned char closeables_;
 	unsigned char interactives_;
 };

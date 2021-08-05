@@ -20,20 +20,20 @@
 // THE SOFTWARE.
 //
 
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef DIALOG_H
+#define DIALOG_H
 
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/UI/UIElement.h>
 #include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT Widget : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT Dialog : public Urho3D::Object
 {
-	URHO3D_OBJECT(Widget, Urho3D::Object)
+	URHO3D_OBJECT(Dialog, Urho3D::Object)
 
 public:
-	explicit Widget(Urho3D::Context* context);
-	virtual ~Widget();
+	explicit Dialog(Urho3D::Context* context);
+	virtual ~Dialog();
 
 	void LoadLayout(const Urho3D::String& layoutName);
 	void ShrinkSize();
@@ -58,4 +58,4 @@ protected:
 	bool interactive_;
 };
 
-#endif // WIDGET_H
+#endif // DIALOG_H

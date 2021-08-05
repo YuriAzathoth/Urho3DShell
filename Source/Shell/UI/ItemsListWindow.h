@@ -23,7 +23,7 @@
 #ifndef ITEMSLISTWINDOW_H
 #define ITEMSLISTWINDOW_H
 
-#include "Widget.h"
+#include "Dialog.h"
 
 namespace Urho3D
 {
@@ -32,9 +32,9 @@ class LineEdit;
 class ListView;
 } // namespace Urho3D
 
-class ItemsListWindow : public Widget
+class ItemsListWindow : public Dialog
 {
-	URHO3D_OBJECT(ItemsListWindow, Widget)
+	URHO3D_OBJECT(ItemsListWindow, Dialog)
 
 public:
 	explicit ItemsListWindow(Urho3D::Context* context);

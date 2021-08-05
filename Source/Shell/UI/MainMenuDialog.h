@@ -23,11 +23,11 @@
 #ifndef MAINMENUDIALOG_H
 #define MAINMENUDIALOG_H
 
-#include "Widget.h"
+#include "Dialog.h"
 
-class MainMenuDialog : public Widget
+class MainMenuDialog : public Dialog
 {
-	URHO3D_OBJECT(MainMenuDialog, Widget)
+	URHO3D_OBJECT(MainMenuDialog, Dialog)
 
 public:
 	explicit MainMenuDialog(Urho3D::Context* context);
