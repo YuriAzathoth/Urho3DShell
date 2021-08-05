@@ -31,7 +31,7 @@ static Config* GetConfig() { return GetScriptContext()->GetSubsystem<Config>(); 
 
 void RegisterConfigAPI(asIScriptEngine* engine)
 {
-    engine->RegisterObjectType("Config", 0, asOBJ_REF);
+	engine->RegisterObjectType("Config", 0, asOBJ_REF);
 
 	engine->RegisterObjectBehaviour("Config",
 									asBEHAVE_FACTORY,
@@ -39,7 +39,7 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 									AS_FUNCTION(CreateConfig),
 									AS_CALL_CDECL);
 
-    engine->RegisterGlobalFunction("Config@+ get_config()", AS_FUNCTION(GetConfig), AS_CALL_CDECL);
+	engine->RegisterGlobalFunction("Config@+ get_config()", AS_FUNCTION(GetConfig), AS_CALL_CDECL);
 
 	RegisterSubclass<Object, Config>(engine, "Object", "Config");
 	RegisterSubclass<RefCounted, Config>(engine, "RefCounted", "Config");
