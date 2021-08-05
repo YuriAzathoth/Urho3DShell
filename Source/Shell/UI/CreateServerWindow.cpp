@@ -20,19 +20,16 @@
 // THE SOFTWARE.
 //
 
+#include "Core/Shell.h"
 #include "CreateServerWindow.h"
-#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 
-void CreateServerWindow::Start(const Urho3D::String& gameName)
-{
-	GetSubsystem<ShellState>()->StartLocalServer(gameName);
-}
+void CreateServerWindow::Start(const Urho3D::String& gameName) { GetSubsystem<Shell>()->StartLocalServer(gameName); }
 
 void CreateServerWindow::Start(const Urho3D::String& gameName,
 							   const Urho3D::String& serverName,
 							   [[maybe_unused]] const Urho3D::String& serverPass)
 {
-	GetSubsystem<ShellState>()->StartRemoteServer(serverName, gameName);
+	GetSubsystem<Shell>()->StartRemoteServer(serverName, gameName);
 }

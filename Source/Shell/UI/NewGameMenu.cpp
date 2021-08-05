@@ -24,7 +24,6 @@
 #include <Urho3D/IO/PackageFile.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include "NewGameMenu.h"
-#include "ShellState/ShellState.h"
 
 #define SCENES_PATH "Scenes/"
 

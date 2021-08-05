@@ -25,7 +25,6 @@
 #include "Core/Shell.h"
 #include "Network/ServerDefs.h"
 #include "ServersListWindow.h"
-#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 
@@ -41,10 +40,7 @@ ServersListWindow::ServersListWindow(Urho3D::Context* context)
 	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<Shell>()->GetPort());
 }
 
-void ServersListWindow::Start(const Urho3D::String& gameName)
-{
-	GetSubsystem<ShellState>()->StartClient(gameName);
-}
+void ServersListWindow::Start(const Urho3D::String& gameName) { GetSubsystem<Shell>()->StartClient(gameName); }
 
 void ServersListWindow::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {

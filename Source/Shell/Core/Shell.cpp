@@ -36,10 +36,11 @@
 #include <Urho3D/UI/UI.h>
 #include <boost/filesystem.hpp>
 #include "Config/Config.h"
+#include "Network/Client.h"
+#include "Network/Server.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
-#include "ShellState/ShellState.h"
 #include "UI/UIController.h"
 
 #define CONFIG_ROOT "config"
@@ -67,7 +68,6 @@ Shell::~Shell()
 {
 	SaveProfile();
 	SaveProfileName();
-	context_->RemoveSubsystem<ShellState>();
 	context_->RemoveSubsystem<PluginsRegistry>();
 }
 
@@ -119,7 +119,6 @@ void Shell::Initialize()
 		debugHud->SetDefaultStyle(styleFile);
 
 		context_->RegisterSubsystem<UIController>();
-		context_->RegisterSubsystem<ShellState>();
 	}
 
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
@@ -129,6 +128,9 @@ void Shell::Initialize()
 	shellParameters_.Clear();
 
 	GetSubsystem<Config>()->Apply(false);
+
+	if (client_)
+		StartMainMenu();
 }
 
 bool Shell::PreconfigureEngine()
@@ -161,6 +163,56 @@ bool Shell::PreconfigureEngine()
 		return false;
 
 	return GetSubsystem<PluginsRegistry>()->RegisterPlugin(libraryName);
+}
+
+void Shell::StartMainMenu()
+{
+	context_->RemoveSubsystem<Client>();
+	context_->RemoveSubsystem<Server>();
+
+	UIController* uiController = GetSubsystem<UIController>();
+	uiController->RemoveAllDialogs();
+	uiController->CreateDialog("MainMenuWindow");
+}
+
+void Shell::StartLocalServer(Urho3D::String sceneName)
+{
+	Server* server = context_->RegisterSubsystem<Server>();
+	server->Start(GetSubsystem<Shell>()->GetPort());
+	server->LoadScene(sceneName);
+	server->SetPausable(true);
+
+	Client* client = context_->RegisterSubsystem<Client>();
+	client->Connect();
+
+	UIController* uiController = GetSubsystem<UIController>();
+	uiController->RemoveAllDialogs();
+}
+
+void Shell::StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName)
+{
+	Server* server = context_->RegisterSubsystem<Server>();
+	server->Start(GetPort());
+	server->MakeVisible(serverName);
+	server->LoadScene(sceneName);
+	server->SetPausable(false);
+
+	Client* client = context_->RegisterSubsystem<Client>();
+	client->Connect();
+
+	UIController* uiController = GetSubsystem<UIController>();
+	uiController->RemoveAllDialogs();
+}
+
+void Shell::StartClient(Urho3D::String address)
+{
+	context_->RemoveSubsystem<Server>();
+
+	Client* client = context_->RegisterSubsystem<Client>();
+	client->Connect(address);
+
+	UIController* uiController = GetSubsystem<UIController>();
+	uiController->RemoveAllDialogs();
 }
 
 void Shell::LoadProfile(const Urho3D::String& profileName)

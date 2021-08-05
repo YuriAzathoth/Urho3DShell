@@ -37,6 +37,11 @@ public:
 	void Setup(Urho3D::VariantMap& engineParameters);
 	void Initialize();
 
+	void StartMainMenu();
+	void StartLocalServer(Urho3D::String sceneName);
+	void StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName);
+	void StartClient(Urho3D::String address);
+
 	void LoadProfile(const Urho3D::String& profileName);
 	void SaveProfile() const;
 	void CreateProfile(const Urho3D::String& profileName);
