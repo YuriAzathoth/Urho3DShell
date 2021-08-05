@@ -47,8 +47,6 @@ public:
 	void SetPausable(bool pausable) noexcept { pausable_ = pausable; }
 	void SetUpdate(bool update);
 
-	Urho3D::Scene& GetScene() noexcept { return scene_; }
-	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
 	bool IsPausable() const noexcept { return pausable_; }
 	bool IsRemote() const noexcept { return remote_; }
 	bool IsUpdate() const { return scene_.IsUpdateEnabled(); }
