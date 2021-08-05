@@ -100,7 +100,7 @@ public:
 	bool RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterFunc writer);
 	bool RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory);
 
-	void GetDebugString(Urho3D::String& dst) const;
+	Urho3D::String GetDebugString() const;
 
 	void CreateParameterControl(Urho3D::StringHash parameter, Urho3D::UIElement* parent);
 

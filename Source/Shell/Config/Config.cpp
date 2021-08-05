@@ -290,35 +290,36 @@ bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringH
 	}
 }
 
-void Config::GetDebugString(Urho3D::String& dst) const
+Urho3D::String Config::GetDebugString() const
 {
 	// ATTENTION! Slow code! Use it ONLY for debugging purposes!
+	String ret;
 	StringVector tabs = GetSettingsTabs();
 	StringVector parameters;
 	Variant value;
 	EnumVector enumVector;
 	for (const String& tabName : tabs)
 	{
-		dst.Append(tabName).Append('\n');
+		ret.Append(tabName).Append('\n');
 		parameters = GetSettings(tabName);
 		for (const String& parameterName : parameters)
 		{
 			const Parameter& parameter = *parameters_[parameterName];
 			value = parameter.reader_->Read();
-			dst.Append("\t").Append(parameterName).Append('\n');
-			dst.Append("\t\tType  = ").Append(value.GetTypeName()).Append('\n');
-			dst.Append("\t\tValue = ").Append(value.ToString()).Append('\n');
-			dst.Append("\t\tStore = ");
+			ret.Append("\t").Append(parameterName).Append('\n');
+			ret.Append("\t\tType  = ").Append(value.GetTypeName()).Append('\n');
+			ret.Append("\t\tValue = ").Append(value.ToString()).Append('\n');
+			ret.Append("\t\tStore = ");
 			if (parameter.flags_ & ParameterFlags::ENGINE)
-				dst.Append("ENGINE\n");
+				ret.Append("ENGINE\n");
 			else
-				dst.Append("CUSTOM\n");
+				ret.Append("CUSTOM\n");
 			if (parameter.flags_ & ParameterFlags::ENUM)
 			{
-				dst.Append("\t\tEnum Variants:\n");
+				ret.Append("\t\tEnum Variants:\n");
 				enumVector = (*enumConstructors_[parameterName])();
 				for (const EnumVariant& enumVariant : enumVector)
-					dst.Append("\t\t\t")
+					ret.Append("\t\t\t")
 						.Append(enumVariant.caption_)
 						.Append(" = ")
 						.Append(enumVariant.value_.ToString())
@@ -326,6 +327,7 @@ void Config::GetDebugString(Urho3D::String& dst) const
 			}
 		}
 	}
+	return ret;
 }
 
 void Config::CreateParameterControl(Urho3D::StringHash parameter, Urho3D::UIElement* parent)

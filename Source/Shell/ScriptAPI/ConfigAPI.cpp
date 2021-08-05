@@ -71,7 +71,7 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_METHOD(Config, RemoveSettingsTab),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config",
-								 "Array<String>@+ GetSettingsTabs(StringHash)",
+								 "Array<String>@+ get_tabs(StringHash)",
 								 AS_METHOD(Config, GetSettingsTabs),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config",
@@ -89,7 +89,7 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_CALL_THISCALL);
 
 	engine->RegisterObjectMethod("Config",
-								 "String GetDebugString()",
+								 "String get_debugString()",
 								 AS_METHOD(Config, GetDebugString),
 								 AS_CALL_THISCALL);
 }
