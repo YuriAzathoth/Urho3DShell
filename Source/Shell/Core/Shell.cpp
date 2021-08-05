@@ -27,6 +27,7 @@
 #include <Urho3D/Engine/DebugHud.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Engine/EngineDefs.h>
+#include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
@@ -119,6 +120,8 @@ void Shell::Initialize()
 		debugHud->SetDefaultStyle(styleFile);
 
 		context_->RegisterSubsystem<UIController>();
+
+		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
 	}
 
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
@@ -355,4 +358,16 @@ Urho3D::Variant Shell::GetParameter(Urho3D::StringHash parameter, const Urho3D::
 {
 	const auto it = shellParameters_.Find(parameter);
 	return it != shellParameters_.End() ? it->second_ : defaultValue;
+}
+
+void Shell::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace KeyDown;
+	const int key = eventData[P_KEY].GetInt();
+	switch (key)
+	{
+	case KEY_F1:
+		GetSubsystem<Console>()->Toggle();
+		break;
+	}
 }
