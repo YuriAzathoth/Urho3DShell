@@ -106,6 +106,12 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 
 void Shell::Initialize()
 {
+	const auto itScript = shellParameters_.Find(LP_SCRIPT);
+	if (itScript != shellParameters_.End())
+		GetSubsystem<PluginsRegistry>()->RegisterPlugin(itScript->second_.GetString());
+
+	shellParameters_.Clear();
+
 	if (client_)
 	{
 		ResourceCache* cache = GetSubsystem<ResourceCache>();
@@ -120,20 +126,12 @@ void Shell::Initialize()
 		debugHud->SetDefaultStyle(styleFile);
 
 		context_->RegisterSubsystem<UIController>();
+		StartMainMenu();
 
 		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
 	}
 
-	const auto itScript = shellParameters_.Find(LP_SCRIPT);
-	if (itScript != shellParameters_.End())
-		GetSubsystem<PluginsRegistry>()->RegisterPlugin(itScript->second_.GetString());
-
-	shellParameters_.Clear();
-
 	GetSubsystem<Config>()->Apply(false);
-
-	if (client_)
-		StartMainMenu();
 }
 
 bool Shell::PreconfigureEngine()
