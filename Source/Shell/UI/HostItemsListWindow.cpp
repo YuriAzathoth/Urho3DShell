@@ -28,8 +28,8 @@ using namespace Urho3D;
 void HostItemsListWindow::Start(const Urho3D::String& gameName) { GetSubsystem<Shell>()->StartLocalServer(gameName); }
 
 void HostItemsListWindow::Start(const Urho3D::String& gameName,
-							   const Urho3D::String& serverName,
-							   [[maybe_unused]] const Urho3D::String& serverPass)
+								const Urho3D::String& serverName,
+								[[maybe_unused]] const Urho3D::String& serverPass)
 {
 	GetSubsystem<Shell>()->StartRemoteServer(serverName, gameName);
 }
