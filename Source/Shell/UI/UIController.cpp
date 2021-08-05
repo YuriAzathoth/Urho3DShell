@@ -27,6 +27,7 @@
 #include <Urho3D/UI/Cursor.h>
 #include <Urho3D/UI/UI.h>
 #include "MainMenuWindow.h"
+#include "ServersListWindow.h"
 #include "SettingsWindow.h"
 #include "StartGameWindow.h"
 #include "UIController.h"
@@ -38,6 +39,7 @@ UIController::UIController(Urho3D::Context* context)
 	, interactives_(0)
 {
 	context->RegisterFactory<MainMenuWindow>();
+	context->RegisterFactory<ServersListWindow>();
 	context->RegisterFactory<SettingsWindow>();
 	context->RegisterFactory<StartGameWindow>();
 

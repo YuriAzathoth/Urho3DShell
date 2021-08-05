@@ -23,6 +23,8 @@
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Scene/SceneEvents.h>
 #include "Client.h"
+#include "Core/Shell.h"
+#include "Core/ShellEvents.h"
 #include "ServerDefs.h"
 
 using namespace Urho3D;
@@ -31,14 +33,26 @@ Client::Client(Urho3D::Context* context)
 	: Object(context)
 	, scene_(context)
 {
+	Network* network = GetSubsystem<Network>();
+	network->RegisterRemoteEvent(E_SERVERSIDESPAWNED);
 }
 
-void Client::Connect()
+Client::~Client()
+{
+	Network* network = GetSubsystem<Network>();
+	if (network->GetServerConnection())
+		network->Disconnect();
+	network->UnregisterRemoteEvent(E_SERVERSIDESPAWNED);
+}
+
+void Client::Connect(const Urho3D::String& address)
 {
 	VariantMap identity;
 	identity[CL_NAME] = "SimpleName";
-	identity[CL_PASSWORD] = "";
 
-	Network* network = GetSubsystem<Network>();
-	network->Connect("localhost", 27500, &scene_, identity);
+	GetSubsystem<Network>()->Connect(address, GetSubsystem<Shell>()->GetPort(), &scene_, identity);
+}
+
+void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&)
+{
 }

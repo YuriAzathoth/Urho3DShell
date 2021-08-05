@@ -29,14 +29,11 @@
 #include "Server.h"
 #include "ServerDefs.h"
 
-#define DEFAULT_PORT 27500
-
 using namespace Urho3D;
 
 Server::Server(Urho3D::Context* context)
 	: Object(context)
 	, scene_(context)
-	, serverPort_(27500)
 	, pausable_(false)
 	, remote_(false)
 {
@@ -67,9 +64,9 @@ void Server::ClearScene()
 	scene_.Clear();
 }
 
-void Server::Start()
+void Server::Start(unsigned short port)
 {
-	GetSubsystem<Network>()->StartServer(serverPort_);
+	GetSubsystem<Network>()->StartServer(port);
 	remote_ = false;
 }
 
@@ -81,26 +78,35 @@ void Server::Stop()
 	remote_ = false;
 }
 
-void Server::OnClientConnected(Urho3D::StringHash, Urho3D::VariantMap& /*eventData*/)
+void Server::MakeVisible(const Urho3D::String& serverName)
 {
-	URHO3D_LOGTRACE("Server::OnClientConnected");
+	VariantMap hostBeacon;
+	hostBeacon[SV_NAME] = serverName;
+	GetSubsystem<Network>()->SetDiscoveryBeacon(hostBeacon);
+	remote_ = true;
+}
+
+void Server::OnClientConnected(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
 	using namespace ClientConnected;
-	//	Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
+	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
+	URHO3D_LOGTRACEF("Server::OnClientConnected %s", connection->ToString().CString());
 }
 
 void Server::OnClientIdentity(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
-	URHO3D_LOGTRACE("Server::OnClientIdentity");
 	using namespace ClientIdentity;
 	Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-	//	const String& clientName = eventData[CL_NAME].GetString();
-	//	const String& clientPass = eventData[CL_PASSWORD].GetString();
 	connection->SetScene(&scene_);
+	//	const String& clientName = eventData[CL_NAME].GetString();
+	URHO3D_LOGTRACEF("Server::OnClientIdentity %s", connection->ToString().CString());
 }
 
-void Server::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& /*eventData*/)
+void Server::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
-	URHO3D_LOGTRACE("Server::OnClientSceneLoaded");
+	using namespace ClientSceneLoaded;
+	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
+	URHO3D_LOGTRACEF("Server::OnClientSceneLoaded %s", connection->ToString().CString());
 }
 
 void Server::OnServerSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&)

@@ -34,11 +34,15 @@ class URHO3DSHELLAPI_EXPORT Client : public Urho3D::Object
 
 public:
 	explicit Client(Urho3D::Context* context);
+	~Client();
 
-	void Connect();
+	void Connect(const Urho3D::String& address = "localhost");
+
+	Urho3D::Scene& GetScene() noexcept { return scene_; }
+	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
 
 private:
-	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
 
 	Urho3D::Scene scene_;
 };

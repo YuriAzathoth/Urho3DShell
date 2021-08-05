@@ -24,6 +24,7 @@
 #include <Urho3D/IO/PackageFile.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Button.h>
+#include <Urho3D/UI/CheckBox.h>
 #include <Urho3D/UI/LineEdit.h>
 #include <Urho3D/UI/ListView.h>
 #include <Urho3D/UI/Text.h>
@@ -33,13 +34,16 @@
 
 using namespace Urho3D;
 
+static const StringHash VAR_FILENAME = "FileName";
+
 StartGameWindow::StartGameWindow(Urho3D::Context* context)
 	: Widget(context)
-	, spawnedControls_(nullptr)
+	, spawnedButton_(nullptr)
 {
 	LoadLayout("UI/StartGameMenu.xml");
 	levelsList_ = root_->GetChildStaticCast<ListView>("LevelsList", true);
 	serverPanel_ = root_->GetChild("ServerPanel", true);
+	server_ = root_->GetChildStaticCast<CheckBox>("Server", true);
 	serverName_ = root_->GetChildStaticCast<LineEdit>("ServerName", true);
 	serverPass_ = root_->GetChildStaticCast<LineEdit>("ServerPass", true);
 
@@ -75,7 +79,7 @@ void StartGameWindow::FillScenesList(const Urho3D::StringVector& scenes)
 	{
 		item = MakeShared<UIElement>(context_);
 		levelsList_->AddItem(item);
-		item->SetName(filename);
+		item->SetVar(VAR_FILENAME, filename);
 		item->SetLayout(LM_HORIZONTAL, 0, {4, 4, 4, 4});
 		item->SetStyleAuto();
 
@@ -87,7 +91,7 @@ void StartGameWindow::FillScenesList(const Urho3D::StringVector& scenes)
 
 void StartGameWindow::ClearScenesList()
 {
-	spawnedControls_ = nullptr;
+	spawnedButton_ = nullptr;
 	levelsList_->RemoveAllItems();
 }
 
@@ -119,29 +123,25 @@ Urho3D::StringVector StartGameWindow::ScanScenesInPath(const Urho3D::String& pat
 }
 
 void StartGameWindow::OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&) { ShowNewGameTab(); }
+
 void StartGameWindow::OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&) { ShowLoadGameTab(); }
 
-void StartGameWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+void StartGameWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	if (spawnedControls_)
-		spawnedControls_->Remove();
+	if (spawnedButton_)
+		spawnedButton_->Remove();
 
-	using namespace ItemSelected;
-	const int selection = eventData[P_SELECTION].GetInt();
-	UIElement* selectedItem = levelsList_->GetItem(selection);
+	spawnedButton_ = levelsList_->GetSelectedItem()->CreateChild<Button>();
+	spawnedButton_->SetLayout(LM_VERTICAL, 0, {4, 4, 4, 4});
+	spawnedButton_->SetStyleAuto();
 
-	Button* button = selectedItem->CreateChild<Button>();
-	button->SetLayout(LM_VERTICAL, 0, {4, 4, 4, 4});
-	button->SetStyleAuto();
-	spawnedControls_ = button;
-
-	Text* caption = button->CreateChild<Text>();
+	Text* caption = spawnedButton_->CreateChild<Text>();
 	caption->SetText("Start");
 	caption->SetTextAlignment(HA_CENTER);
 	caption->SetAutoLocalizable(true);
 	caption->SetStyleAuto();
 
-	button->SubscribeToEvent(button, E_PRESSED, URHO3D_HANDLER(StartGameWindow, OnStart));
+	spawnedButton_->SubscribeToEvent(spawnedButton_, E_PRESSED, URHO3D_HANDLER(StartGameWindow, OnStart));
 }
 
 void StartGameWindow::OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData)
@@ -152,7 +152,14 @@ void StartGameWindow::OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& ev
 
 void StartGameWindow::OnStart(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	const UIElement* item = spawnedControls_->GetParent();
-	const String& sceneName = item->GetName();
-	GetSubsystem<ShellState>()->StartLocalServer(sceneName);
+	ShellState* shellState = GetSubsystem<ShellState>();
+	const UIElement* item = spawnedButton_->GetParent();
+	const String& sceneName = item->GetVar(VAR_FILENAME).GetString();
+	if (server_->IsChecked())
+	{
+		const String& serverName = serverName_->GetText();
+		shellState->StartRemoteServer(serverName, sceneName);
+	}
+	else
+		shellState->StartLocalServer(sceneName);
 }

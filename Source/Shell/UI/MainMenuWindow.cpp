@@ -39,7 +39,7 @@ MainMenuWindow::MainMenuWindow(Urho3D::Context* context)
 }
 
 void MainMenuWindow::OnStartGame(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("StartGameWindow"); }
-void MainMenuWindow::OnConnect(Urho3D::StringHash, Urho3D::VariantMap&) {}
+void MainMenuWindow::OnConnect(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("ServersListWindow"); }
 void MainMenuWindow::OnMods(Urho3D::StringHash, Urho3D::VariantMap&) {}
 void MainMenuWindow::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("SettingsWindow"); }
 

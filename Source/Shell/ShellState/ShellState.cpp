@@ -25,6 +25,7 @@
 // Removing all widgets will cause references to null objects.
 
 #include <Urho3D/Core/Context.h>
+#include "Core/Shell.h"
 #include "ShellState.h"
 #include "UI/UIController.h"
 
@@ -49,12 +50,38 @@ void ShellState::StartMainMenu()
 void ShellState::StartLocalServer(const Urho3D::String& sceneName)
 {
 	server_ = MakeUnique<Server>(context_);
-	server_->Start();
+	server_->Start(GetSubsystem<Shell>()->GetPort());
 	server_->LoadScene(sceneName);
 	server_->SetPausable(true);
 
 	client_ = MakeUnique<Client>(context_);
 	client_->Connect();
+
+	UIController* uiController = GetSubsystem<UIController>();
+	uiController->RemoveAllDialogs();
+}
+
+void ShellState::StartRemoteServer(const Urho3D::String& serverName, const Urho3D::String& sceneName)
+{
+	server_ = MakeUnique<Server>(context_);
+	server_->Start(GetSubsystem<Shell>()->GetPort());
+	server_->MakeVisible(serverName);
+	server_->LoadScene(sceneName);
+	server_->SetPausable(false);
+
+	client_ = MakeUnique<Client>(context_);
+	client_->Connect();
+
+	UIController* uiController = GetSubsystem<UIController>();
+	uiController->RemoveAllDialogs();
+}
+
+void ShellState::StartClient(const Urho3D::String& address)
+{
+	server_.Reset();
+
+	client_ = MakeUnique<Client>(context_);
+	client_->Connect(address);
 
 	UIController* uiController = GetSubsystem<UIController>();
 	uiController->RemoveAllDialogs();

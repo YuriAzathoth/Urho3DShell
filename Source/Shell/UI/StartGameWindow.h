@@ -27,6 +27,7 @@
 
 namespace Urho3D
 {
+class CheckBox;
 class LineEdit;
 class ListView;
 } // namespace Urho3D
@@ -49,13 +50,14 @@ private:
 
 	void OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnStart(Urho3D::StringHash, Urho3D::VariantMap&);
 
 	Urho3D::ListView* levelsList_;
 	Urho3D::UIElement* serverPanel_;
-	Urho3D::UIElement* spawnedControls_;
+	Urho3D::UIElement* spawnedButton_;
+	Urho3D::CheckBox* server_;
 	Urho3D::LineEdit* serverName_;
 	Urho3D::LineEdit* serverPass_;
 };

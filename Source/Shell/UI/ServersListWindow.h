@@ -20,11 +20,30 @@
 // THE SOFTWARE.
 //
 
-#ifndef SERVERDEFS_H
-#define SERVERDEFS_H
+#ifndef SERVERSLISTWINDOW_H
+#define SERVERSLISTWINDOW_H
 
-static Urho3D::String CL_NAME = "Name";
+#include "Widget.h"
 
-static Urho3D::String SV_NAME = "Name";
+namespace Urho3D
+{
+class ListView;
+}
 
-#endif // SERVERDEFS_H
+class ServersListWindow : public Widget
+{
+	URHO3D_OBJECT(ServersListWindow, Widget)
+
+public:
+	explicit ServersListWindow(Urho3D::Context* context);
+
+private:
+	void OnConnect(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+
+	Urho3D::ListView* serversList_;
+	Urho3D::UIElement* spawnedButton_;
+};
+
+#endif // SERVERSLISTWINDOW_H

@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef SERVERDEFS_H
-#define SERVERDEFS_H
+#ifndef SHELLEVENTS_H
+#define SHELLEVENTS_H
 
 #include <Urho3D/Core/Object.h>
 
@@ -31,4 +31,4 @@ URHO3D_EVENT(E_SERVERSIDESPAWNED, ServerSideSpawned)
 	URHO3D_PARAM(P_NODE, Node);				// int
 }
 
-#endif // SERVERDEFS_H
+#endif // SHELLEVENTS_H

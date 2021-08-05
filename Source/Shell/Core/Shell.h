@@ -42,6 +42,8 @@ public:
 	void CreateProfile(const Urho3D::String& profileName);
 	void RemoveProfile(const Urho3D::String& profileName);
 
+	void SetPort(unsigned short port) noexcept { port_ = port; }
+
 	Urho3D::String GetConfigFilename() const;
 	Urho3D::String GetConfigPath() const;
 	Urho3D::String GetInputPath() const;
@@ -51,6 +53,7 @@ public:
 	Urho3D::String GetProfileFilename() const;
 	Urho3D::String GetSavesPath() const;
 
+	unsigned short GetPort() const noexcept { return port_; }
 	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
 
 private:
@@ -69,6 +72,7 @@ private:
 	Urho3D::String gameName_;
 	Urho3D::String profileName_;
 	Urho3D::String userDataPath_;
+	unsigned short port_; // TODO: Move to something else location
 	bool client_;
 };
 

@@ -37,6 +37,8 @@ public:
 
 	void StartMainMenu();
 	void StartLocalServer(const Urho3D::String& sceneName);
+	void StartRemoteServer(const Urho3D::String& serverName, const Urho3D::String& sceneName);
+	void StartClient(const Urho3D::String& address);
 
 	Client* GetClient() const { return client_.Get(); }
 	Server* GetServer() const { return server_.Get(); }

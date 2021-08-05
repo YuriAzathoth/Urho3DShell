@@ -55,6 +55,7 @@ Shell::Shell(Urho3D::Context* context)
 	: Object(context)
 	, profileName_(DEFAULT_PROFILE)
 	, userDataPath_("./")
+	, port_(27500)
 	, client_(true)
 {
 	context_->RegisterSubsystem<Script>();

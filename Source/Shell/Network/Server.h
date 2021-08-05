@@ -39,16 +39,16 @@ public:
 	void LoadScene(const Urho3D::String& sceneName);
 	void ClearScene();
 
-	void Start();
+	void Start(unsigned short port);
 	void Stop();
 
+	void MakeVisible(const Urho3D::String& serverName);
+
 	void SetPausable(bool pausable) noexcept { pausable_ = pausable; }
-	void SetServerPort(unsigned short serverPort) noexcept { serverPort_ = serverPort; }
 	void SetUpdate(bool update);
 
 	Urho3D::Scene& GetScene() noexcept { return scene_; }
 	const Urho3D::Scene& GetScene() const noexcept { return scene_; }
-	unsigned short GetServerPort() const noexcept { return serverPort_; }
 	bool IsPausable() const noexcept { return pausable_; }
 	bool IsRemote() const noexcept { return remote_; }
 	bool IsUpdate() const { return scene_.IsUpdateEnabled(); }
@@ -60,9 +60,6 @@ private:
 	void OnServerSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
 
 	Urho3D::Scene scene_;
-	Urho3D::String serverName_;
-	Urho3D::String serverPass_;
-	unsigned short serverPort_;
 	bool pausable_;
 	bool remote_;
 };
