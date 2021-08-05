@@ -32,7 +32,7 @@ class LineEdit;
 class ListView;
 } // namespace Urho3D
 
-class ItemsListWindow : public Dialog
+class URHO3DSHELLAPI_EXPORT ItemsListWindow : public Dialog
 {
 	URHO3D_OBJECT(ItemsListWindow, Dialog)
 
