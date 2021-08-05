@@ -33,7 +33,8 @@ public:
 	explicit MainMenuWindow(Urho3D::Context* context);
 
 private:
-	void OnStartGame(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnConnect(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnMods(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnSettings(Urho3D::StringHash, Urho3D::VariantMap&);

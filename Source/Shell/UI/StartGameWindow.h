@@ -39,22 +39,24 @@ class StartGameWindow : public Widget
 public:
 	explicit StartGameWindow(Urho3D::Context* context);
 
-private:
-	void ShowNewGameTab();
-	void ShowLoadGameTab();
-	void FillScenesList(const Urho3D::StringVector& scenes);
-	void ClearScenesList();
-	void SetServerPanelVisible(bool visible);
-	Urho3D::StringVector ScanScenesInPackages() const;
-	Urho3D::StringVector ScanScenesInPath(const Urho3D::String& path) const;
+	void AddGame(const Urho3D::String& caption, const Urho3D::String& gameName);
+	void ClearGamesList();
 
-	void OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&);
+	void SetTitle(const Urho3D::String& title);
+	void SetServerSettingsVisible(bool visible);
+
+private:
+	virtual void Start(const Urho3D::String& gameName) = 0;
+	virtual void
+	Start(const Urho3D::String& gameName, const Urho3D::String& serverName, const Urho3D::String& serverPass) = 0;
+
+	void SetServerPanelVisible(bool visible);
+
 	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnStart(Urho3D::StringHash, Urho3D::VariantMap&);
 
-	Urho3D::ListView* levelsList_;
+	Urho3D::ListView* gamesList_;
 	Urho3D::UIElement* serverPanel_;
 	Urho3D::UIElement* spawnedButton_;
 	Urho3D::CheckBox* server_;

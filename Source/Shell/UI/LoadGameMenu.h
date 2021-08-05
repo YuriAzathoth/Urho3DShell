@@ -20,37 +20,17 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Network/Network.h>
-#include <Urho3D/Scene/SceneEvents.h>
-#include "Client.h"
-#include "Core/Shell.h"
-#include "Core/ShellEvents.h"
-#include "ServerDefs.h"
+#ifndef LOADGAMEMENU_H
+#define LOADGAMEMENU_H
 
-using namespace Urho3D;
+#include "CreateServerWindow.h"
 
-Client::Client(Urho3D::Context* context)
-	: Object(context)
-	, scene_(context)
+class LoadGameMenu : public CreateServerWindow
 {
-	Network* network = GetSubsystem<Network>();
-	network->RegisterRemoteEvent(E_SERVERSIDESPAWNED);
-}
+	URHO3D_OBJECT(LoadGameMenu, CreateServerWindow)
 
-Client::~Client()
-{
-	Network* network = GetSubsystem<Network>();
-	if (network->GetServerConnection())
-		network->Disconnect();
-	network->UnregisterRemoteEvent(E_SERVERSIDESPAWNED);
-}
+public:
+	explicit LoadGameMenu(Urho3D::Context* context);
+};
 
-void Client::Connect(const Urho3D::String& address)
-{
-	VariantMap identity;
-	identity[CL_NAME] = "SimpleName";
-
-	GetSubsystem<Network>()->Connect(address, GetSubsystem<Shell>()->GetPort(), &scene_, identity);
-}
-
-void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&) {}
+#endif // LOADGAMEMENU_H

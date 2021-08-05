@@ -31,14 +31,16 @@ MainMenuWindow::MainMenuWindow(Urho3D::Context* context)
 	LoadLayout("UI/MainMenu.xml");
 	SetInteractive(true);
 
-	SubscribeToEvent(root_->GetChild("StartGame", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnStartGame));
+	SubscribeToEvent(root_->GetChild("NewGame", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnNewGame));
+	SubscribeToEvent(root_->GetChild("LoadGame", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnLoadGame));
 	SubscribeToEvent(root_->GetChild("Connect", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnConnect));
 	SubscribeToEvent(root_->GetChild("Mods", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnMods));
 	SubscribeToEvent(root_->GetChild("Settings", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnSettings));
 	SubscribeToEvent(root_->GetChild("Exit", true), E_PRESSED, URHO3D_HANDLER(MainMenuWindow, OnExit));
 }
 
-void MainMenuWindow::OnStartGame(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("StartGameWindow"); }
+void MainMenuWindow::OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("NewGameMenu"); }
+void MainMenuWindow::OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("LoadGameMenu"); }
 void MainMenuWindow::OnConnect(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("ServersListWindow"); }
 void MainMenuWindow::OnMods(Urho3D::StringHash, Urho3D::VariantMap&) {}
 void MainMenuWindow::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("SettingsWindow"); }

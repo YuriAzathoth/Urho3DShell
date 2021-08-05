@@ -1,0 +1,357 @@
+{
+	"id": 1,
+	"attributes": {
+		"Name": "",
+		"Time Scale": 1.0,
+		"Smoothing Constant": 50.0,
+		"Snap Threshold": 5.0,
+		"Elapsed Time": 1.56141996383667,
+		"Next Replicated Node ID": 17,
+		"Next Replicated Component ID": 42,
+		"Next Local Node ID": 16777219,
+		"Next Local Component ID": 16777252,
+		"Variables": {},
+		"Variable Names": ""
+	},
+	"components": [
+		{
+			"type": "Octree",
+			"id": 1,
+			"attributes": null
+		},
+		{
+			"type": "DebugRenderer",
+			"id": 2,
+			"attributes": null
+		},
+		{
+			"type": "PhysicsWorld",
+			"id": 9,
+			"attributes": null
+		}
+	],
+	"children": [
+		{
+			"id": 2,
+			"attributes": {
+				"Is Enabled": true,
+				"Name": "",
+				"Tags": [],
+				"Position": "0 0 0",
+				"Rotation": "1 0 0 0",
+				"Scale": "1 1 1",
+				"Variables": {}
+			},
+			"components": [],
+			"children": [
+				{
+					"id": 3,
+					"attributes": {
+						"Is Enabled": true,
+						"Name": "",
+						"Tags": [],
+						"Position": "0 2 0",
+						"Rotation": "0.92388 0.382683 0 0",
+						"Scale": "1 1 1",
+						"Variables": {}
+					},
+					"components": [
+						{
+							"type": "Light",
+							"id": 5,
+							"attributes": {
+								"Light Shape Texture": "TextureCube;",
+								"Cast Shadows": true
+							}
+						}
+					],
+					"children": []
+				},
+				{
+					"id": 4,
+					"attributes": {
+						"Is Enabled": true,
+						"Name": "Floor",
+						"Tags": [],
+						"Position": "0 0 0",
+						"Rotation": "1 0 0 0",
+						"Scale": "10 0.01 10",
+						"Variables": {}
+					},
+					"components": [
+						{
+							"type": "StaticModel",
+							"id": 7,
+							"attributes": {
+								"Model": "Model;Models/Box.mdl",
+								"Material": "Material;",
+								"Is Occluder": true,
+								"Cast Shadows": true
+							}
+						},
+						{
+							"type": "RigidBody",
+							"id": 8,
+							"attributes": {
+								"Friction": 1.0,
+								"Rolling Friction": 0.5
+							}
+						},
+						{
+							"type": "CollisionShape",
+							"id": 10,
+							"attributes": null
+						}
+					],
+					"children": []
+				},
+				{
+					"id": 7,
+					"attributes": {
+						"Is Enabled": true,
+						"Name": "Wall Back",
+						"Tags": [],
+						"Position": "0 2.5 -5",
+						"Rotation": "0.707107 -0.707107 0 0",
+						"Scale": "10 0.01 5",
+						"Variables": {}
+					},
+					"components": [
+						{
+							"type": "StaticModel",
+							"id": 17,
+							"attributes": {
+								"Model": "Model;Models/Box.mdl",
+								"Material": "Material;",
+								"Is Occluder": true,
+								"Cast Shadows": true
+							}
+						},
+						{
+							"type": "RigidBody",
+							"id": 18,
+							"attributes": {
+								"Physics Rotation": "0.707107 -0.707107 0 0",
+								"Physics Position": "0 2.5 -5",
+								"Friction": 1.0,
+								"Rolling Friction": 0.5
+							}
+						},
+						{
+							"type": "CollisionShape",
+							"id": 19,
+							"attributes": null
+						}
+					],
+					"children": []
+				},
+				{
+					"id": 8,
+					"attributes": {
+						"Is Enabled": true,
+						"Name": "Wall Front",
+						"Tags": [],
+						"Position": "0 2.5 5",
+						"Rotation": "0.707107 -0.707107 0 0",
+						"Scale": "10 0.01 5",
+						"Variables": {}
+					},
+					"components": [
+						{
+							"type": "StaticModel",
+							"id": 20,
+							"attributes": {
+								"Model": "Model;Models/Box.mdl",
+								"Material": "Material;",
+								"Is Occluder": true,
+								"Cast Shadows": true
+							}
+						},
+						{
+							"type": "RigidBody",
+							"id": 21,
+							"attributes": {
+								"Physics Rotation": "0.707107 -0.707107 0 0",
+								"Physics Position": "0 2.5 5",
+								"Friction": 1.0,
+								"Rolling Friction": 0.5
+							}
+						},
+						{
+							"type": "CollisionShape",
+							"id": 22,
+							"attributes": null
+						}
+					],
+					"children": []
+				},
+				{
+					"id": 11,
+					"attributes": {
+						"Is Enabled": true,
+						"Name": "Wall Left",
+						"Tags": [],
+						"Position": "-5 2.5 -2.38419e-07",
+						"Rotation": "0.5 -0.500001 0.5 0.5",
+						"Scale": "10 0.01 5",
+						"Variables": {}
+					},
+					"components": [
+						{
+							"type": "StaticModel",
+							"id": 29,
+							"attributes": {
+								"Model": "Model;Models/Box.mdl",
+								"Material": "Material;",
+								"Is Occluder": true,
+								"Cast Shadows": true
+							}
+						},
+						{
+							"type": "RigidBody",
+							"id": 30,
+							"attributes": {
+								"Physics Rotation": "-0.5 0.5 -0.5 -0.5",
+								"Physics Position": "-5 2.5 -2.38419e-07",
+								"Friction": 1.0,
+								"Rolling Friction": 0.5
+							}
+						},
+						{
+							"type": "CollisionShape",
+							"id": 31,
+							"attributes": null
+						}
+					],
+					"children": []
+				},
+				{
+					"id": 12,
+					"attributes": {
+						"Is Enabled": true,
+						"Name": "Wall Right",
+						"Tags": [],
+						"Position": "5 2.5 2.38419e-07",
+						"Rotation": "0.5 -0.500001 0.5 0.5",
+						"Scale": "10 0.01 5",
+						"Variables": {}
+					},
+					"components": [
+						{
+							"type": "StaticModel",
+							"id": 32,
+							"attributes": {
+								"Model": "Model;Models/Box.mdl",
+								"Material": "Material;",
+								"Is Occluder": true,
+								"Cast Shadows": true
+							}
+						},
+						{
+							"type": "RigidBody",
+							"id": 33,
+							"attributes": {
+								"Physics Rotation": "-0.5 0.5 -0.5 -0.5",
+								"Physics Position": "5 2.5 2.38419e-07",
+								"Friction": 1.0,
+								"Rolling Friction": 0.5
+							}
+						},
+						{
+							"type": "CollisionShape",
+							"id": 34,
+							"attributes": null
+						}
+					],
+					"children": []
+				}
+			]
+		},
+		{
+			"id": 15,
+			"attributes": {
+				"Is Enabled": true,
+				"Name": "Box",
+				"Tags": [],
+				"Position": "0.993733 0.50499 1.58399",
+				"Rotation": "0.965637 -1.71115e-11 0.259895 4.42571e-11",
+				"Scale": "0.5 0.5 0.5",
+				"Variables": {}
+			},
+			"components": [
+				{
+					"type": "StaticModel",
+					"id": 36,
+					"attributes": {
+						"Model": "Model;Models/Box.mdl",
+						"Material": "Material;",
+						"Is Occluder": true,
+						"Cast Shadows": true
+					}
+				},
+				{
+					"type": "RigidBody",
+					"id": 37,
+					"attributes": {
+						"Physics Rotation": "0.965637 -1.71115e-11 0.259895 4.42571e-11",
+						"Physics Position": "0.993733 0.50499 1.58399",
+						"Mass": 1.0,
+						"Friction": 1.0,
+						"Rolling Friction": 0.5,
+						"Linear Velocity": "-1.47417e-05 0.000133082 -3.39497e-05",
+						"Angular Velocity": "3.72251e-24 5.64753e-07 -4.1359e-25"
+					}
+				},
+				{
+					"type": "CollisionShape",
+					"id": 38,
+					"attributes": null
+				}
+			],
+			"children": []
+		},
+		{
+			"id": 16,
+			"attributes": {
+				"Is Enabled": true,
+				"Name": "Box",
+				"Tags": [],
+				"Position": "-0.340415 0.50499 1.87544",
+				"Rotation": "0.916117 -1.03243e-11 0.400912 4.63131e-11",
+				"Scale": "1 1 1",
+				"Variables": {}
+			},
+			"components": [
+				{
+					"type": "StaticModel",
+					"id": 39,
+					"attributes": {
+						"Model": "Model;Models/Box.mdl",
+						"Material": "Material;",
+						"Is Occluder": true,
+						"Cast Shadows": true
+					}
+				},
+				{
+					"type": "RigidBody",
+					"id": 40,
+					"attributes": {
+						"Physics Rotation": "0.916117 -1.03243e-11 0.400912 4.63131e-11",
+						"Physics Position": "-0.340415 0.50499 1.87544",
+						"Mass": 1.0,
+						"Friction": 1.0,
+						"Rolling Friction": 0.5,
+						"Linear Velocity": "-1.47417e-05 0.000133082 -3.39497e-05",
+						"Angular Velocity": "3.72251e-24 5.64753e-07 -4.1359e-25"
+					}
+				},
+				{
+					"type": "CollisionShape",
+					"id": 41,
+					"attributes": null
+				}
+			],
+			"children": []
+		}
+	]
+}

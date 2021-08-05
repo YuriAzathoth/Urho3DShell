@@ -20,28 +20,24 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/IO/FileSystem.h>
-#include <Urho3D/IO/PackageFile.h>
-#include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Button.h>
 #include <Urho3D/UI/CheckBox.h>
 #include <Urho3D/UI/LineEdit.h>
 #include <Urho3D/UI/ListView.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIEvents.h>
-#include "ShellState/ShellState.h"
 #include "StartGameWindow.h"
 
 using namespace Urho3D;
 
-static const StringHash VAR_FILENAME = "FileName";
+static const StringHash VAR_GAMENAME = "GameName";
 
 StartGameWindow::StartGameWindow(Urho3D::Context* context)
 	: Widget(context)
 	, spawnedButton_(nullptr)
 {
-	LoadLayout("UI/StartGameMenu.xml");
-	levelsList_ = root_->GetChildStaticCast<ListView>("LevelsList", true);
+	LoadLayout("UI/GamesMenu.xml");
+	gamesList_ = root_->GetChildStaticCast<ListView>("GamesList", true);
 	serverPanel_ = root_->GetChild("ServerPanel", true);
 	server_ = root_->GetChildStaticCast<CheckBox>("Server", true);
 	serverName_ = root_->GetChildStaticCast<LineEdit>("ServerName", true);
@@ -52,47 +48,38 @@ StartGameWindow::StartGameWindow(Urho3D::Context* context)
 	SetServerPanelVisible(false);
 
 	BindButtonToClose(root_->GetChild("CloseButton", true));
-
-	SubscribeToEvent(root_->GetChild("NewGame", true), E_PRESSED, URHO3D_HANDLER(StartGameWindow, OnNewGame));
-	SubscribeToEvent(root_->GetChild("LoadGame", true), E_PRESSED, URHO3D_HANDLER(StartGameWindow, OnLoadGame));
-
-	SubscribeToEvent(levelsList_, E_ITEMSELECTED, URHO3D_HANDLER(StartGameWindow, OnItemSelected));
-
+	SubscribeToEvent(gamesList_, E_ITEMSELECTED, URHO3D_HANDLER(StartGameWindow, OnItemSelected));
 	SubscribeToEvent(root_->GetChild("Server", true), E_TOGGLED, URHO3D_HANDLER(StartGameWindow, OnServerToggled));
-
-	ShowNewGameTab();
 }
 
-void StartGameWindow::ShowNewGameTab()
+void StartGameWindow::AddGame(const Urho3D::String& caption, const Urho3D::String& gameName)
 {
-	ClearScenesList();
-	FillScenesList(ScanScenesInPackages());
+	SharedPtr<UIElement> item = MakeShared<UIElement>(context_);
+	gamesList_->AddItem(item);
+	item->SetVar(VAR_GAMENAME, gameName);
+	item->SetLayout(LM_HORIZONTAL, 0, {4, 4, 4, 4});
+	item->SetStyleAuto();
+
+	Text* text = item->CreateChild<Text>();
+	text->SetText(caption);
+	text->SetStyleAuto();
 }
 
-void StartGameWindow::ShowLoadGameTab() { ClearScenesList(); }
-
-void StartGameWindow::FillScenesList(const Urho3D::StringVector& scenes)
-{
-	SharedPtr<UIElement> item;
-	Text* text;
-	for (const String& filename : scenes)
-	{
-		item = MakeShared<UIElement>(context_);
-		levelsList_->AddItem(item);
-		item->SetVar(VAR_FILENAME, filename);
-		item->SetLayout(LM_HORIZONTAL, 0, {4, 4, 4, 4});
-		item->SetStyleAuto();
-
-		text = item->CreateChild<Text>();
-		text->SetText(filename.Replaced("Scenes/", ""));
-		text->SetStyleAuto();
-	}
-}
-
-void StartGameWindow::ClearScenesList()
+void StartGameWindow::ClearGamesList()
 {
 	spawnedButton_ = nullptr;
-	levelsList_->RemoveAllItems();
+	gamesList_->RemoveAllItems();
+}
+
+void StartGameWindow::SetTitle(const Urho3D::String& title)
+{
+	GetRoot()->GetChildStaticCast<Text>("Title", true)->SetText(title);
+}
+
+void StartGameWindow::SetServerSettingsVisible(bool visible)
+{
+	GetRoot()->GetChild("ServerCheckbox", true)->SetVisible(visible);
+	SetServerPanelVisible(visible ? server_->IsChecked() : false);
 }
 
 void StartGameWindow::SetServerPanelVisible(bool visible)
@@ -101,37 +88,12 @@ void StartGameWindow::SetServerPanelVisible(bool visible)
 	ShrinkSize();
 }
 
-Urho3D::StringVector StartGameWindow::ScanScenesInPackages() const
-{
-	StringVector ret;
-	for (const SharedPtr<PackageFile>& package : GetSubsystem<ResourceCache>()->GetPackageFiles())
-	{
-		const StringVector resources = package->GetEntryNames();
-		for (const String& filename : resources)
-			if (filename.StartsWith("Scenes/") &&
-				(filename.EndsWith(".xml") || filename.EndsWith(".bin") || filename.EndsWith(".json")))
-				ret.Push(filename);
-	}
-	return ret;
-}
-
-Urho3D::StringVector StartGameWindow::ScanScenesInPath(const Urho3D::String& path) const
-{
-	StringVector ret;
-	GetSubsystem<FileSystem>()->ScanDir(ret, path, "*.xml|*.bin|*.json", SCAN_FILES, true);
-	return ret;
-}
-
-void StartGameWindow::OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&) { ShowNewGameTab(); }
-
-void StartGameWindow::OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&) { ShowLoadGameTab(); }
-
 void StartGameWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	if (spawnedButton_)
 		spawnedButton_->Remove();
 
-	spawnedButton_ = levelsList_->GetSelectedItem()->CreateChild<Button>();
+	spawnedButton_ = gamesList_->GetSelectedItem()->CreateChild<Button>();
 	spawnedButton_->SetLayout(LM_VERTICAL, 0, {4, 4, 4, 4});
 	spawnedButton_->SetStyleAuto();
 
@@ -152,14 +114,14 @@ void StartGameWindow::OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& ev
 
 void StartGameWindow::OnStart(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	ShellState* shellState = GetSubsystem<ShellState>();
 	const UIElement* item = spawnedButton_->GetParent();
-	const String& sceneName = item->GetVar(VAR_FILENAME).GetString();
+	const String& gameName = item->GetVar(VAR_GAMENAME).GetString();
 	if (server_->IsChecked())
 	{
 		const String& serverName = serverName_->GetText();
-		shellState->StartRemoteServer(serverName, sceneName);
+		const String& serverPass = serverPass_->GetText();
+		Start(gameName, serverName, serverPass);
 	}
 	else
-		shellState->StartLocalServer(sceneName);
+		Start(gameName);
 }

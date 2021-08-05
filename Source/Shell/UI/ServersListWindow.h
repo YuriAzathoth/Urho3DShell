@@ -23,27 +23,20 @@
 #ifndef SERVERSLISTWINDOW_H
 #define SERVERSLISTWINDOW_H
 
-#include "Widget.h"
+#include "StartGameWindow.h"
 
-namespace Urho3D
+class ServersListWindow : public StartGameWindow
 {
-class ListView;
-}
-
-class ServersListWindow : public Widget
-{
-	URHO3D_OBJECT(ServersListWindow, Widget)
+	URHO3D_OBJECT(ServersListWindow, StartGameWindow)
 
 public:
 	explicit ServersListWindow(Urho3D::Context* context);
 
 private:
-	void OnConnect(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void Start(const Urho3D::String& gameName) override;
+	void Start(const Urho3D::String&, const Urho3D::String&, const Urho3D::String&) override {}
 
-	Urho3D::ListView* serversList_;
-	Urho3D::UIElement* spawnedButton_;
+	void OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
 #endif // SERVERSLISTWINDOW_H

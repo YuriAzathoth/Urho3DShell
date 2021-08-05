@@ -20,37 +20,22 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Network/Network.h>
-#include <Urho3D/Scene/SceneEvents.h>
-#include "Client.h"
-#include "Core/Shell.h"
-#include "Core/ShellEvents.h"
-#include "ServerDefs.h"
+#ifndef CREATESERVERWINDOW_H
+#define CREATESERVERWINDOW_H
 
-using namespace Urho3D;
+#include "StartGameWindow.h"
 
-Client::Client(Urho3D::Context* context)
-	: Object(context)
-	, scene_(context)
+class CreateServerWindow : public StartGameWindow
 {
-	Network* network = GetSubsystem<Network>();
-	network->RegisterRemoteEvent(E_SERVERSIDESPAWNED);
-}
+	URHO3D_OBJECT(CreateServerWindow, StartGameWindow)
 
-Client::~Client()
-{
-	Network* network = GetSubsystem<Network>();
-	if (network->GetServerConnection())
-		network->Disconnect();
-	network->UnregisterRemoteEvent(E_SERVERSIDESPAWNED);
-}
+public:
+	using StartGameWindow::StartGameWindow;
 
-void Client::Connect(const Urho3D::String& address)
-{
-	VariantMap identity;
-	identity[CL_NAME] = "SimpleName";
+private:
+	void Start(const Urho3D::String& gameName) override;
+	void
+	Start(const Urho3D::String& gameName, const Urho3D::String& serverName, const Urho3D::String& serverPass) override;
+};
 
-	GetSubsystem<Network>()->Connect(address, GetSubsystem<Shell>()->GetPort(), &scene_, identity);
-}
-
-void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&) {}
+#endif // CREATESERVERWINDOW_H

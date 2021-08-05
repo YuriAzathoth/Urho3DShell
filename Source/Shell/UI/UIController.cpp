@@ -26,10 +26,11 @@
 #include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/UI/Cursor.h>
 #include <Urho3D/UI/UI.h>
+#include "LoadGameMenu.h"
 #include "MainMenuWindow.h"
+#include "NewGameMenu.h"
 #include "ServersListWindow.h"
 #include "SettingsWindow.h"
-#include "StartGameWindow.h"
 #include "UIController.h"
 
 using namespace Urho3D;
@@ -38,10 +39,11 @@ UIController::UIController(Urho3D::Context* context)
 	: Urho3D::Object(context)
 	, interactives_(0)
 {
+	context->RegisterFactory<LoadGameMenu>();
 	context->RegisterFactory<MainMenuWindow>();
+	context->RegisterFactory<NewGameMenu>();
 	context->RegisterFactory<ServersListWindow>();
 	context->RegisterFactory<SettingsWindow>();
-	context->RegisterFactory<StartGameWindow>();
 
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(UIController, OnKeyDown));
 }

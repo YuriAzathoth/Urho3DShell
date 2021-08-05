@@ -20,37 +20,33 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Network/Network.h>
-#include <Urho3D/Scene/SceneEvents.h>
-#include "Client.h"
-#include "Core/Shell.h"
-#include "Core/ShellEvents.h"
-#include "ServerDefs.h"
+#include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/IO/PackageFile.h>
+#include <Urho3D/Resource/ResourceCache.h>
+#include "NewGameMenu.h"
+#include "ShellState/ShellState.h"
+
+#define SCENES_PATH "Scenes/"
 
 using namespace Urho3D;
 
-Client::Client(Urho3D::Context* context)
-	: Object(context)
-	, scene_(context)
+NewGameMenu::NewGameMenu(Urho3D::Context* context)
+	: CreateServerWindow(context)
 {
-	Network* network = GetSubsystem<Network>();
-	network->RegisterRemoteEvent(E_SERVERSIDESPAWNED);
+	SetTitle("NewGame");
+
+	StringVector resources;
+	for (const SharedPtr<PackageFile>& package : GetSubsystem<ResourceCache>()->GetPackageFiles())
+	{
+		resources = package->GetEntryNames();
+		for (const String& filename : resources)
+			if (filename.StartsWith(SCENES_PATH) &&
+				(filename.EndsWith(".xml") || filename.EndsWith(".bin") || filename.EndsWith(".json")))
+				AddGame(filename.Replaced(SCENES_PATH, ""), filename);
+	}
+
+	StringVector files;
+	GetSubsystem<FileSystem>()->ScanDir(files, "Scenes/", "*.xml|*.bin|*.json", SCAN_FILES, true);
+	for (const String& filename : files)
+		AddGame(filename.Replaced(SCENES_PATH, ""), filename);
 }
-
-Client::~Client()
-{
-	Network* network = GetSubsystem<Network>();
-	if (network->GetServerConnection())
-		network->Disconnect();
-	network->UnregisterRemoteEvent(E_SERVERSIDESPAWNED);
-}
-
-void Client::Connect(const Urho3D::String& address)
-{
-	VariantMap identity;
-	identity[CL_NAME] = "SimpleName";
-
-	GetSubsystem<Network>()->Connect(address, GetSubsystem<Shell>()->GetPort(), &scene_, identity);
-}
-
-void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&) {}

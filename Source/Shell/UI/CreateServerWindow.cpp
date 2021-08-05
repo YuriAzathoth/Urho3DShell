@@ -20,37 +20,19 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Network/Network.h>
-#include <Urho3D/Scene/SceneEvents.h>
-#include "Client.h"
-#include "Core/Shell.h"
-#include "Core/ShellEvents.h"
-#include "ServerDefs.h"
+#include "CreateServerWindow.h"
+#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 
-Client::Client(Urho3D::Context* context)
-	: Object(context)
-	, scene_(context)
+void CreateServerWindow::Start(const Urho3D::String& gameName)
 {
-	Network* network = GetSubsystem<Network>();
-	network->RegisterRemoteEvent(E_SERVERSIDESPAWNED);
+	GetSubsystem<ShellState>()->StartLocalServer(gameName);
 }
 
-Client::~Client()
+void CreateServerWindow::Start(const Urho3D::String& gameName,
+							   const Urho3D::String& serverName,
+							   [[maybe_unused]] const Urho3D::String& serverPass)
 {
-	Network* network = GetSubsystem<Network>();
-	if (network->GetServerConnection())
-		network->Disconnect();
-	network->UnregisterRemoteEvent(E_SERVERSIDESPAWNED);
+	GetSubsystem<ShellState>()->StartRemoteServer(serverName, gameName);
 }
-
-void Client::Connect(const Urho3D::String& address)
-{
-	VariantMap identity;
-	identity[CL_NAME] = "SimpleName";
-
-	GetSubsystem<Network>()->Connect(address, GetSubsystem<Shell>()->GetPort(), &scene_, identity);
-}
-
-void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&) {}
