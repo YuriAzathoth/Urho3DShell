@@ -25,8 +25,9 @@
 void RegisterConfigAPI(asIScriptEngine* engine);
 void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
 void RegisterShellAPI(asIScriptEngine* engine);
+void RegisterUIControllerAPI(asIScriptEngine* engine);
 
-void RegisterClientAPI(asIScriptEngine* /*engine*/) {}
+void RegisterClientAPI(asIScriptEngine* engine) { RegisterUIControllerAPI(engine); }
 
 void RegisterServerAPI(asIScriptEngine* engine)
 {
