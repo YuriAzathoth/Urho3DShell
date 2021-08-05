@@ -20,31 +20,32 @@
 // THE SOFTWARE.
 //
 
-#ifndef SETTINGSWINDOW_H
-#define SETTINGSWINDOW_H
+#include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/IO/PackageFile.h>
+#include <Urho3D/Resource/ResourceCache.h>
+#include "NewGameDialog.h"
 
-#include "Widget.h"
+#define SCENES_PATH "Scenes/"
 
-namespace Urho3D
+using namespace Urho3D;
+
+NewGameDialog::NewGameDialog(Urho3D::Context* context)
+	: HostItemsListWindow(context)
 {
-class ListView;
+	SetTitle("NewGame");
+
+	StringVector resources;
+	for (const SharedPtr<PackageFile>& package : GetSubsystem<ResourceCache>()->GetPackageFiles())
+	{
+		resources = package->GetEntryNames();
+		for (const String& filename : resources)
+			if (filename.StartsWith(SCENES_PATH) &&
+				(filename.EndsWith(".xml") || filename.EndsWith(".bin") || filename.EndsWith(".json")))
+				AddGame(filename.Replaced(SCENES_PATH, ""), filename);
+	}
+
+	StringVector files;
+	GetSubsystem<FileSystem>()->ScanDir(files, "Scenes/", "*.xml|*.bin|*.json", SCAN_FILES, true);
+	for (const String& filename : files)
+		AddGame(filename.Replaced(SCENES_PATH, ""), filename);
 }
-
-class SettingsWindow : public Widget
-{
-	URHO3D_OBJECT(SettingsWindow, Widget)
-
-public:
-	explicit SettingsWindow(Urho3D::Context* context);
-
-private:
-	void ShowSettingsTab(Urho3D::StringHash settingsTab);
-
-	void OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&);
-
-	Urho3D::ListView* settings_;
-};
-
-#endif // SETTINGSWINDOW_H

@@ -172,7 +172,7 @@ void Shell::StartMainMenu()
 
 	UIController* uiController = GetSubsystem<UIController>();
 	uiController->RemoveAllDialogs();
-	uiController->CreateDialog("MainMenuWindow");
+	uiController->CreateDialog("MainMenuDialog");
 }
 
 void Shell::StartLocalServer(Urho3D::String sceneName)

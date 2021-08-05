@@ -20,23 +20,48 @@
 // THE SOFTWARE.
 //
 
-#ifndef SERVERSLISTWINDOW_H
-#define SERVERSLISTWINDOW_H
+#ifndef ITEMSLISTWINDOW_H
+#define ITEMSLISTWINDOW_H
 
-#include "StartGameWindow.h"
+#include "Widget.h"
 
-class ServersListWindow : public StartGameWindow
+namespace Urho3D
 {
-	URHO3D_OBJECT(ServersListWindow, StartGameWindow)
+class CheckBox;
+class LineEdit;
+class ListView;
+} // namespace Urho3D
+
+class ItemsListWindow : public Widget
+{
+	URHO3D_OBJECT(ItemsListWindow, Widget)
 
 public:
-	explicit ServersListWindow(Urho3D::Context* context);
+	explicit ItemsListWindow(Urho3D::Context* context);
+
+	void AddGame(const Urho3D::String& caption, const Urho3D::String& gameName);
+	void ClearGamesList();
+
+	void SetTitle(const Urho3D::String& title);
+	void SetServerSettingsVisible(bool visible);
 
 private:
-	void Start(const Urho3D::String& gameName) override;
-	void Start(const Urho3D::String&, const Urho3D::String&, const Urho3D::String&) override {}
+	virtual void Start(const Urho3D::String& gameName) = 0;
+	virtual void
+	Start(const Urho3D::String& gameName, const Urho3D::String& serverName, const Urho3D::String& serverPass) = 0;
 
-	void OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void SetServerPanelVisible(bool visible);
+
+	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnStart(Urho3D::StringHash, Urho3D::VariantMap&);
+
+	Urho3D::ListView* gamesList_;
+	Urho3D::UIElement* serverPanel_;
+	Urho3D::UIElement* spawnedButton_;
+	Urho3D::CheckBox* server_;
+	Urho3D::LineEdit* serverName_;
+	Urho3D::LineEdit* serverPass_;
 };
 
-#endif // SERVERSLISTWINDOW_H
+#endif // ITEMSLISTWINDOW_H

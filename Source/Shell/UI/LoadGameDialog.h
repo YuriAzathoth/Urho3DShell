@@ -20,36 +20,17 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Network/Network.h>
-#include <Urho3D/Network/NetworkEvents.h>
-#include "Core/Shell.h"
-#include "Network/ServerDefs.h"
-#include "ServersListWindow.h"
+#ifndef LOADGAMEDIALOG_H
+#define LOADGAMEDIALOG_H
 
-using namespace Urho3D;
+#include "HostItemsListWindow.h"
 
-ServersListWindow::ServersListWindow(Urho3D::Context* context)
-	: StartGameWindow(context)
+class LoadGameDialog : public HostItemsListWindow
 {
-	SetServerSettingsVisible(false);
-	SetInteractive(true);
-	SetTitle("ConnectToServer");
+	URHO3D_OBJECT(LoadGameDialog, HostItemsListWindow)
 
-	SubscribeToEvent(E_NETWORKHOSTDISCOVERED, URHO3D_HANDLER(ServersListWindow, OnNetworkHostDiscovered));
+public:
+	explicit LoadGameDialog(Urho3D::Context* context);
+};
 
-	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<Shell>()->GetPort());
-}
-
-void ServersListWindow::Start(const Urho3D::String& gameName) { GetSubsystem<Shell>()->StartClient(gameName); }
-
-void ServersListWindow::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)
-{
-	using namespace NetworkHostDiscovered;
-	const VariantMap& hostBeacon = eventData[P_BEACON].GetVariantMap();
-	if (!hostBeacon.Empty())
-	{
-		const String& address = eventData[P_ADDRESS].GetString();
-		const String& serverName = hostBeacon[SV_NAME]->GetString();
-		AddGame(serverName, address);
-	}
-}
+#endif // LOADGAMEDIALOG_H

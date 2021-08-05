@@ -20,25 +20,31 @@
 // THE SOFTWARE.
 //
 
-#ifndef MAINMENUWINDOW_H
-#define MAINMENUWINDOW_H
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
 #include "Widget.h"
 
-class MainMenuWindow : public Widget
+namespace Urho3D
 {
-	URHO3D_OBJECT(MainMenuWindow, Widget)
+class ListView;
+}
+
+class SettingsDialog : public Widget
+{
+	URHO3D_OBJECT(SettingsDialog, Widget)
 
 public:
-	explicit MainMenuWindow(Urho3D::Context* context);
+	explicit SettingsDialog(Urho3D::Context* context);
 
 private:
-	void OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnConnect(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnMods(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnSettings(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnExit(Urho3D::StringHash, Urho3D::VariantMap&);
+	void ShowSettingsTab(Urho3D::StringHash settingsTab);
+
+	void OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&);
+
+	Urho3D::ListView* settings_;
 };
 
-#endif // MAINMENUWINDOW_H
+#endif // SETTINGSDIALOG_H

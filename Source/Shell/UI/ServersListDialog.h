@@ -20,17 +20,23 @@
 // THE SOFTWARE.
 //
 
-#ifndef LOADGAMEMENU_H
-#define LOADGAMEMENU_H
+#ifndef SERVERSLISTDIALOG_H
+#define SERVERSLISTDIALOG_H
 
-#include "CreateServerWindow.h"
+#include "ItemsListWindow.h"
 
-class LoadGameMenu : public CreateServerWindow
+class ServersListDialog : public ItemsListWindow
 {
-	URHO3D_OBJECT(LoadGameMenu, CreateServerWindow)
+	URHO3D_OBJECT(ServersListDialog, ItemsListWindow)
 
 public:
-	explicit LoadGameMenu(Urho3D::Context* context);
+	explicit ServersListDialog(Urho3D::Context* context);
+
+private:
+	void Start(const Urho3D::String& gameName) override;
+	void Start(const Urho3D::String&, const Urho3D::String&, const Urho3D::String&) override {}
+
+	void OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
-#endif // LOADGAMEMENU_H
+#endif // SERVERSLISTDIALOG_H

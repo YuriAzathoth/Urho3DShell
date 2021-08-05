@@ -20,32 +20,12 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/IO/FileSystem.h>
-#include <Urho3D/IO/PackageFile.h>
-#include <Urho3D/Resource/ResourceCache.h>
-#include "NewGameMenu.h"
-
-#define SCENES_PATH "Scenes/"
+#include "LoadGameDialog.h"
 
 using namespace Urho3D;
 
-NewGameMenu::NewGameMenu(Urho3D::Context* context)
-	: CreateServerWindow(context)
+LoadGameDialog::LoadGameDialog(Urho3D::Context* context)
+	: HostItemsListWindow(context)
 {
-	SetTitle("NewGame");
-
-	StringVector resources;
-	for (const SharedPtr<PackageFile>& package : GetSubsystem<ResourceCache>()->GetPackageFiles())
-	{
-		resources = package->GetEntryNames();
-		for (const String& filename : resources)
-			if (filename.StartsWith(SCENES_PATH) &&
-				(filename.EndsWith(".xml") || filename.EndsWith(".bin") || filename.EndsWith(".json")))
-				AddGame(filename.Replaced(SCENES_PATH, ""), filename);
-	}
-
-	StringVector files;
-	GetSubsystem<FileSystem>()->ScanDir(files, "Scenes/", "*.xml|*.bin|*.json", SCAN_FILES, true);
-	for (const String& filename : files)
-		AddGame(filename.Replaced(SCENES_PATH, ""), filename);
+	SetTitle("LoadGame");
 }

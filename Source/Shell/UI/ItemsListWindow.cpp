@@ -26,13 +26,13 @@
 #include <Urho3D/UI/ListView.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIEvents.h>
-#include "StartGameWindow.h"
+#include "ItemsListWindow.h"
 
 using namespace Urho3D;
 
 static const StringHash VAR_GAMENAME = "GameName";
 
-StartGameWindow::StartGameWindow(Urho3D::Context* context)
+ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
 	: Widget(context)
 	, spawnedButton_(nullptr)
 {
@@ -48,11 +48,11 @@ StartGameWindow::StartGameWindow(Urho3D::Context* context)
 	SetServerPanelVisible(false);
 
 	BindButtonToClose(root_->GetChild("CloseButton", true));
-	SubscribeToEvent(gamesList_, E_ITEMSELECTED, URHO3D_HANDLER(StartGameWindow, OnItemSelected));
-	SubscribeToEvent(root_->GetChild("Server", true), E_TOGGLED, URHO3D_HANDLER(StartGameWindow, OnServerToggled));
+	SubscribeToEvent(gamesList_, E_ITEMSELECTED, URHO3D_HANDLER(ItemsListWindow, OnItemSelected));
+	SubscribeToEvent(root_->GetChild("Server", true), E_TOGGLED, URHO3D_HANDLER(ItemsListWindow, OnServerToggled));
 }
 
-void StartGameWindow::AddGame(const Urho3D::String& caption, const Urho3D::String& gameName)
+void ItemsListWindow::AddGame(const Urho3D::String& caption, const Urho3D::String& gameName)
 {
 	SharedPtr<UIElement> item = MakeShared<UIElement>(context_);
 	gamesList_->AddItem(item);
@@ -65,30 +65,30 @@ void StartGameWindow::AddGame(const Urho3D::String& caption, const Urho3D::Strin
 	text->SetStyleAuto();
 }
 
-void StartGameWindow::ClearGamesList()
+void ItemsListWindow::ClearGamesList()
 {
 	spawnedButton_ = nullptr;
 	gamesList_->RemoveAllItems();
 }
 
-void StartGameWindow::SetTitle(const Urho3D::String& title)
+void ItemsListWindow::SetTitle(const Urho3D::String& title)
 {
 	GetRoot()->GetChildStaticCast<Text>("Title", true)->SetText(title);
 }
 
-void StartGameWindow::SetServerSettingsVisible(bool visible)
+void ItemsListWindow::SetServerSettingsVisible(bool visible)
 {
 	GetRoot()->GetChild("ServerCheckbox", true)->SetVisible(visible);
 	SetServerPanelVisible(visible ? server_->IsChecked() : false);
 }
 
-void StartGameWindow::SetServerPanelVisible(bool visible)
+void ItemsListWindow::SetServerPanelVisible(bool visible)
 {
 	serverPanel_->SetVisible(visible);
 	ShrinkSize();
 }
 
-void StartGameWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&)
+void ItemsListWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	if (spawnedButton_)
 		spawnedButton_->Remove();
@@ -103,16 +103,16 @@ void StartGameWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&)
 	caption->SetAutoLocalizable(true);
 	caption->SetStyleAuto();
 
-	spawnedButton_->SubscribeToEvent(spawnedButton_, E_PRESSED, URHO3D_HANDLER(StartGameWindow, OnStart));
+	spawnedButton_->SubscribeToEvent(spawnedButton_, E_PRESSED, URHO3D_HANDLER(ItemsListWindow, OnStart));
 }
 
-void StartGameWindow::OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+void ItemsListWindow::OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
 	using namespace Toggled;
 	SetServerPanelVisible(eventData[P_STATE].GetBool());
 }
 
-void StartGameWindow::OnStart(Urho3D::StringHash, Urho3D::VariantMap&)
+void ItemsListWindow::OnStart(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	const UIElement* item = spawnedButton_->GetParent();
 	const String& gameName = item->GetVar(VAR_GAMENAME).GetString();

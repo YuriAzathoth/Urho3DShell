@@ -20,17 +20,17 @@
 // THE SOFTWARE.
 //
 
-#ifndef NEWGAMEMENU_H
-#define NEWGAMEMENU_H
+#ifndef NEWGAMEDIALOG_H
+#define NEWGAMEDIALOG_H
 
-#include "CreateServerWindow.h"
+#include "HostItemsListWindow.h"
 
-class NewGameMenu : public CreateServerWindow
+class NewGameDialog : public HostItemsListWindow
 {
-	URHO3D_OBJECT(NewGameMenu, CreateServerWindow)
+	URHO3D_OBJECT(NewGameDialog, HostItemsListWindow)
 
 public:
-	explicit NewGameMenu(Urho3D::Context* context);
+	explicit NewGameDialog(Urho3D::Context* context);
 };
 
-#endif // NEWGAMEMENU_H
+#endif // NEWGAMEDIALOG_H

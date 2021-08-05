@@ -20,12 +20,36 @@
 // THE SOFTWARE.
 //
 
-#include "LoadGameMenu.h"
+#include <Urho3D/Network/Network.h>
+#include <Urho3D/Network/NetworkEvents.h>
+#include "Core/Shell.h"
+#include "Network/ServerDefs.h"
+#include "ServersListDialog.h"
 
 using namespace Urho3D;
 
-LoadGameMenu::LoadGameMenu(Urho3D::Context* context)
-	: CreateServerWindow(context)
+ServersListDialog::ServersListDialog(Urho3D::Context* context)
+	: ItemsListWindow(context)
 {
-	SetTitle("LoadGame");
+	SetServerSettingsVisible(false);
+	SetInteractive(true);
+	SetTitle("ConnectToServer");
+
+	SubscribeToEvent(E_NETWORKHOSTDISCOVERED, URHO3D_HANDLER(ServersListDialog, OnNetworkHostDiscovered));
+
+	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<Shell>()->GetPort());
+}
+
+void ServersListDialog::Start(const Urho3D::String& gameName) { GetSubsystem<Shell>()->StartClient(gameName); }
+
+void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace NetworkHostDiscovered;
+	const VariantMap& hostBeacon = eventData[P_BEACON].GetVariantMap();
+	if (!hostBeacon.Empty())
+	{
+		const String& address = eventData[P_ADDRESS].GetString();
+		const String& serverName = hostBeacon[SV_NAME]->GetString();
+		AddGame(serverName, address);
+	}
 }

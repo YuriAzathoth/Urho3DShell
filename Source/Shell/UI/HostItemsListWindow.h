@@ -20,17 +20,17 @@
 // THE SOFTWARE.
 //
 
-#ifndef CREATESERVERWINDOW_H
-#define CREATESERVERWINDOW_H
+#ifndef HOSTITEMSLISTWINDOW_H
+#define HOSTITEMSLISTWINDOW_H
 
-#include "StartGameWindow.h"
+#include "ItemsListWindow.h"
 
-class CreateServerWindow : public StartGameWindow
+class HostItemsListWindow : public ItemsListWindow
 {
-	URHO3D_OBJECT(CreateServerWindow, StartGameWindow)
+	URHO3D_OBJECT(HostItemsListWindow, ItemsListWindow)
 
 public:
-	using StartGameWindow::StartGameWindow;
+	using ItemsListWindow::ItemsListWindow;
 
 private:
 	void Start(const Urho3D::String& gameName) override;
@@ -38,4 +38,4 @@ private:
 	Start(const Urho3D::String& gameName, const Urho3D::String& serverName, const Urho3D::String& serverPass) override;
 };
 
-#endif // CREATESERVERWINDOW_H
+#endif // HOSTITEMSLISTWINDOW_H

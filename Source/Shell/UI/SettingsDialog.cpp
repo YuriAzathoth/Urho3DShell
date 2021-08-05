@@ -25,21 +25,21 @@
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIEvents.h>
 #include "Config/Config.h"
-#include "SettingsWindow.h"
+#include "SettingsDialog.h"
 
 using namespace Urho3D;
 
-SettingsWindow::SettingsWindow(Urho3D::Context* context)
+SettingsDialog::SettingsDialog(Urho3D::Context* context)
 	: Widget(context)
 {
 	LoadLayout("UI/Settings.xml");
 	SetCloseable(true);
 	SetInteractive(true);
 
-	SubscribeToEvent(root_->GetChild("CloseButton", true), E_PRESSED, URHO3D_HANDLER(SettingsWindow, OnClosePressed));
-	SubscribeToEvent(root_->GetChild("Cancel", true), E_PRESSED, URHO3D_HANDLER(SettingsWindow, OnClosePressed));
-	SubscribeToEvent(root_->GetChild("Ok", true), E_PRESSED, URHO3D_HANDLER(SettingsWindow, OnOkPressed));
-	SubscribeToEvent(root_->GetChild("Apply", true), E_PRESSED, URHO3D_HANDLER(SettingsWindow, OnApplyPressed));
+	SubscribeToEvent(root_->GetChild("CloseButton", true), E_PRESSED, URHO3D_HANDLER(SettingsDialog, OnClosePressed));
+	SubscribeToEvent(root_->GetChild("Cancel", true), E_PRESSED, URHO3D_HANDLER(SettingsDialog, OnClosePressed));
+	SubscribeToEvent(root_->GetChild("Ok", true), E_PRESSED, URHO3D_HANDLER(SettingsDialog, OnOkPressed));
+	SubscribeToEvent(root_->GetChild("Apply", true), E_PRESSED, URHO3D_HANDLER(SettingsDialog, OnApplyPressed));
 
 	settings_ = root_->GetChildStaticCast<ListView>("SettingsList", true);
 
@@ -71,7 +71,7 @@ SettingsWindow::SettingsWindow(Urho3D::Context* context)
 	ShowSettingsTab(tabs[0]);
 }
 
-void SettingsWindow::ShowSettingsTab(Urho3D::StringHash settingsTab)
+void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)
 {
 	Config* config = GetSubsystem<Config>();
 	const StringVector settings = config->GetSettings(settingsTab);
@@ -92,15 +92,15 @@ void SettingsWindow::ShowSettingsTab(Urho3D::StringHash settingsTab)
 	}
 }
 
-void SettingsWindow::OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&)
+void SettingsDialog::OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	GetSubsystem<Config>()->Apply();
 	Close();
 }
 
-void SettingsWindow::OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&) { GetSubsystem<Config>()->Apply(); }
+void SettingsDialog::OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&) { GetSubsystem<Config>()->Apply(); }
 
-void SettingsWindow::OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&)
+void SettingsDialog::OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	GetSubsystem<Config>()->Clear();
 	Close();
