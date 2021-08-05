@@ -59,7 +59,7 @@ public:
 			, value_(value)
 		{
 		}
-		EnumVariant(const EnumVariant& src) // = default;
+		EnumVariant(const EnumVariant& src)
 			: caption_(src.caption_)
 			, value_(src.value_)
 		{
