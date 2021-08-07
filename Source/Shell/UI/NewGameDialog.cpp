@@ -41,11 +41,11 @@ NewGameDialog::NewGameDialog(Urho3D::Context* context)
 		for (const String& filename : resources)
 			if (filename.StartsWith(SCENES_PATH) &&
 				(filename.EndsWith(".xml") || filename.EndsWith(".bin") || filename.EndsWith(".json")))
-				AddGame(filename.Replaced(SCENES_PATH, ""), filename);
+				AddItem(filename.Replaced(SCENES_PATH, ""), filename);
 	}
 
 	StringVector files;
 	GetSubsystem<FileSystem>()->ScanDir(files, "Scenes/", "*.xml|*.bin|*.json", SCAN_FILES, true);
 	for (const String& filename : files)
-		AddGame(filename.Replaced(SCENES_PATH, ""), filename);
+		AddItem(filename.Replaced(SCENES_PATH, ""), filename);
 }

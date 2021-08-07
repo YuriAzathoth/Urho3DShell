@@ -33,7 +33,7 @@ public:
 	explicit ServersListDialog(Urho3D::Context* context);
 
 private:
-	void Start(const Urho3D::String& gameName) override;
+	void Start(const Urho3D::String& itemName) override;
 	void Start(const Urho3D::String&, const Urho3D::String&, const Urho3D::String&) override {}
 
 	void OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData);

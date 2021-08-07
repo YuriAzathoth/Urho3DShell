@@ -39,16 +39,16 @@ class URHO3DSHELLAPI_EXPORT ItemsListWindow : public Dialog
 public:
 	explicit ItemsListWindow(Urho3D::Context* context);
 
-	void AddGame(const Urho3D::String& caption, const Urho3D::String& gameName);
-	void ClearGamesList();
+	void AddItem(const Urho3D::String& caption, const Urho3D::String& itemName);
+	void RemoveAllItems();
 
 	void SetTitle(const Urho3D::String& title);
 	void SetServerSettingsVisible(bool visible);
 
 private:
-	virtual void Start(const Urho3D::String& gameName) = 0;
+	virtual void Start(const Urho3D::String& itemName) = 0;
 	virtual void
-	Start(const Urho3D::String& gameName, const Urho3D::String& serverName, const Urho3D::String& serverPass) = 0;
+	Start(const Urho3D::String& itemName, const Urho3D::String& serverName, const Urho3D::String& serverPass) = 0;
 
 	void SetServerPanelVisible(bool visible);
 
@@ -56,7 +56,7 @@ private:
 	void OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnStart(Urho3D::StringHash, Urho3D::VariantMap&);
 
-	Urho3D::ListView* gamesList_;
+	Urho3D::ListView* itemList_;
 	Urho3D::UIElement* serverPanel_;
 	Urho3D::UIElement* spawnedButton_;
 	Urho3D::CheckBox* server_;

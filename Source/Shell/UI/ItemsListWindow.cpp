@@ -37,7 +37,7 @@ ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
 	, spawnedButton_(nullptr)
 {
 	LoadLayout("UI/GamesMenu.xml");
-	gamesList_ = root_->GetChildStaticCast<ListView>("GamesList", true);
+	itemList_ = root_->GetChildStaticCast<ListView>("GamesList", true);
 	serverPanel_ = root_->GetChild("ServerPanel", true);
 	server_ = root_->GetChildStaticCast<CheckBox>("Server", true);
 	serverName_ = root_->GetChildStaticCast<LineEdit>("ServerName", true);
@@ -48,15 +48,15 @@ ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
 	SetServerPanelVisible(false);
 
 	BindButtonToClose(root_->GetChild("CloseButton", true));
-	SubscribeToEvent(gamesList_, E_ITEMSELECTED, URHO3D_HANDLER(ItemsListWindow, OnItemSelected));
+	SubscribeToEvent(itemList_, E_ITEMSELECTED, URHO3D_HANDLER(ItemsListWindow, OnItemSelected));
 	SubscribeToEvent(root_->GetChild("Server", true), E_TOGGLED, URHO3D_HANDLER(ItemsListWindow, OnServerToggled));
 }
 
-void ItemsListWindow::AddGame(const Urho3D::String& caption, const Urho3D::String& gameName)
+void ItemsListWindow::AddItem(const Urho3D::String& caption, const Urho3D::String& itemName)
 {
 	SharedPtr<UIElement> item = MakeShared<UIElement>(context_);
-	gamesList_->AddItem(item);
-	item->SetVar(VAR_GAMENAME, gameName);
+	itemList_->AddItem(item);
+	item->SetVar(VAR_GAMENAME, itemName);
 	item->SetLayout(LM_HORIZONTAL, 0, {4, 4, 4, 4});
 	item->SetStyleAuto();
 
@@ -65,10 +65,10 @@ void ItemsListWindow::AddGame(const Urho3D::String& caption, const Urho3D::Strin
 	text->SetStyleAuto();
 }
 
-void ItemsListWindow::ClearGamesList()
+void ItemsListWindow::RemoveAllItems()
 {
 	spawnedButton_ = nullptr;
-	gamesList_->RemoveAllItems();
+	itemList_->RemoveAllItems();
 }
 
 void ItemsListWindow::SetTitle(const Urho3D::String& title)
@@ -93,7 +93,7 @@ void ItemsListWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&)
 	if (spawnedButton_)
 		spawnedButton_->Remove();
 
-	spawnedButton_ = gamesList_->GetSelectedItem()->CreateChild<Button>();
+	spawnedButton_ = itemList_->GetSelectedItem()->CreateChild<Button>();
 	spawnedButton_->SetLayout(LM_VERTICAL, 0, {4, 4, 4, 4});
 	spawnedButton_->SetStyleAuto();
 

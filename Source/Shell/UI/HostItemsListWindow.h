@@ -33,9 +33,9 @@ public:
 	using ItemsListWindow::ItemsListWindow;
 
 private:
-	void Start(const Urho3D::String& gameName) override;
+	void Start(const Urho3D::String& itemName) override;
 	void
-	Start(const Urho3D::String& gameName, const Urho3D::String& serverName, const Urho3D::String& serverPass) override;
+	Start(const Urho3D::String& itemName, const Urho3D::String& serverName, const Urho3D::String& serverPass) override;
 };
 
 #endif // HOSTITEMSLISTWINDOW_H

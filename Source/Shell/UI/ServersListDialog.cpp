@@ -40,7 +40,7 @@ ServersListDialog::ServersListDialog(Urho3D::Context* context)
 	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<Shell>()->GetPort());
 }
 
-void ServersListDialog::Start(const Urho3D::String& gameName) { GetSubsystem<Shell>()->StartClient(gameName); }
+void ServersListDialog::Start(const Urho3D::String& itemName) { GetSubsystem<Shell>()->StartClient(itemName); }
 
 void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
@@ -50,6 +50,6 @@ void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::Vari
 	{
 		const String& address = eventData[P_ADDRESS].GetString();
 		const String& serverName = hostBeacon[SV_NAME]->GetString();
-		AddGame(serverName, address);
+		AddItem(serverName, address);
 	}
 }
