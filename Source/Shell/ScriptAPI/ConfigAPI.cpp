@@ -101,7 +101,7 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_CALL_THISCALL);
 
 	engine->RegisterObjectMethod("Config",
-								 "String get_debugString()",
+								 "String get_debugString() const",
 								 AS_METHOD(Config, GetDebugString),
 								 AS_CALL_THISCALL);
 }

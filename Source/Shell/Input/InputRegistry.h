@@ -20,20 +20,35 @@
 // THE SOFTWARE.
 //
 
-#include "ScriptAPI.h"
+#ifndef INPUTREGISTRY_H
+#define INPUTREGISTRY_H
 
-void RegisterConfigAPI(asIScriptEngine* engine);
-void RegisterInputRegistryAPI(asIScriptEngine* engine);
-void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
-void RegisterShellAPI(asIScriptEngine* engine);
-void RegisterUIControllerAPI(asIScriptEngine* engine);
+#include <Urho3D/Core/Object.h>
+#include "Urho3DShellAPI.h"
 
-void RegisterClientAPI(asIScriptEngine* engine) { RegisterUIControllerAPI(engine); }
-
-void RegisterServerAPI(asIScriptEngine* engine)
+class URHO3DSHELLAPI_EXPORT InputRegistry : public Urho3D::Object
 {
-	RegisterConfigAPI(engine);
-	RegisterInputRegistryAPI(engine);
-	RegisterPluginsRegistryAPI(engine);
-	RegisterShellAPI(engine);
-}
+	URHO3D_OBJECT(InputRegistry, Urho3D::Object)
+
+public:
+	explicit InputRegistry(Urho3D::Context* context);
+
+	void RegisterActionLocal(const Urho3D::String& actionName);
+	unsigned RegisterActionRemote(const Urho3D::String& actionName);
+	void RemoveAction(Urho3D::StringHash action);
+	void RemoveAllActions();
+
+	unsigned GetActionFlag(Urho3D::StringHash action) const;
+	const Urho3D::String& GetActionName(Urho3D::StringHash action) const;
+	Urho3D::StringVector GetActions() const;
+
+	Urho3D::String GetDebugString() const;
+
+private:
+	Urho3D::PODVector<Urho3D::StringHash> ordered_;
+	Urho3D::HashMap<Urho3D::StringHash, unsigned> remoteFlags_;
+	Urho3D::StringMap names_;
+	unsigned lastRemoteFlag_;
+};
+
+#endif // INPUTREGISTRY_H

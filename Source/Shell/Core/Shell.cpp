@@ -37,6 +37,7 @@
 #include <Urho3D/UI/UI.h>
 #include <boost/filesystem.hpp>
 #include "Config/Config.h"
+#include "Input/InputRegistry.h"
 #include "Network/Client.h"
 #include "Network/Server.h"
 #include "Plugin/PluginsRegistry.h"
@@ -63,6 +64,7 @@ Shell::Shell(Urho3D::Context* context)
 	context_->RegisterSubsystem<Script>();
 	context_->RegisterSubsystem<Config>();
 	context_->RegisterSubsystem<PluginsRegistry>();
+	context_->RegisterSubsystem<InputRegistry>();
 }
 
 Shell::~Shell()
