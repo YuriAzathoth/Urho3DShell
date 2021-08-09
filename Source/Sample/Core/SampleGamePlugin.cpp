@@ -32,7 +32,7 @@
 
 using namespace Urho3D;
 
-static const String s_pluginName = "Sample game";
+static const String PLUGIN_NAME = "Sample game";
 
 SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	: PluginInterface(context)
@@ -41,7 +41,7 @@ SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(SampleGamePlugin, OnServerSideSpawned));
 }
 
-const Urho3D::String& SampleGamePlugin::GetName() const { return s_pluginName; }
+const Urho3D::String& SampleGamePlugin::GetName() const { return PLUGIN_NAME; }
 
 void SampleGamePlugin::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
