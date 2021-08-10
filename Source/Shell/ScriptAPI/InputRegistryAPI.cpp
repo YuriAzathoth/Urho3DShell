@@ -84,7 +84,7 @@ void RegisterInputRegistryAPI(asIScriptEngine* engine)
 								 AS_METHOD(InputRegistry, GetActionName),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("InputRegistry",
-								 "Array<String>@ get_actionsHandlers() const",
+								 "Array<StringHash>@ get_actionsHandlers() const",
 								 AS_FUNCTION_OBJFIRST(GetActionsHandlers<InputRegistry>),
 								 AS_CALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("InputRegistry",
