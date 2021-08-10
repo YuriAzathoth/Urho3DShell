@@ -20,42 +20,14 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Network/Network.h>
-#include <Urho3D/Scene/SceneEvents.h>
-#include "Client.h"
-#include "Core/Shell.h"
-#include "Core/ShellEvents.h"
-#include "NetworkEvents.h"
-#include "ServerDefs.h"
+#ifndef NETWORKEVENTS_H
+#define NETWORKEVENTS_H
 
-using namespace Urho3D;
+#include <Urho3D/Core/Object.h>
 
-Client::Client(Urho3D::Context* context)
-	: Object(context)
-	, scene_(context)
-{
-}
+URHO3D_EVENT(E_REMOTECLIENTSTARTED, RemoteClientStarted) {}
+URHO3D_EVENT(E_REMOTECLIENTSTOPPED, RemoteClientStopped) {}
+URHO3D_EVENT(E_REMOTESERVERSTARTED, RemoteServerStarted) {}
+URHO3D_EVENT(E_REMOTESERVERSTOPPED, RemoteServerStopped) {}
 
-Client::~Client() { Disconnect(); }
-
-void Client::Connect(const Urho3D::String& address)
-{
-	VariantMap identity;
-	identity[CL_NAME] = "SimpleName";
-
-	GetSubsystem<Network>()->Connect(address, GetSubsystem<Shell>()->GetPort(), &scene_, identity);
-
-	SendEvent(E_REMOTECLIENTSTARTED);
-}
-
-void Client::Disconnect()
-{
-	Network* network = GetSubsystem<Network>();
-	if (network->GetServerConnection())
-	{
-		network->Disconnect();
-		SendEvent(E_REMOTECLIENTSTOPPED);
-	}
-}
-
-void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&) {}
+#endif // NETWORKEVENTS_H

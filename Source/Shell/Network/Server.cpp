@@ -26,6 +26,7 @@
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/Scene/SceneEvents.h>
+#include "NetworkEvents.h"
 #include "Server.h"
 #include "ServerDefs.h"
 
@@ -74,7 +75,10 @@ void Server::Stop()
 {
 	Network* network = GetSubsystem<Network>();
 	if (network->IsServerRunning())
+	{
 		network->StopServer();
+		SendEvent(E_REMOTESERVERSTOPPED);
+	}
 	remote_ = false;
 }
 
@@ -84,6 +88,7 @@ void Server::MakeVisible(const Urho3D::String& serverName)
 	hostBeacon[SV_NAME] = serverName;
 	GetSubsystem<Network>()->SetDiscoveryBeacon(hostBeacon);
 	remote_ = true;
+	SendEvent(E_REMOTESERVERSTARTED);
 }
 
 void Server::OnClientConnected(Urho3D::StringHash, Urho3D::VariantMap& eventData)

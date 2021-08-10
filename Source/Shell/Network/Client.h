@@ -36,6 +36,7 @@ public:
 	~Client();
 
 	void Connect(const Urho3D::String& address = "localhost");
+	void Disconnect();
 
 private:
 	void OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
