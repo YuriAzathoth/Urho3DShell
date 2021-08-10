@@ -43,6 +43,7 @@
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
+#include "ShellEvents.h"
 #include "UI/UIController.h"
 
 #define CONFIG_ROOT "config"
@@ -108,12 +109,6 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 
 void Shell::Initialize()
 {
-	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
-	pluginsRegistry->RegisterPlugin(gameLibrary_);
-	const auto itScript = shellParameters_.Find(LP_SCRIPT);
-	if (itScript != shellParameters_.End())
-		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
-
 	shellParameters_.Clear();
 
 	if (client_)
@@ -130,10 +125,19 @@ void Shell::Initialize()
 		debugHud->SetDefaultStyle(styleFile);
 
 		context_->RegisterSubsystem<UIController>();
+
 		StartMainMenu();
 
 		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
+
+		SendEvent(E_SHELLCLIENTSTARTED);
 	}
+
+	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
+	pluginsRegistry->RegisterPlugin(gameLibrary_);
+	const auto itScript = shellParameters_.Find(LP_SCRIPT);
+	if (itScript != shellParameters_.End())
+		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
 
 	GetSubsystem<Config>()->Apply(false);
 }
