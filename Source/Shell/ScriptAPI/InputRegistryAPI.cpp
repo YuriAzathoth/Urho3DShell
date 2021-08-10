@@ -35,6 +35,12 @@ template <typename T> static CScriptArray* GetActions(T* _ptr)
 	return VectorToArray<String>(result, "Array<String>");
 }
 
+template <typename T> static CScriptArray* GetActionsHandlers(T* _ptr)
+{
+	const PODVector<StringHash>& result = _ptr->GetActionsHandlers();
+	return VectorToArray<StringHash>(result, "Array<StringHash>");
+}
+
 void RegisterInputRegistryAPI(asIScriptEngine* engine)
 {
 	engine->RegisterObjectType("InputRegistry", 0, asOBJ_REF);
@@ -77,6 +83,10 @@ void RegisterInputRegistryAPI(asIScriptEngine* engine)
 								 "const String& GetActionName(StringHash) const",
 								 AS_METHOD(InputRegistry, GetActionName),
 								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("InputRegistry",
+								 "Array<String>@ get_actionsHandlers() const",
+								 AS_FUNCTION_OBJFIRST(GetActionsHandlers<InputRegistry>),
+								 AS_CALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("InputRegistry",
 								 "Array<String>@ get_actions() const",
 								 AS_FUNCTION_OBJFIRST(GetActions<InputRegistry>),
