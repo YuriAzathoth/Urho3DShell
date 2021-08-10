@@ -60,6 +60,7 @@ public:
 
 	unsigned short GetPort() const noexcept { return port_; }
 	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
+	bool IsClientLaunched() const noexcept { return client_; }
 
 private:
 	bool PreconfigureEngine();
