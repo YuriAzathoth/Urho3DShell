@@ -108,9 +108,11 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 
 void Shell::Initialize()
 {
+	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
+	pluginsRegistry->RegisterPlugin(gameLibrary_);
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
 	if (itScript != shellParameters_.End())
-		GetSubsystem<PluginsRegistry>()->RegisterPlugin(itScript->second_.GetString());
+		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
 
 	shellParameters_.Clear();
 
@@ -153,8 +155,8 @@ bool Shell::PreconfigureEngine()
 	if (libraryNameValue.IsNull())
 		return false;
 
-	const String& libraryName = libraryNameValue.GetString();
-	if (libraryName.Empty())
+	gameLibrary_ = libraryNameValue.GetString();
+	if (gameLibrary_.Empty())
 		return false;
 
 	const JSONValue& dirNameValue = root.Get("dir");
@@ -165,7 +167,7 @@ bool Shell::PreconfigureEngine()
 	if (gameName_.Empty())
 		return false;
 
-	return GetSubsystem<PluginsRegistry>()->RegisterPlugin(libraryName);
+	return true;
 }
 
 void Shell::StartMainMenu()

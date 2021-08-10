@@ -78,6 +78,7 @@ private:
 	Urho3D::VariantMap shellParameters_;
 	Urho3D::String appName_;
 	Urho3D::String gameName_;
+	Urho3D::String gameLibrary_;
 	Urho3D::String profileName_;
 	Urho3D::String userDataPath_;
 	unsigned short port_; // TODO: Move to something else location
