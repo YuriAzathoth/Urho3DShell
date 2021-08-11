@@ -102,14 +102,14 @@ Urho3D::String InputRegistry::GetDebugString() const
 	Urho3D::HashMap<Urho3D::StringHash, unsigned>::ConstIterator it;
 	for (const StringHash action : ordered_)
 	{
-		ret.Append("Name: ").Append(*names_[action]);
+		ret.Append("Name: ").Append(*names_[action]).Append("\n");
 		it = remoteFlags_.Find(action);
 		if (it == remoteFlags_.End())
 			ret.Append("\tType: Local\n");
 		else
 		{
 			ret.Append("\tType: Remote\n");
-			ret.Append("\tFlag: %u\n", it->second_);
+			ret.Append(ToString("\tFlag: %u\n", it->second_));
 		}
 	}
 	return ret;
