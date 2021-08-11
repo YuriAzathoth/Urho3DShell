@@ -64,8 +64,8 @@ Shell::Shell(Urho3D::Context* context)
 {
 	context_->RegisterSubsystem<Script>();
 	context_->RegisterSubsystem<Config>();
-	context_->RegisterSubsystem<PluginsRegistry>();
 	context_->RegisterSubsystem<InputRegistry>();
+	context_->RegisterSubsystem<PluginsRegistry>();
 }
 
 Shell::~Shell()
@@ -242,10 +242,9 @@ void Shell::LoadProfile()
 	if (fileSystem->DirExists(path))
 	{
 		path = GetConfigFilename();
-		Config* config = GetSubsystem<Config>();
 		XMLFile file(context_);
 		if (fileSystem->FileExists(path) && file.LoadFile(path))
-			config->LoadXML(file.GetRoot(CONFIG_ROOT));
+			GetSubsystem<Config>()->LoadXML(file.GetRoot(CONFIG_ROOT));
 	}
 	else
 		fileSystem->CreateDir(path);
@@ -297,7 +296,7 @@ void Shell::LoadProfileName()
 
 void Shell::SaveProfileName()
 {
-	File file(context_, profileFile, FileMode::FILE_WRITE);
+	File file(context_, GetProfileFilename(), FileMode::FILE_WRITE);
 	file.WriteString(profileName_);
 }
 
