@@ -297,23 +297,8 @@ void Shell::LoadProfileName()
 
 void Shell::SaveProfileName()
 {
-	bool replaceFile = false;
-
-	const String profileFile = GetProfileFilename();
-	if (GetSubsystem<FileSystem>()->FileExists(profileFile))
-	{
-		File file(context_, profileFile, FILE_READ);
-		if (file.ReadString() != profileName_)
-			replaceFile = true;
-	}
-	else
-		replaceFile = true;
-
-	if (replaceFile)
-	{
-		File file(context_, profileFile, FileMode::FILE_WRITE);
-		file.WriteString(profileName_);
-	}
+	File file(context_, profileFile, FileMode::FILE_WRITE);
+	file.WriteString(profileName_);
 }
 
 Urho3D::String Shell::GetConfigFilename() const { return GetConfigPath() + appName_ + ".xml"; }
