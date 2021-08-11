@@ -24,24 +24,68 @@
 #include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/Viewport.h>
 #include <Urho3D/IO/Log.h>
-#include <Urho3D/Network/Connection.h>
+#include <Urho3D/Input/InputConstants.h>
+#include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Scene/Scene.h>
 #include "Core/ShellEvents.h"
+#include "GameEvents.h"
+#include "Input/InputRegistry.h"
+#include "Network/NetworkEvents.h"
 #include "SampleGamePlugin.h"
 
 using namespace Urho3D;
 
 static const String PLUGIN_NAME = "Sample game";
 
+static const String MOVE_FORWARD = "MoveForward";
+static const String MOVE_BACK = "MoveBack";
+static const String MOVE_LEFT = "MoveLeft";
+static const String MOVE_RIGHT = "MoveRight";
+
 SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	: PluginInterface(context)
 {
+	SubscribeToEvent(E_SHELLCLIENTSTARTED, URHO3D_HANDLER(SampleGamePlugin, OnShellClientStarted));
+	SubscribeToEvent(E_REMOTECLIENTSTARTED, URHO3D_HANDLER(SampleGamePlugin, OnRemoteClientStarted));
+	SubscribeToEvent(E_REMOTECLIENTSTOPPED, URHO3D_HANDLER(SampleGamePlugin, OnRemoteClientStopped));
+	SubscribeToEvent(E_REMOTESERVERSTARTED, URHO3D_HANDLER(SampleGamePlugin, OnRemoteServerStarted));
+	SubscribeToEvent(E_REMOTESERVERSTOPPED, URHO3D_HANDLER(SampleGamePlugin, OnRemoteServerStopped));
 	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(SampleGamePlugin, OnClientSceneLoaded));
 	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(SampleGamePlugin, OnServerSideSpawned));
+
+	InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
+	inputRegistry->RegisterActionRemote(MOVE_FORWARD);
+	inputRegistry->RegisterActionRemote(MOVE_BACK);
+	inputRegistry->RegisterActionRemote(MOVE_LEFT);
+	inputRegistry->RegisterActionRemote(MOVE_RIGHT);
 }
 
 const Urho3D::String& SampleGamePlugin::GetName() const { return PLUGIN_NAME; }
+
+void SampleGamePlugin::OnShellClientStarted(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+}
+
+void SampleGamePlugin::OnRemoteClientStarted(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	Network* network = GetSubsystem<Network>();
+	network->RegisterRemoteEvent(E_SERVERSIDESPAWNED);
+}
+
+void SampleGamePlugin::OnRemoteClientStopped(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	Network* network = GetSubsystem<Network>();
+	network->UnregisterAllRemoteEvents();
+}
+
+void SampleGamePlugin::OnRemoteServerStarted(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+}
+
+void SampleGamePlugin::OnRemoteServerStopped(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+}
 
 void SampleGamePlugin::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {

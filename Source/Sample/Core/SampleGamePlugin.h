@@ -37,6 +37,11 @@ public:
 	const Urho3D::String& GetName() const override;
 
 private:
+	void OnShellClientStarted(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnRemoteClientStarted(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnRemoteClientStopped(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnRemoteServerStarted(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnRemoteServerStopped(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
