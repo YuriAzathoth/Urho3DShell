@@ -54,14 +54,19 @@ public:
 		Urho3D::String caption_;
 		Urho3D::Variant value_;
 		EnumVariant() = default;
-		EnumVariant(Urho3D::String caption, Urho3D::Variant value)
+		EnumVariant(const char* caption, Urho3D::Variant value)
 			: caption_(caption)
 			, value_(value)
 		{
 		}
-		EnumVariant(const EnumVariant& src)
-			: caption_(src.caption_)
-			, value_(src.value_)
+		EnumVariant(const Urho3D::String& caption, Urho3D::Variant value)
+			: caption_(caption)
+			, value_(value)
+		{
+		}
+		EnumVariant(Urho3D::String&& caption, Urho3D::Variant value)
+			: caption_(std::move(caption))
+			, value_(value)
 		{
 		}
 	};
