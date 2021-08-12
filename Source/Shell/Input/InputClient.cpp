@@ -132,6 +132,15 @@ InputController* InputClient::GetController(Urho3D::StringHash controllerType) c
 	return nullptr;
 }
 
+Urho3D::StringVector InputClient::GetEnabledControllers() const
+{
+	StringVector ret;
+	ret.Reserve(enabledControllers_.Size());
+	for (const auto& p : enabledControllers_)
+		ret.Push(p.second_->GetTypeName());
+	return ret;
+}
+
 void InputClient::RemoveAllControllers()
 {
 	enabledControllers_.Clear();

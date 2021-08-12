@@ -47,6 +47,7 @@ public:
 	void EnableController(Urho3D::StringHash controllerType);
 	void DisableController(Urho3D::StringHash controllerType);
 	InputController* GetController(Urho3D::StringHash controllerType) const;
+	Urho3D::StringVector GetEnabledControllers() const;
 	void RemoveAllControllers();
 
 	template <typename T> T* RegisterController();
