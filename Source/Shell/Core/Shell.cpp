@@ -102,6 +102,7 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	LoadProfileName();
 	LoadProfile();
 	config->ExtractEngineParameters(engineParameters);
+
 	engineParameters[EP_LOG_NAME] = GetLogsFilename();
 
 	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
@@ -112,8 +113,6 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 
 void Shell::Initialize()
 {
-	shellParameters_.Clear();
-
 	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
 	pluginsRegistry->RegisterPlugin(gameLibrary_);
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
@@ -146,7 +145,8 @@ void Shell::Initialize()
 		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
 	}
 
-	GetSubsystem<Config>()->Apply(false);
+	GetSubsystem<Config>()->Apply(shellParameters_, false);
+	shellParameters_.Clear();
 }
 
 bool Shell::PreconfigureEngine()
@@ -251,7 +251,7 @@ void Shell::LoadProfile()
 		path = GetConfigFilename();
 		XMLFile file(context_);
 		if (fileSystem->FileExists(path) && file.LoadFile(path))
-			GetSubsystem<Config>()->LoadXML(file.GetRoot(CONFIG_ROOT));
+			GetSubsystem<Config>()->InitialLoadXML(shellParameters_, file.GetRoot(CONFIG_ROOT));
 	}
 	else
 		fileSystem->CreateDir(path);

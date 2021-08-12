@@ -67,10 +67,13 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_METHOD(Config, SaveXML),
 								 AS_CALL_THISCALL);
 
-	engine->RegisterObjectMethod("Config", "void Apply(bool)", AS_METHOD(Config, Apply), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "void Apply(const VariantMap&in, bool)",
+								 AS_METHOD(Config, Apply),
+								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config", "void Clear()", AS_METHOD(Config, Clear), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config",
-								 "void ExtractEngineParameters(VariantMap&) const",
+								 "void ExtractEngineParameters(VariantMap&, VariantMap&) const",
 								 AS_METHOD(Config, ExtractEngineParameters),
 								 AS_CALL_THISCALL);
 

@@ -79,12 +79,14 @@ public:
 
 	using Urho3D::Object::Object;
 
+	void InitialLoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source);
 	void LoadXML(const Urho3D::XMLElement& source);
 	void SaveXML(Urho3D::XMLElement& dst) const;
 
-	void Apply(bool engineToo = true);
+	void Apply(const Urho3D::VariantMap& parameters, bool engineToo = true);
 	void Clear();
-	void ExtractEngineParameters(Urho3D::VariantMap& dst);
+
+	void ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters);
 
 	void RegisterSettingsTab(const Urho3D::String& tabName);
 	void RemoveSettingsTab(Urho3D::StringHash tab);
@@ -182,8 +184,6 @@ private:
 		const Urho3D::StringHash name_;
 	};
 
-	using ParametersMap = Urho3D::HashMap<Urho3D::StringHash, Parameter>;
-
 	void CreateParameterBool(const Urho3D::String& parameterName, bool value, Urho3D::UIElement* parent);
 	void CreateParameterFloat(const Urho3D::String& parameterName, float value, Urho3D::UIElement* parent);
 	void
@@ -200,10 +200,9 @@ private:
 	void OnFloatTextChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnStringChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
-	ParametersMap parameters_;
+	Urho3D::HashMap<Urho3D::StringHash, Parameter> parameters_;
 	Urho3D::HashMap<Urho3D::StringHash, EnumConstructorFunc> enumConstructors_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<ComplexStorage>> storages_;
-	Urho3D::VariantMap changedParameters_;
 	Urho3D::HashMap<Urho3D::StringHash, SettingsTab> settings_;
 	Urho3D::StringMap names_;
 

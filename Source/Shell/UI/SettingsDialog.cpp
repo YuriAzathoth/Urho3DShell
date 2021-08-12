@@ -101,11 +101,14 @@ void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)
 
 void SettingsDialog::OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	GetSubsystem<Config>()->Apply();
+	GetSubsystem<Config>()->Apply(changedParameters_);
 	Close();
 }
 
-void SettingsDialog::OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&) { GetSubsystem<Config>()->Apply(); }
+void SettingsDialog::OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	GetSubsystem<Config>()->Apply(changedParameters_);
+}
 
 void SettingsDialog::OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&)
 {

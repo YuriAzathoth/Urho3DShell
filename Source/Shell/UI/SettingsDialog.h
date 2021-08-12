@@ -45,6 +45,7 @@ private:
 	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&);
 
+	Urho3D::VariantMap changedParameters_;
 	Urho3D::UIElement* settingsTabs_;
 	Urho3D::ListView* settings_;
 };

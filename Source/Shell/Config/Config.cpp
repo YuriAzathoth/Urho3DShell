@@ -37,7 +37,7 @@
 
 using namespace Urho3D;
 
-void Config::LoadXML(const Urho3D::XMLElement& source)
+void Config::InitialLoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source)
 {
 	String name;
 	Variant value;
@@ -52,8 +52,15 @@ void Config::LoadXML(const Urho3D::XMLElement& source)
 		else if (!parameters_.Contains(name))
 			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: parameter is not registered yet.", name.CString());
 		else
-			changedParameters_[name] = value;
+			dst[name] = value;
 	}
+}
+
+void Config::LoadXML(const Urho3D::XMLElement& source)
+{
+	VariantMap parameters;
+	InitialLoadXML(parameters, source);
+	Apply(parameters);
 }
 
 void Config::SaveXML(Urho3D::XMLElement& dst) const
@@ -67,16 +74,15 @@ void Config::SaveXML(Urho3D::XMLElement& dst) const
 	}
 }
 
-void Config::Apply(bool engineToo)
+void Config::Apply(const Urho3D::VariantMap& parameters, bool engineToo)
 {
 	Parameter* parameter;
-	for (const auto& p : changedParameters_)
+	for (const auto& p : parameters)
 	{
 		parameter = &parameters_[p.first_];
 		if (engineToo || !(engineToo || parameter->flags_ & ParameterFlags::ENGINE))
 			parameter->writer_->Write(p.second_);
 	}
-	changedParameters_.Clear();
 
 	ComplexStorage* storage;
 	for (auto& p : storages_)
@@ -92,34 +98,33 @@ void Config::Apply(bool engineToo)
 
 void Config::Clear()
 {
-	changedParameters_.Clear();
 	for (auto& p : storages_)
 		p.second_->parameters_.Clear();
 }
 
-void Config::ExtractEngineParameters(Urho3D::VariantMap& dst)
+void Config::ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters)
 {
 	// TODO: Implement registrable engine parameters forwarding
-	auto it = changedParameters_.Find(ECP_RESOLUTION);
-	if (it != changedParameters_.End())
+	auto it = shellParameters.Find(ECP_RESOLUTION);
+	if (it != shellParameters.End())
 	{
 		const IntVector3 resolution = StrToRes(it->second_.GetString());
-		dst[EP_WINDOW_WIDTH] = resolution.x_;
-		dst[EP_WINDOW_HEIGHT] = resolution.y_;
-		dst[EP_REFRESH_RATE] = resolution.z_;
+		engineParameters[EP_WINDOW_WIDTH] = resolution.x_;
+		engineParameters[EP_WINDOW_HEIGHT] = resolution.y_;
+		engineParameters[EP_REFRESH_RATE] = resolution.z_;
 	}
-	it = changedParameters_.Find(ECP_WINDOW_MODE);
-	if (it != changedParameters_.End())
+	it = shellParameters.Find(ECP_WINDOW_MODE);
+	if (it != shellParameters.End())
 	{
 		const int windowMode = it->second_.GetInt();
-		dst[EP_FULL_SCREEN] = windowMode >= 1;
-		dst[EP_BORDERLESS] = windowMode == 2;
+		engineParameters[EP_FULL_SCREEN] = windowMode >= 1;
+		engineParameters[EP_BORDERLESS] = windowMode == 2;
 	}
-	for (it = changedParameters_.Begin(); it != changedParameters_.End();)
+	for (it = shellParameters.Begin(); it != shellParameters.End();)
 		if (parameters_[it->first_].flags_ & ParameterFlags::ENGINE)
 		{
-			dst.Insert(it);
-			it = changedParameters_.Erase(it);
+			engineParameters.Insert(it);
+			it = shellParameters.Erase(it);
 		}
 		else
 			++it;
