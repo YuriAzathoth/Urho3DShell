@@ -201,7 +201,7 @@ private:
 
 private:
 	static Urho3D::IntVector3 StrToRes(const Urho3D::String& str);
-	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);
+	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);Urho3D::Serializable
 };
 
 inline Urho3D::VariantType Config::GetParameterType(Urho3D::StringHash parameter) const

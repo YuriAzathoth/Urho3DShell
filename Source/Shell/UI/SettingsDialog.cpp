@@ -86,9 +86,12 @@ Urho3D::UIElement* SettingsDialog::CreateSettingsTab(const Urho3D::String& setti
 
 void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)
 {
-	const StringVector settings = GetSubsystem<Config>()->GetSettings(settingsTab);
+	const Config* config = GetSubsystem<Config>();
+	const StringVector settings = config->GetSettings(settingsTab);
+
 	SharedPtr<UIElement> item;
 	Text* caption;
+	Variant value;
 	for (const String& parameter : settings)
 	{
 		item = MakeShared<UIElement>(context_);
@@ -100,37 +103,29 @@ void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)
 		caption->SetText(parameter);
 		caption->SetStyleAuto();
 
-		CreateParameterControl(parameter, item);
-	}
-}
-
-void SettingsDialog::CreateParameterControl(Urho3D::StringHash parameter, Urho3D::UIElement* parent)
-{
-	const Config* config = GetSubsystem<Config>();
-	const String& parameterName = config->GetParameterName(parameter);
-	const Variant value = config->ReadValue(parameter);
-
-	if (config->IsEnum(parameter))
-	{
-		const bool localized = config->IsLocalized(parameter);
-		const Config::EnumVector items = config->ConstructEnum(parameter);
-		CreateParameterEnum(parameterName, items, value, parent, localized);
-	}
-	else
-		switch (config->GetParameterType(parameter))
+		value = config->ReadValue(parameter);
+		if (config->IsEnum(parameter))
 		{
-		case VAR_BOOL:
-			CreateParameterBool(parameterName, value.GetBool(), parent);
-			break;
-		case VAR_FLOAT:
-			CreateParameterFloat(parameterName, value.GetFloat(), parent);
-			break;
-		case VAR_STRING:
-			CreateParameterString(parameterName, value.GetString(), parent);
-			break;
-		default:
-			break;
+			const bool localized = config->IsLocalized(parameter);
+			const Config::EnumVector items = config->ConstructEnum(parameter);
+			CreateParameterEnum(parameter, items, value, item, localized);
 		}
+		else
+			switch (config->GetParameterType(parameter))
+			{
+			case VAR_BOOL:
+				CreateParameterBool(parameter, value.GetBool(), item);
+				break;
+			case VAR_FLOAT:
+				CreateParameterFloat(parameter, value.GetFloat(), item);
+				break;
+			case VAR_STRING:
+				CreateParameterString(parameter, value.GetString(), item);
+				break;
+			default:
+				break;
+			}
+	}
 }
 
 void SettingsDialog::CreateParameterBool(const Urho3D::String& parameterName, bool value, Urho3D::UIElement* parent)
