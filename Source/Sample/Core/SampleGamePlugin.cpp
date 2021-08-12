@@ -89,13 +89,9 @@ void SampleGamePlugin::OnRemoteClientStopped(Urho3D::StringHash, Urho3D::Variant
 	network->UnregisterAllRemoteEvents();
 }
 
-void SampleGamePlugin::OnRemoteServerStarted(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-}
+void SampleGamePlugin::OnRemoteServerStarted(Urho3D::StringHash, Urho3D::VariantMap&) {}
 
-void SampleGamePlugin::OnRemoteServerStopped(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-}
+void SampleGamePlugin::OnRemoteServerStopped(Urho3D::StringHash, Urho3D::VariantMap&) {}
 
 void SampleGamePlugin::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
