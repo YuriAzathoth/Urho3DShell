@@ -101,7 +101,7 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 		config->RegisterClientParameters();
 	LoadProfileName();
 	LoadProfile();
-	config->ExtractEngineParameters(engineParameters);
+	config->ExtractEngineParameters(engineParameters, shellParameters_);
 
 	engineParameters[EP_LOG_NAME] = GetLogsFilename();
 

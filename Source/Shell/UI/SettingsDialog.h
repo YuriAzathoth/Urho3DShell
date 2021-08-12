@@ -23,6 +23,7 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
+#include "Config/Config.h"
 #include "Dialog.h"
 
 namespace Urho3D
@@ -41,9 +42,26 @@ private:
 	Urho3D::UIElement* CreateSettingsTab(const Urho3D::String& settingsTab);
 	void ShowSettingsTab(Urho3D::StringHash settingsTab);
 
+	void CreateParameterControl(Urho3D::StringHash parameter, Urho3D::UIElement* parent);
+	void CreateParameterBool(const Urho3D::String& parameterName, bool value, Urho3D::UIElement* parent);
+	void CreateParameterFloat(const Urho3D::String& parameterName, float value, Urho3D::UIElement* parent);
+	void
+	CreateParameterString(const Urho3D::String& parameterName, const Urho3D::String& value, Urho3D::UIElement* parent);
+	void CreateParameterEnum(const Urho3D::String& parameterName,
+							 const Config::EnumVector& items,
+							 const Urho3D::Variant& value,
+							 Urho3D::UIElement* parent,
+							 bool localized);
+
 	void OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&);
+
+	void OnBoolChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnEnumChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnFloatSliderChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnFloatTextChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnStringChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	Urho3D::VariantMap changedParameters_;
 	Urho3D::UIElement* settingsTabs_;

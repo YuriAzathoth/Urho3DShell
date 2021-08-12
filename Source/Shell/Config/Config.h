@@ -98,6 +98,7 @@ public:
 						   Urho3D::StringHash settingsTab,
 						   bool isEngine,
 						   bool localized);
+
 	void RemoveParameter(Urho3D::StringHash parameter);
 
 	void RegisterReader(Urho3D::StringHash parameter, SimpleReaderFunc reader);
@@ -106,6 +107,14 @@ public:
 
 	bool RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterFunc writer);
 	bool RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory);
+
+	const Urho3D::String& GetParameterName(Urho3D::StringHash parameter) const { return *names_[parameter]; }
+	Urho3D::VariantType GetParameterType(Urho3D::StringHash parameter) const;
+	bool IsEnum(Urho3D::StringHash parameter) const;
+	bool IsLocalized(Urho3D::StringHash parameter) const;
+	Urho3D::Variant ReadValue(Urho3D::StringHash parameter) const;
+	void WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& value);
+	EnumVector ConstructEnum(Urho3D::StringHash parameter) const;
 
 	Urho3D::String GetDebugString() const;
 
@@ -184,22 +193,6 @@ private:
 		const Urho3D::StringHash name_;
 	};
 
-	void CreateParameterBool(const Urho3D::String& parameterName, bool value, Urho3D::UIElement* parent);
-	void CreateParameterFloat(const Urho3D::String& parameterName, float value, Urho3D::UIElement* parent);
-	void
-	CreateParameterString(const Urho3D::String& parameterName, const Urho3D::String& value, Urho3D::UIElement* parent);
-	void CreateParameterEnum(const Urho3D::String& parameterName,
-							 const EnumVector& items,
-							 const Urho3D::Variant& value,
-							 Urho3D::UIElement* parent,
-							 bool localized);
-
-	void OnBoolChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnEnumChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnFloatSliderChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnFloatTextChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnStringChanged(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-
 	Urho3D::HashMap<Urho3D::StringHash, Parameter> parameters_;
 	Urho3D::HashMap<Urho3D::StringHash, EnumConstructorFunc> enumConstructors_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<ComplexStorage>> storages_;
@@ -210,5 +203,35 @@ private:
 	static Urho3D::IntVector3 StrToRes(const Urho3D::String& str);
 	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);
 };
+
+inline Urho3D::VariantType Config::GetParameterType(Urho3D::StringHash parameter) const
+{
+	return parameters_[parameter]->type_;
+}
+
+inline bool Config::IsEnum(Urho3D::StringHash parameter) const
+{
+	return parameters_[parameter]->flags_ & ParameterFlags::ENUM;
+}
+
+inline bool Config::IsLocalized(Urho3D::StringHash parameter) const
+{
+	return parameters_[parameter]->flags_ & ParameterFlags::LOCALIZED;
+}
+
+inline Urho3D::Variant Config::ReadValue(Urho3D::StringHash parameter) const
+{
+	return parameters_[parameter]->reader_->Read();
+}
+
+inline void Config::WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& value)
+{
+	parameters_[parameter].writer_->Write(value);
+}
+
+inline Config::EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
+{
+	return (*enumConstructors_[parameter])();
+}
 
 #endif // CONFIG_H
