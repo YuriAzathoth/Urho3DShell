@@ -36,7 +36,7 @@ ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
 	: Dialog(context)
 	, spawnedButton_(nullptr)
 {
-	LoadLayout("UI/GamesMenu.xml");
+	LoadLayout("UI/ItemsListWindow.xml");
 	itemList_ = root_->GetChildStaticCast<ListView>("GamesList", true);
 	serverPanel_ = root_->GetChild("ServerPanel", true);
 	server_ = root_->GetChildStaticCast<CheckBox>("Server", true);

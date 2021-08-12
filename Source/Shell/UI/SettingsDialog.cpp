@@ -38,7 +38,7 @@ using namespace Urho3D;
 SettingsDialog::SettingsDialog(Urho3D::Context* context)
 	: Dialog(context)
 {
-	LoadLayout("UI/Settings.xml");
+	LoadLayout("UI/SettingsDialog.xml");
 	SetCloseable(true);
 	SetInteractive(true);
 

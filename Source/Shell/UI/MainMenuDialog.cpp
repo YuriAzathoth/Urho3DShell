@@ -28,7 +28,7 @@ using namespace Urho3D;
 MainMenuDialog::MainMenuDialog(Urho3D::Context* context)
 	: Dialog(context)
 {
-	LoadLayout("UI/MainMenu.xml");
+	LoadLayout("UI/MainMenuDialog.xml");
 	SetInteractive(true);
 
 	SubscribeToEvent(root_->GetChild("NewGame", true), E_PRESSED, URHO3D_HANDLER(MainMenuDialog, OnNewGame));
