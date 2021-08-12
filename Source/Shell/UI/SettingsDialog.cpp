@@ -41,26 +41,17 @@ SettingsDialog::SettingsDialog(Urho3D::Context* context)
 	SubscribeToEvent(root_->GetChild("Ok", true), E_PRESSED, URHO3D_HANDLER(SettingsDialog, OnOkPressed));
 	SubscribeToEvent(root_->GetChild("Apply", true), E_PRESSED, URHO3D_HANDLER(SettingsDialog, OnApplyPressed));
 
+	settingsTabs_ = root_->GetChild("SettingsTabs", true);
 	settings_ = root_->GetChildStaticCast<ListView>("SettingsList", true);
 
-	UIElement* settingsTabs = root_->GetChild("SettingsTabs", true);
-	Button* button;
-	Text* caption;
 	const StringVector tabs = GetSubsystem<Config>()->GetSettingsTabs();
+	StringHash settingsTab;
+	UIElement* tabButton;
 	for (const String& tabName : tabs)
 	{
-		button = settingsTabs->CreateChild<Button>();
-		button->SetLayout(LM_VERTICAL, 0, {4, 4, 4, 4});
-		button->SetStyleAuto();
-
-		caption = button->CreateChild<Text>();
-		caption->SetText(tabName);
-		caption->SetHorizontalAlignment(HA_CENTER);
-		caption->SetAutoLocalizable(true);
-		caption->SetStyleAuto();
-
-		const StringHash settingsTab = tabName;
-		SubscribeToEvent(button,
+		tabButton = CreateSettingsTab(tabName);
+		settingsTab = tabName;
+		SubscribeToEvent(tabButton,
 						 E_PRESSED,
 						 [this, settingsTab](StringHash, VariantMap&)
 						 {
@@ -68,7 +59,23 @@ SettingsDialog::SettingsDialog(Urho3D::Context* context)
 							 ShowSettingsTab(settingsTab);
 						 });
 	}
+
 	ShowSettingsTab(tabs[0]);
+}
+
+Urho3D::UIElement* SettingsDialog::CreateSettingsTab(const Urho3D::String& settingsTab)
+{
+	Button* button = settingsTabs_->CreateChild<Button>();
+	button->SetLayout(LM_VERTICAL, 0, {4, 4, 4, 4});
+	button->SetStyleAuto();
+
+	Text* caption = button->CreateChild<Text>();
+	caption->SetText(settingsTab);
+	caption->SetHorizontalAlignment(HA_CENTER);
+	caption->SetAutoLocalizable(true);
+	caption->SetStyleAuto();
+
+	return button;
 }
 
 void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)

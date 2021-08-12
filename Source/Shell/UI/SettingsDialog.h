@@ -38,12 +38,14 @@ public:
 	explicit SettingsDialog(Urho3D::Context* context);
 
 private:
+	Urho3D::UIElement* CreateSettingsTab(const Urho3D::String& settingsTab);
 	void ShowSettingsTab(Urho3D::StringHash settingsTab);
 
 	void OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&);
 
+	Urho3D::UIElement* settingsTabs_;
 	Urho3D::ListView* settings_;
 };
 
