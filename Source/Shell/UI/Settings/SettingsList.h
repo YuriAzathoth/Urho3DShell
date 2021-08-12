@@ -20,30 +20,34 @@
 // THE SOFTWARE.
 //
 
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+#ifndef SETTINGSLIST_H
+#define SETTINGSLIST_H
 
-#include "Dialog.h"
-#include "Settings/SettingsList.h"
+#include <Urho3D/Core/Object.h>
 
-class SettingsDialog : public Dialog
+namespace Urho3D
 {
-	URHO3D_OBJECT(SettingsDialog, Dialog)
+class ListView;
+class UIElement;
+} // namespace Urho3D
+
+class SettingsList : public Urho3D::Object
+{
+	URHO3D_OBJECT(SettingsList, Urho3D::Object)
 
 public:
-	explicit SettingsDialog(Urho3D::Context* context);
+	SettingsList(Urho3D::Context* context, Urho3D::ListView* settings);
+
+	virtual void Apply() = 0;
+
+	Urho3D::UIElement* CreateCaption(const Urho3D::String& parameterName);
+
+protected:
+	Urho3D::ListView* settings_;
 
 private:
-	Urho3D::UIElement* CreateSettingsTab(const Urho3D::String& settingsTab);
-	void ShowSettingsTab(Urho3D::StringHash settingsTab);
-
-	void OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&);
-
-	Urho3D::UniquePtr<SettingsList> settingsList_;
-	Urho3D::ListView* settings_;
-	Urho3D::UIElement* settingsTabs_;
+	SettingsList(const SettingsList&) = delete;
+	SettingsList& operator=(const SettingsList&) = delete;
 };
 
-#endif // SETTINGSDIALOG_H
+#endif // SETTINGSLIST_H

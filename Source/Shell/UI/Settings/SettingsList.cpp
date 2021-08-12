@@ -20,30 +20,29 @@
 // THE SOFTWARE.
 //
 
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+#include <Urho3D/UI/Button.h>
+#include <Urho3D/UI/ListView.h>
+#include <Urho3D/UI/Text.h>
+#include <Urho3D/UI/UIElement.h>
+#include "SettingsList.h"
 
-#include "Dialog.h"
-#include "Settings/SettingsList.h"
+using namespace Urho3D;
 
-class SettingsDialog : public Dialog
+SettingsList::SettingsList(Urho3D::Context* context, Urho3D::ListView* settings)
+	: Object(context)
+	, settings_(settings)
 {
-	URHO3D_OBJECT(SettingsDialog, Dialog)
+}
 
-public:
-	explicit SettingsDialog(Urho3D::Context* context);
+Urho3D::UIElement* SettingsList::CreateCaption(const Urho3D::String& parameterName)
+{
+	SharedPtr<UIElement> item = MakeShared<UIElement>(context_);
+	settings_->AddItem(item);
+	item->SetLayout(LM_HORIZONTAL, 8, {4, 4, 4, 4});
+	item->SetStyleAuto();
 
-private:
-	Urho3D::UIElement* CreateSettingsTab(const Urho3D::String& settingsTab);
-	void ShowSettingsTab(Urho3D::StringHash settingsTab);
-
-	void OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&);
-
-	Urho3D::UniquePtr<SettingsList> settingsList_;
-	Urho3D::ListView* settings_;
-	Urho3D::UIElement* settingsTabs_;
-};
-
-#endif // SETTINGSDIALOG_H
+	Text* caption = item->CreateChild<Text>();
+	caption->SetText(parameterName);
+	caption->SetStyleAuto();
+	return item.Get();
+}
