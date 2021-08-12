@@ -37,8 +37,6 @@ class URHO3DSHELLAPI_EXPORT InputController : public Urho3D::Object
 	URHO3D_OBJECT(InputController, Urho3D::Object)
 
 public:
-//	using StringBindingsMap = Urho3D::HashMap<Urho3D::String, Urho3D::String>;
-
 	using BindingsMap = Urho3D::HashMap<unsigned, Urho3D::StringHash>;
 	using DefaultBindingsMap = Urho3D::HashMap<Urho3D::StringHash, unsigned>;
 
@@ -84,8 +82,8 @@ private:
 	virtual bool Enable() = 0;
 	virtual bool Disable() = 0;
 
-	BindingsMap bindings_; // Key -> Action
-	RemoteBindingsVector remoteBindings_; // Key -> Flag
+	BindingsMap bindings_;											// Key -> Action
+	RemoteBindingsVector remoteBindings_;							// Key -> Flag
 	Urho3D::HashMap<Urho3D::StringHash, unsigned> defaultBindings_; // Action -> Key
 	float sensitivity_;
 	bool enabled_;
