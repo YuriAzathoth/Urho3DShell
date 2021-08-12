@@ -111,7 +111,7 @@ void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)
 			CreateParameterEnum(parameter, items, value, item, localized);
 		}
 		else
-			switch (config->GetParameterType(parameter))
+			switch (config->GetType(parameter))
 			{
 			case VAR_BOOL:
 				CreateParameterBool(parameter, value.GetBool(), item);

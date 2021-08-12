@@ -69,6 +69,28 @@ public:
 			, value_(value)
 		{
 		}
+		EnumVariant(const EnumVariant& src)
+			: caption_(src.caption_)
+			, value_(src.value_)
+		{
+		}
+		EnumVariant(EnumVariant&& src) noexcept
+			: caption_(std::move(src.caption_))
+			, value_(src.value_)
+		{
+		}
+		EnumVariant& operator=(const EnumVariant& src)
+		{
+			caption_ = src.caption_;
+			value_ = src.value_;
+			return *this;
+		}
+		EnumVariant& operator=(EnumVariant&& src)
+		{
+			caption_.Swap(src.caption_);
+			value_ = src.value_;
+			return *this;
+		}
 	};
 
 	using SimpleReaderFunc = std::function<Urho3D::Variant()>;
@@ -108,8 +130,8 @@ public:
 	bool RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterFunc writer);
 	bool RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory);
 
-	const Urho3D::String& GetParameterName(Urho3D::StringHash parameter) const { return *names_[parameter]; }
-	Urho3D::VariantType GetParameterType(Urho3D::StringHash parameter) const;
+	const Urho3D::String& GetName(Urho3D::StringHash parameter) const { return *names_[parameter]; }
+	Urho3D::VariantType GetType(Urho3D::StringHash parameter) const;
 	bool IsEnum(Urho3D::StringHash parameter) const;
 	bool IsLocalized(Urho3D::StringHash parameter) const;
 	Urho3D::Variant ReadValue(Urho3D::StringHash parameter) const;
@@ -201,13 +223,10 @@ private:
 
 private:
 	static Urho3D::IntVector3 StrToRes(const Urho3D::String& str);
-	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);Urho3D::Serializable
+	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);
 };
 
-inline Urho3D::VariantType Config::GetParameterType(Urho3D::StringHash parameter) const
-{
-	return parameters_[parameter]->type_;
-}
+inline Urho3D::VariantType Config::GetType(Urho3D::StringHash parameter) const { return parameters_[parameter]->type_; }
 
 inline bool Config::IsEnum(Urho3D::StringHash parameter) const
 {
