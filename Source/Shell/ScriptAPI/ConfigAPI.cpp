@@ -21,6 +21,7 @@
 //
 
 #include <Urho3D/AngelScript/Generated_Members.h>
+#include <new>
 #include "Config/Config.h"
 
 using namespace Urho3D;
@@ -28,6 +29,12 @@ using namespace Urho3D;
 static Config* CreateConfig() { return new Config(GetScriptContext()); }
 
 static Config* GetConfig() { return GetScriptContext()->GetSubsystem<Config>(); }
+
+template <typename T> static CScriptArray* ConstructEnum(T* _ptr, StringHash parameter)
+{
+	const Config::EnumVector result = _ptr->ConstructEnum(parameter);
+	return VectorToArray<Config::EnumVariant>(result, "Array<EnumVariant>");
+}
 
 template <typename T> static CScriptArray* GetConfigTabs(T* _ptr)
 {
@@ -41,8 +48,12 @@ template <typename T> static CScriptArray* GetConfigSettings(T* _ptr, StringHash
 	return VectorToArray<String>(result, "Array<String>");
 }
 
+static void RegisterEnumVariantAPI(asIScriptEngine* engine);
+
 void RegisterConfigAPI(asIScriptEngine* engine)
 {
+	RegisterEnumVariantAPI(engine);
+
 	engine->RegisterObjectType("Config", 0, asOBJ_REF);
 
 	engine->RegisterObjectBehaviour("Config",
@@ -68,7 +79,7 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_CALL_THISCALL);
 
 	engine->RegisterObjectMethod("Config",
-								 "void Apply(const VariantMap&in, bool)",
+								 "void Apply(const VariantMap&in, bool = true)",
 								 AS_METHOD(Config, Apply),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config", "void Clear()", AS_METHOD(Config, Clear), AS_CALL_THISCALL);
@@ -103,8 +114,78 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_METHOD(Config, RemoveParameter),
 								 AS_CALL_THISCALL);
 
+	// TODO: Script parameter Readers/Writers
+
+	engine->RegisterObjectMethod("Config",
+								 "const String& GetName(StringHash) const",
+								 AS_METHODPR(Config, GetName, (StringHash) const, const String&),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "VariantType GetType(StringHash) const",
+								 AS_METHODPR(Config, GetType, (StringHash) const, VariantType),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "bool IsEnum(StringHash) const",
+								 AS_METHOD(Config, IsEnum),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "bool IsLocalized(StringHash) const",
+								 AS_METHOD(Config, IsLocalized),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "Variant ReadValue(StringHash) const",
+								 AS_METHOD(Config, ReadValue),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "void WriteValue(StringHash, const Variant&in)",
+								 AS_METHOD(Config, ReadValue),
+								 AS_CALL_THISCALL);
+
+	// TODO: Fix creating Array<EnumVariant> contains empty data
+	engine->RegisterObjectMethod("Config",
+								 "Array<EnumVariant>@ ConstructEnum(StringHash)",
+								 AS_FUNCTION_OBJFIRST(ConstructEnum<Config>),
+								 AS_CALL_CDECL_OBJFIRST);
+
 	engine->RegisterObjectMethod("Config",
 								 "String get_debugString() const",
 								 AS_METHOD(Config, GetDebugString),
 								 AS_CALL_THISCALL);
+}
+
+using EnumVariant = Config::EnumVariant;
+
+static void NewEnumVariantV(EnumVariant* ptr) { new (ptr) EnumVariant; }
+static void NewEnumVariantSVar(EnumVariant* ptr, const String& caption, const Variant& value)
+{
+	new (ptr) EnumVariant(caption, value);
+}
+
+void RegisterEnumVariantAPI(asIScriptEngine* engine)
+{
+	engine->RegisterObjectType("EnumVariant", sizeof(EnumVariant), asOBJ_VALUE | asGetTypeTraits<AllocatorNode>());
+
+	engine->RegisterObjectBehaviour("EnumVariant",
+									asBEHAVE_CONSTRUCT,
+									"void f()",
+									AS_FUNCTION_OBJFIRST(NewEnumVariantV),
+									AS_CALL_CDECL_OBJFIRST);
+	engine->RegisterObjectBehaviour("EnumVariant",
+									asBEHAVE_CONSTRUCT,
+									"void f(const String& in, const Variant&in)",
+									AS_FUNCTION_OBJFIRST(NewEnumVariantSVar),
+									AS_CALL_CDECL_OBJFIRST);
+	engine->RegisterObjectBehaviour("EnumVariant",
+									asBEHAVE_DESTRUCT,
+									"void f()",
+									AS_DESTRUCTOR(EnumVariant),
+									AS_CALL_CDECL_OBJFIRST);
+
+	engine->RegisterObjectMethod("EnumVariant",
+								 "EnumVariant& opAssign(const EnumVariant&in) const",
+								 AS_METHODPR(EnumVariant, operator=, (const EnumVariant&), EnumVariant&),
+								 AS_CALL_THISCALL);
+
+	engine->RegisterObjectProperty("EnumVariant", "String caption", offsetof(EnumVariant, caption_));
+	engine->RegisterObjectProperty("EnumVariant", "Variant value", offsetof(EnumVariant, value_));
 }
