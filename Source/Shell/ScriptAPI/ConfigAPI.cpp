@@ -70,8 +70,12 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 	RegisterMembers_Object<Config>(engine, "Config");
 
 	engine->RegisterObjectMethod("Config",
+								 "void LoadXML(VariantMap&, const XMLElement&)",
+								 AS_METHODPR(Config, LoadXML, (VariantMap&, const XMLElement&), void),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
 								 "void LoadXML(const XMLElement&)",
-								 AS_METHOD(Config, LoadXML),
+								 AS_METHODPR(Config, LoadXML, (const XMLElement&), void),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config",
 								 "void SaveXML(XMLElement&) const",
@@ -79,7 +83,7 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_CALL_THISCALL);
 
 	engine->RegisterObjectMethod("Config",
-								 "void Apply(const VariantMap&in, bool = true)",
+								 "void Apply(const VariantMap&in)",
 								 AS_METHOD(Config, Apply),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config", "void Clear()", AS_METHOD(Config, Clear), AS_CALL_THISCALL);

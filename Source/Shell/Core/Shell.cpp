@@ -78,7 +78,7 @@ Shell::~Shell()
 		context_->RemoveSubsystem<InputClient>();
 }
 
-void Shell::Setup(Urho3D::VariantMap& engineParameters)
+void Shell::Setup([[maybe_unused]] Urho3D::VariantMap& engineParameters)
 {
 	if (!PreconfigureEngine())
 	{
@@ -145,7 +145,7 @@ void Shell::Initialize()
 		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
 	}
 
-	GetSubsystem<Config>()->Apply(shellParameters_, false);
+	GetSubsystem<Config>()->Apply(shellParameters_);
 	shellParameters_.Clear();
 }
 
@@ -251,7 +251,7 @@ void Shell::LoadProfile()
 		path = GetConfigFilename();
 		XMLFile file(context_);
 		if (fileSystem->FileExists(path) && file.LoadFile(path))
-			GetSubsystem<Config>()->InitialLoadXML(shellParameters_, file.GetRoot(CONFIG_ROOT));
+			GetSubsystem<Config>()->LoadXML(shellParameters_, file.GetRoot(CONFIG_ROOT));
 	}
 	else
 		fileSystem->CreateDir(path);

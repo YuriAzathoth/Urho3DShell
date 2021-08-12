@@ -29,7 +29,7 @@
 
 using namespace Urho3D;
 
-void Config::InitialLoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source)
+void Config::LoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source)
 {
 	String name;
 	Variant value;
@@ -51,7 +51,7 @@ void Config::InitialLoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& s
 void Config::LoadXML(const Urho3D::XMLElement& source)
 {
 	VariantMap parameters;
-	InitialLoadXML(parameters, source);
+	LoadXML(parameters, source);
 	Apply(parameters);
 }
 
@@ -66,21 +66,21 @@ void Config::SaveXML(Urho3D::XMLElement& dst) const
 	}
 }
 
-void Config::Apply(const Urho3D::VariantMap& parameters, bool engineToo)
+void Config::Apply(const Urho3D::VariantMap& parameters)
 {
-	Parameter* parameter;
+	decltype(parameters_)::Iterator it;
 	for (const auto& p : parameters)
 	{
-		parameter = &parameters_[p.first_];
-		if (engineToo || !(engineToo || parameter->flags_ & ParameterFlags::ENGINE))
-			parameter->writer_->Write(p.second_);
+		it = parameters_.Find(p.first_);
+		if (it != parameters_.End())
+			it->second_.writer_->Write(p.second_);
 	}
 
 	ComplexStorage* storage;
 	for (auto& p : storages_)
 	{
 		storage = p.second_.Get();
-		if (!storage->parameters_.Empty() && (engineToo || !(engineToo || storage->isEngine_)))
+		if (!storage->parameters_.Empty())
 		{
 			storage->writer_(p.second_->parameters_);
 			storage->parameters_.Clear();
@@ -112,14 +112,19 @@ void Config::ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3
 		engineParameters[EP_FULL_SCREEN] = windowMode >= 1;
 		engineParameters[EP_BORDERLESS] = windowMode == 2;
 	}
+
+	decltype(parameters_)::Iterator itParameter;
 	for (it = shellParameters.Begin(); it != shellParameters.End();)
-		if (parameters_[it->first_].flags_ & ParameterFlags::ENGINE)
+	{
+		itParameter = parameters_.Find(it->first_);
+		if (itParameter != parameters_.End() && itParameter->second_.flags_ & ParameterFlags::ENGINE)
 		{
 			engineParameters.Insert(it);
 			it = shellParameters.Erase(it);
 		}
 		else
 			++it;
+	}
 }
 
 void Config::RegisterSettingsTab(const Urho3D::String& tabName)

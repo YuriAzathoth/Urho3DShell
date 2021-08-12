@@ -101,11 +101,11 @@ public:
 
 	using Urho3D::Object::Object;
 
-	void InitialLoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source);
+	void LoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source);
 	void LoadXML(const Urho3D::XMLElement& source);
 	void SaveXML(Urho3D::XMLElement& dst) const;
 
-	void Apply(const Urho3D::VariantMap& parameters, bool engineToo = true);
+	void Apply(const Urho3D::VariantMap& parameters);
 	void Clear();
 
 	void ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters);
