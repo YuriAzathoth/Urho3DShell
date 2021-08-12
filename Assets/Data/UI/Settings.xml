@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <element type="Window">
-	<attribute name="Size" value="528 418" />
+	<attribute name="Size" value="528 387" />
 	<attribute name="Min Anchor" value="0.5 0.5" />
 	<attribute name="Max Anchor" value="0.5 0.5" />
 	<attribute name="Pivot" value="0.5 0.5" />
@@ -24,12 +24,13 @@
 			<attribute name="Text" value="Settings" />
 			<attribute name="Auto Localizable" value="true" />
 		</element>
-		<element type="Button">
+		<element type="Button" style="CloseButton">
 			<attribute name="Name" value="CloseButton" />
-			<attribute name="Min Size" value="24 24" />
-			<attribute name="Max Size" value="24 24" />
+			<attribute name="Min Size" value="16 16" />
+			<attribute name="Max Size" value="16 16" />
 			<attribute name="Pivot" value="0 0" />
-			<attribute name="Image Rect" value="16 0 32 16" />
+			<attribute name="Focus Mode" value="NotFocusable" />
+			<attribute name="Image Rect" value="144 0 160 16" />
 			<attribute name="Border" value="4 4 4 4" />
 			<attribute name="Hover Image Offset" value="0 16" />
 			<attribute name="Pressed Image Offset" value="16 0" />
