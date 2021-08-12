@@ -20,25 +20,29 @@
 // THE SOFTWARE.
 //
 
-#include "ScriptAPI.h"
+#ifndef KEYBOARDCONTROLLER_H
+#define KEYBOARDCONTROLLER_H
 
-void RegisterConfigAPI(asIScriptEngine* engine);
-void RegisterInputClientAPI(asIScriptEngine* engine);
-void RegisterInputRegistryAPI(asIScriptEngine* engine);
-void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
-void RegisterShellAPI(asIScriptEngine* engine);
-void RegisterUIControllerAPI(asIScriptEngine* engine);
+#include "InputController.h"
+#include "Urho3DShellAPI.h"
 
-void RegisterClientAPI(asIScriptEngine* engine)
+class URHO3DSHELLAPI_EXPORT KeyboardController : public InputController
 {
-	RegisterInputClientAPI(engine);
-	RegisterUIControllerAPI(engine);
-}
+	URHO3D_OBJECT(KeyboardController, InputController)
 
-void RegisterServerAPI(asIScriptEngine* engine)
-{
-	RegisterConfigAPI(engine);
-	RegisterInputRegistryAPI(engine);
-	RegisterPluginsRegistryAPI(engine);
-	RegisterShellAPI(engine);
-}
+public:
+	explicit KeyboardController(Urho3D::Context* context);
+
+	void ReadControls(Urho3D::Controls& controls) const override;
+	Urho3D::String GetKeyName(unsigned keyCode) const override;
+	unsigned GetKeyCode(const Urho3D::String& keyName) const override;
+
+private:
+	bool Enable() override;
+	bool Disable() override;
+
+	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnKeyUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+};
+
+#endif // KEYBOARDCONTROLLER_H

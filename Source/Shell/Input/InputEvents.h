@@ -20,25 +20,19 @@
 // THE SOFTWARE.
 //
 
-#include "ScriptAPI.h"
+#ifndef INPUTEVENTS_H
+#define INPUTEVENTS_H
 
-void RegisterConfigAPI(asIScriptEngine* engine);
-void RegisterInputClientAPI(asIScriptEngine* engine);
-void RegisterInputRegistryAPI(asIScriptEngine* engine);
-void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
-void RegisterShellAPI(asIScriptEngine* engine);
-void RegisterUIControllerAPI(asIScriptEngine* engine);
+#include <Urho3D/Core/Object.h>
 
-void RegisterClientAPI(asIScriptEngine* engine)
+URHO3D_EVENT(E_ACTIONDOWN, ActionDown)
 {
-	RegisterInputClientAPI(engine);
-	RegisterUIControllerAPI(engine);
+	URHO3D_PARAM(P_ACTION, Action); // StringHash
 }
 
-void RegisterServerAPI(asIScriptEngine* engine)
+URHO3D_EVENT(E_ACTIONUP, ActionUp)
 {
-	RegisterConfigAPI(engine);
-	RegisterInputRegistryAPI(engine);
-	RegisterPluginsRegistryAPI(engine);
-	RegisterShellAPI(engine);
+	URHO3D_PARAM(P_ACTION, Action); // StringHash
 }
+
+#endif // INPUTEVENTS_H

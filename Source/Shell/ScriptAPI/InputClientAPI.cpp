@@ -20,25 +20,34 @@
 // THE SOFTWARE.
 //
 
-#include "ScriptAPI.h"
+#include <Urho3D/AngelScript/Generated_Members.h>
+#include "Input/InputClient.h"
 
-void RegisterConfigAPI(asIScriptEngine* engine);
-void RegisterInputClientAPI(asIScriptEngine* engine);
-void RegisterInputRegistryAPI(asIScriptEngine* engine);
-void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
-void RegisterShellAPI(asIScriptEngine* engine);
-void RegisterUIControllerAPI(asIScriptEngine* engine);
+using namespace Urho3D;
 
-void RegisterClientAPI(asIScriptEngine* engine)
+static InputClient* CreateInputClient() { return new InputClient(GetScriptContext()); }
+
+static InputClient* GetInputClient() { return GetScriptContext()->GetSubsystem<InputClient>(); }
+
+void RegisterInputClientAPI(asIScriptEngine* engine)
 {
-	RegisterInputClientAPI(engine);
-	RegisterUIControllerAPI(engine);
-}
+	engine->RegisterObjectType("InputClient", 0, asOBJ_REF);
 
-void RegisterServerAPI(asIScriptEngine* engine)
-{
-	RegisterConfigAPI(engine);
-	RegisterInputRegistryAPI(engine);
-	RegisterPluginsRegistryAPI(engine);
-	RegisterShellAPI(engine);
+	engine->RegisterObjectBehaviour("InputClient",
+									asBEHAVE_FACTORY,
+									"InputClient@+ f()",
+									AS_FUNCTION(CreateInputClient),
+									AS_CALL_CDECL);
+
+	engine->RegisterGlobalFunction("InputClient@+ get_inputClient()", AS_FUNCTION(GetInputClient), AS_CALL_CDECL);
+
+	RegisterSubclass<Object, InputClient>(engine, "Object", "InputClient");
+	RegisterSubclass<RefCounted, InputClient>(engine, "RefCounted", "InputClient");
+
+	RegisterMembers_Object<InputClient>(engine, "InputClient");
+
+	engine->RegisterObjectMethod("InputClient",
+								 "String get_debugString() const",
+								 AS_METHOD(InputClient, GetDebugString),
+								 AS_CALL_THISCALL);
 }

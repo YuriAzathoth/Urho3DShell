@@ -30,6 +30,8 @@
 #include <Urho3D/Scene/Scene.h>
 #include "Core/ShellEvents.h"
 #include "GameEvents.h"
+#include "Input/InputClient.h"
+#include "Input/InputController.h"
 #include "Input/InputRegistry.h"
 #include "Network/NetworkEvents.h"
 #include "SampleGamePlugin.h"
@@ -65,8 +67,16 @@ const Urho3D::String& SampleGamePlugin::GetName() const { return PLUGIN_NAME; }
 
 void SampleGamePlugin::OnShellClientStarted(Urho3D::StringHash, Urho3D::VariantMap&)
 {
+	InputClient* inputClient = GetSubsystem<InputClient>();
+	InputController* keyboard = inputClient->GetController("KeyboardController");
+	if (keyboard)
+	{
+		keyboard->SetDefaultBinding(MOVE_FORWARD, KEY_W);
+		keyboard->SetDefaultBinding(MOVE_BACK, KEY_S);
+		keyboard->SetDefaultBinding(MOVE_LEFT, KEY_A);
+		keyboard->SetDefaultBinding(MOVE_RIGHT, KEY_D);
+	}
 }
-
 void SampleGamePlugin::OnRemoteClientStarted(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	Network* network = GetSubsystem<Network>();

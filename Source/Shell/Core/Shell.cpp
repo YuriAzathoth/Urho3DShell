@@ -37,6 +37,7 @@
 #include <Urho3D/UI/UI.h>
 #include <boost/filesystem.hpp>
 #include "Config/Config.h"
+#include "Input/InputClient.h"
 #include "Input/InputRegistry.h"
 #include "Network/Client.h"
 #include "Network/Server.h"
@@ -73,6 +74,8 @@ Shell::~Shell()
 	SaveProfile();
 	SaveProfileName();
 	context_->RemoveSubsystem<PluginsRegistry>();
+	if (client_)
+		context_->RemoveSubsystem<InputClient>();
 }
 
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
@@ -111,6 +114,12 @@ void Shell::Initialize()
 {
 	shellParameters_.Clear();
 
+	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
+	pluginsRegistry->RegisterPlugin(gameLibrary_);
+	const auto itScript = shellParameters_.Find(LP_SCRIPT);
+	if (itScript != shellParameters_.End())
+		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
+
 	if (client_)
 	{
 		ResourceCache* cache = GetSubsystem<ResourceCache>();
@@ -125,19 +134,17 @@ void Shell::Initialize()
 		debugHud->SetDefaultStyle(styleFile);
 
 		context_->RegisterSubsystem<UIController>();
-
 		StartMainMenu();
 
-		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
+		InputClient* inputClient = context_->RegisterSubsystem<InputClient>();
+		inputClient->SetConfigPath(GetInputPath());
 
 		SendEvent(E_SHELLCLIENTSTARTED);
-	}
 
-	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
-	pluginsRegistry->RegisterPlugin(gameLibrary_);
-	const auto itScript = shellParameters_.Find(LP_SCRIPT);
-	if (itScript != shellParameters_.End())
-		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
+		inputClient->EnableController("KeyboardController");
+
+		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
+	}
 
 	GetSubsystem<Config>()->Apply(false);
 }
