@@ -42,6 +42,7 @@ private:
 	Urho3D::UIElement* CreateSettingsTab(const Urho3D::String& settingsTab);
 	void ShowSettingsTab(Urho3D::StringHash settingsTab);
 
+	Urho3D::UIElement* CreateCaption(const Urho3D::String& parameterName);
 	void CreateParameterBool(const Urho3D::String& parameterName, bool value, Urho3D::UIElement* parent);
 	void CreateParameterFloat(const Urho3D::String& parameterName, float value, Urho3D::UIElement* parent);
 	void

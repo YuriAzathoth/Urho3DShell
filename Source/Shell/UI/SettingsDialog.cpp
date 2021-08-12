@@ -89,20 +89,11 @@ void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)
 	const Config* config = GetSubsystem<Config>();
 	const StringVector settings = config->GetSettings(settingsTab);
 
-	SharedPtr<UIElement> item;
-	Text* caption;
+	UIElement* item;
 	Variant value;
 	for (const String& parameter : settings)
 	{
-		item = MakeShared<UIElement>(context_);
-		item->SetLayout(LM_HORIZONTAL, 8, {4, 4, 4, 4});
-		settings_->AddItem(item);
-		item->SetStyleAuto();
-
-		caption = item->CreateChild<Text>();
-		caption->SetText(parameter);
-		caption->SetStyleAuto();
-
+		item = CreateCaption(parameter);
 		value = config->ReadValue(parameter);
 		if (config->IsEnum(parameter))
 		{
@@ -126,6 +117,19 @@ void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)
 				break;
 			}
 	}
+}
+
+Urho3D::UIElement* SettingsDialog::CreateCaption(const Urho3D::String& parameterName)
+{
+	SharedPtr<UIElement> item = MakeShared<UIElement>(context_);
+	settings_->AddItem(item);
+	item->SetLayout(LM_HORIZONTAL, 8, {4, 4, 4, 4});
+	item->SetStyleAuto();
+
+	Text* caption = item->CreateChild<Text>();
+	caption->SetText(parameterName);
+	caption->SetStyleAuto();
+	return item.Get();
 }
 
 void SettingsDialog::CreateParameterBool(const Urho3D::String& parameterName, bool value, Urho3D::UIElement* parent)
