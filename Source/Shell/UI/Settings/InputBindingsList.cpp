@@ -114,21 +114,25 @@ void InputBindingsList::CreateSensitivitySlider()
 	LineEdit* lineEdit = item->CreateChild<LineEdit>();
 	lineEdit->SetStyleAuto();
 
-	SubscribeToEvent(sensitivity_, E_SLIDERCHANGED, [this, lineEdit](StringHash, VariantMap& eventData)
-	{
-		using namespace SliderChanged;
-		const float value = eventData[P_VALUE].GetFloat();
-		lineEdit->SetText(ToString("%f", value).Substring(0, 4));
-		ChangedParameters& parameters = changedBindings_[GetCurrentControllerName()];
-		parameters.sensitivity_ = value;
-		parameters.sensitivityChanged_ = true;
-	});
-	SubscribeToEvent(lineEdit, E_TEXTCHANGED, [this](StringHash, VariantMap& eventData)
-	{
-		using namespace TextChanged;
-		const String& text = eventData[P_TEXT].GetString();
-		sensitivity_->SetValue(ToFloat(text));
-	});
+	SubscribeToEvent(sensitivity_,
+					 E_SLIDERCHANGED,
+					 [this, lineEdit](StringHash, VariantMap& eventData)
+					 {
+						 using namespace SliderChanged;
+						 const float value = eventData[P_VALUE].GetFloat();
+						 lineEdit->SetText(ToString("%f", value).Substring(0, 4));
+						 ChangedParameters& parameters = changedBindings_[GetCurrentControllerName()];
+						 parameters.sensitivity_ = value;
+						 parameters.sensitivityChanged_ = true;
+					 });
+	SubscribeToEvent(lineEdit,
+					 E_TEXTCHANGED,
+					 [this](StringHash, VariantMap& eventData)
+					 {
+						 using namespace TextChanged;
+						 const String& text = eventData[P_TEXT].GetString();
+						 sensitivity_->SetValue(ToFloat(text));
+					 });
 }
 
 void InputBindingsList::CreateActionBinding(const Urho3D::String& actionName)

@@ -30,7 +30,7 @@ namespace Urho3D
 {
 class DropDownList;
 class Slider;
-}
+} // namespace Urho3D
 class InputController;
 
 class InputBindingsList : public SettingsList

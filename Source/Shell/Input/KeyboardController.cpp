@@ -82,22 +82,24 @@ unsigned KeyboardController::GetKeyCode(const Urho3D::String& keyName) const
 void KeyboardController::StartBinding(Urho3D::StringHash action)
 {
 	Disable();
-	SubscribeToEvent(E_KEYDOWN, [this, action](StringHash, VariantMap& eventData)
-	{
-		using namespace InputBindingEnd;
-		eventData[P_ACTION] = action;
-		SendEvent(E_INPUTBINDINGEND, eventData);
-		EndBinding();
-	});
-	SubscribeToEvent(E_MOUSEBUTTONDOWN, [this, action](StringHash, VariantMap& eventData)
-	{
-		using namespace MouseButtonDown;
-		using namespace InputBindingEnd;
-		eventData[P_KEY] = eventData[P_BUTTON];
-		eventData[P_ACTION] = action;
-		SendEvent(E_INPUTBINDINGEND, eventData);
-		EndBinding();
-	});
+	SubscribeToEvent(E_KEYDOWN,
+					 [this, action](StringHash, VariantMap& eventData)
+					 {
+						 using namespace InputBindingEnd;
+						 eventData[P_ACTION] = action;
+						 SendEvent(E_INPUTBINDINGEND, eventData);
+						 EndBinding();
+					 });
+	SubscribeToEvent(E_MOUSEBUTTONDOWN,
+					 [this, action](StringHash, VariantMap& eventData)
+					 {
+						 using namespace MouseButtonDown;
+						 using namespace InputBindingEnd;
+						 eventData[P_KEY] = eventData[P_BUTTON];
+						 eventData[P_ACTION] = action;
+						 SendEvent(E_INPUTBINDINGEND, eventData);
+						 EndBinding();
+					 });
 }
 
 void KeyboardController::EndBinding() { Enable(); }
