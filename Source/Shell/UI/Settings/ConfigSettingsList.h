@@ -28,7 +28,7 @@
 
 class ConfigSettingsList : public SettingsList
 {
-	URHO3D_OBJECT(ConfigSettingsList, Urho3D::Object)
+	URHO3D_OBJECT(ConfigSettingsList, SettingsList)
 
 public:
 	ConfigSettingsList(Urho3D::StringHash settingsTab, Urho3D::Context* context, Urho3D::ListView* settings);

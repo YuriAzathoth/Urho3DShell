@@ -40,9 +40,9 @@ public:
 
 	virtual void Apply() = 0;
 
+protected:
 	Urho3D::UIElement* CreateCaption(const Urho3D::String& parameterName);
 
-protected:
 	Urho3D::ListView* settings_;
 
 private:
