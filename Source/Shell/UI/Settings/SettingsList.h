@@ -24,6 +24,7 @@
 #define SETTINGSLIST_H
 
 #include <Urho3D/Core/Object.h>
+#include <boost/noncopyable.hpp>
 
 namespace Urho3D
 {
@@ -31,7 +32,7 @@ class ListView;
 class UIElement;
 } // namespace Urho3D
 
-class SettingsList : public Urho3D::Object
+class SettingsList : public Urho3D::Object, private boost::noncopyable
 {
 	URHO3D_OBJECT(SettingsList, Urho3D::Object)
 
