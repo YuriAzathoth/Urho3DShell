@@ -31,17 +31,17 @@ class URHO3DSHELLAPI_EXPORT KeyboardController : public InputController
 	URHO3D_OBJECT(KeyboardController, InputController)
 
 public:
-	explicit KeyboardController(Urho3D::Context* context);
+	using InputController::InputController;
 
 	void ReadControls(Urho3D::Controls& controls) const override;
 	Urho3D::String GetKeyName(unsigned keyCode) const override;
 	unsigned GetKeyCode(const Urho3D::String& keyName) const override;
+	void StartBinding(Urho3D::StringHash action) override;
+	void EndBinding() override;
 
 private:
 	bool Enable() override;
 	bool Disable() override;
-
-	void ActivateStandardEvents();
 
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnKeyUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);

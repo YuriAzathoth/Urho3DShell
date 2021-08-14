@@ -36,6 +36,7 @@ public:
 private:
 	Urho3D::UIElement* CreateSettingsTab(const Urho3D::String& settingsTab);
 	void ShowSettingsTab(Urho3D::StringHash settingsTab);
+	void ShowControlsTab();
 
 	void OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&);

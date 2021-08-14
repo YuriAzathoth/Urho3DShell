@@ -35,11 +35,6 @@
 
 using namespace Urho3D;
 
-KeyboardController::KeyboardController(Urho3D::Context* context)
-	: InputController(context)
-{
-}
-
 void KeyboardController::ReadControls(Urho3D::Controls& controls) const
 {
 	const Input* input = GetSubsystem<Input>();
@@ -84,9 +79,35 @@ unsigned KeyboardController::GetKeyCode(const Urho3D::String& keyName) const
 		return static_cast<unsigned>(GetSubsystem<Input>()->GetKeyFromName(keyName));
 }
 
+void KeyboardController::StartBinding(Urho3D::StringHash action)
+{
+	Disable();
+	SubscribeToEvent(E_KEYDOWN, [this, action](StringHash, VariantMap& eventData)
+	{
+		using namespace InputBindingEnd;
+		eventData[P_ACTION] = action;
+		SendEvent(E_INPUTBINDINGEND, eventData);
+		EndBinding();
+	});
+	SubscribeToEvent(E_MOUSEBUTTONDOWN, [this, action](StringHash, VariantMap& eventData)
+	{
+		using namespace MouseButtonDown;
+		using namespace InputBindingEnd;
+		eventData[P_KEY] = eventData[P_BUTTON];
+		eventData[P_ACTION] = action;
+		SendEvent(E_INPUTBINDINGEND, eventData);
+		EndBinding();
+	});
+}
+
+void KeyboardController::EndBinding() { Enable(); }
+
 bool KeyboardController::Enable()
 {
-	ActivateStandardEvents();
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(KeyboardController, OnKeyDown));
+	SubscribeToEvent(E_KEYUP, URHO3D_HANDLER(KeyboardController, OnKeyUp));
+	SubscribeToEvent(E_MOUSEBUTTONDOWN, URHO3D_HANDLER(KeyboardController, OnMouseDown));
+	SubscribeToEvent(E_MOUSEBUTTONUP, URHO3D_HANDLER(KeyboardController, OnMouseUp));
 	return true;
 }
 
@@ -94,14 +115,6 @@ bool KeyboardController::Disable()
 {
 	UnsubscribeFromAllEvents();
 	return true;
-}
-
-void KeyboardController::ActivateStandardEvents()
-{
-	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(KeyboardController, OnKeyDown));
-	SubscribeToEvent(E_KEYUP, URHO3D_HANDLER(KeyboardController, OnKeyUp));
-	SubscribeToEvent(E_MOUSEBUTTONDOWN, URHO3D_HANDLER(KeyboardController, OnMouseDown));
-	SubscribeToEvent(E_MOUSEBUTTONUP, URHO3D_HANDLER(KeyboardController, OnMouseUp));
 }
 
 void KeyboardController::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)

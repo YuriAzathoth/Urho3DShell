@@ -25,6 +25,7 @@
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIEvents.h>
 #include "Settings/ConfigSettingsList.h"
+#include "Settings/InputBindingsList.h"
 #include "SettingsDialog.h"
 
 using namespace Urho3D;
@@ -53,19 +54,25 @@ SettingsDialog::SettingsDialog(Urho3D::Context* context)
 		settingsTab = tabName;
 		SubscribeToEvent(tabButton,
 						 E_PRESSED,
-						 [this, settingsTab](StringHash, VariantMap&)
-						 {
-							 ShowSettingsTab(settingsTab);
-						 });
+						 [this, settingsTab](StringHash, VariantMap&) { ShowSettingsTab(settingsTab); });
 	}
+
+	tabButton = CreateSettingsTab("Controls");
+	SubscribeToEvent(tabButton, E_PRESSED, [this](StringHash, VariantMap&) { ShowControlsTab(); });
 
 	ShowSettingsTab(tabs[0]);
 }
 
 void SettingsDialog::ShowSettingsTab(Urho3D::StringHash settingsTab)
 {
-	 settings_->RemoveAllItems();
-	 settingsList_ = new ConfigSettingsList(settingsTab, context_, settings_);
+	settings_->RemoveAllItems();
+	settingsList_ = new ConfigSettingsList(settingsTab, context_, settings_);
+}
+
+void SettingsDialog::ShowControlsTab()
+{
+	settings_->RemoveAllItems();
+	settingsList_ = new InputBindingsList(context_, settings_);
 }
 
 Urho3D::UIElement* SettingsDialog::CreateSettingsTab(const Urho3D::String& settingsTab)

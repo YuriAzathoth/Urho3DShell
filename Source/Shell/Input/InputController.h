@@ -46,6 +46,8 @@ public:
 	virtual void ReadControls(Urho3D::Controls& controls) const = 0;
 	virtual Urho3D::String GetKeyName(unsigned keyCode) const = 0;
 	virtual unsigned GetKeyCode(const Urho3D::String& keyName) const = 0;
+	virtual void StartBinding(Urho3D::StringHash action) = 0;
+	virtual void EndBinding() = 0;
 
 	bool EnableController();
 	bool DisableController();

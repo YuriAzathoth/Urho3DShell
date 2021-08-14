@@ -35,4 +35,10 @@ URHO3D_EVENT(E_ACTIONUP, ActionUp)
 	URHO3D_PARAM(P_ACTION, Action); // StringHash
 }
 
+URHO3D_EVENT(E_INPUTBINDINGEND, InputBindingEnd)
+{
+	URHO3D_PARAM(P_ACTION, Action); // StringHash
+	URHO3D_PARAM(P_KEY, Key);		// unsigned
+}
+
 #endif // INPUTEVENTS_H
