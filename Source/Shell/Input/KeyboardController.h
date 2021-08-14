@@ -41,8 +41,12 @@ private:
 	bool Enable() override;
 	bool Disable() override;
 
+	void ActivateStandardEvents();
+
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnKeyUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnMouseDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnMouseUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
 #endif // KEYBOARDCONTROLLER_H

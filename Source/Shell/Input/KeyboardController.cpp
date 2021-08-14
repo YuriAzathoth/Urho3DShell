@@ -23,6 +23,8 @@
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Input/InputConstants.h>
+#include <Urho3D/Input/InputEvents.h>
+#include "InputEvents.h"
 #include "KeyboardController.h"
 
 #define LEFT_BUTTON_NAME "LMB"
@@ -41,10 +43,8 @@ KeyboardController::KeyboardController(Urho3D::Context* context)
 void KeyboardController::ReadControls(Urho3D::Controls& controls) const
 {
 	const Input* input = GetSubsystem<Input>();
-
 	controls.pitch_ = static_cast<float>(input->GetMouseMoveY()) * GetSensitivity();
 	controls.yaw_ = static_cast<float>(input->GetMouseMoveX()) * GetSensitivity();
-
 	for (const auto& p : GetRemoteBindings())
 		controls.Set(input->GetKeyDown(static_cast<Key>(p.first_)), true);
 }
@@ -86,8 +86,7 @@ unsigned KeyboardController::GetKeyCode(const Urho3D::String& keyName) const
 
 bool KeyboardController::Enable()
 {
-	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(KeyboardController, OnKeyDown));
-	SubscribeToEvent(E_KEYUP, URHO3D_HANDLER(KeyboardController, OnKeyUp));
+	ActivateStandardEvents();
 	return true;
 }
 
@@ -95,6 +94,14 @@ bool KeyboardController::Disable()
 {
 	UnsubscribeFromAllEvents();
 	return true;
+}
+
+void KeyboardController::ActivateStandardEvents()
+{
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(KeyboardController, OnKeyDown));
+	SubscribeToEvent(E_KEYUP, URHO3D_HANDLER(KeyboardController, OnKeyUp));
+	SubscribeToEvent(E_MOUSEBUTTONDOWN, URHO3D_HANDLER(KeyboardController, OnMouseDown));
+	SubscribeToEvent(E_MOUSEBUTTONUP, URHO3D_HANDLER(KeyboardController, OnMouseUp));
 }
 
 void KeyboardController::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
@@ -109,4 +116,18 @@ void KeyboardController::OnKeyUp(Urho3D::StringHash, Urho3D::VariantMap& eventDa
 	using namespace KeyUp;
 	const unsigned key = static_cast<unsigned>(eventData[P_KEY].GetInt());
 	SendAction(key, false);
+}
+
+void KeyboardController::OnMouseDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace MouseButtonDown;
+	const unsigned button = static_cast<unsigned>(eventData[P_BUTTON].GetInt());
+	SendAction(button, true);
+}
+
+void KeyboardController::OnMouseUp(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace MouseButtonUp;
+	const unsigned button = static_cast<unsigned>(eventData[P_BUTTON].GetInt());
+	SendAction(button, false);
 }
