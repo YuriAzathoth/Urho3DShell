@@ -43,14 +43,13 @@ public:
 	explicit InputController(Urho3D::Context* context);
 	virtual ~InputController() {}
 
+	virtual bool Enable() = 0;
+	virtual bool Disable() = 0;
 	virtual void ReadControls(Urho3D::Controls& controls) const = 0;
 	virtual Urho3D::String GetKeyName(unsigned keyCode) const = 0;
 	virtual unsigned GetKeyCode(const Urho3D::String& keyName) const = 0;
 	virtual void StartBinding(Urho3D::StringHash action) = 0;
 	virtual void EndBinding() = 0;
-
-	bool EnableController();
-	bool DisableController();
 
 	bool LoadXML(const Urho3D::XMLElement& source);
 	void SaveXML(Urho3D::XMLElement& dst) const;
@@ -69,26 +68,23 @@ public:
 	void SetSensitivity(float sensitivity) noexcept { sensitivity_ = sensitivity; }
 	float GetSensitivity() const noexcept { return sensitivity_; }
 
-	bool IsEnabled() const noexcept { return enabled_; }
-
 	Urho3D::String GetDebugString() const;
 
 protected:
 	using RemoteBindingsVector = Urho3D::PODVector<Urho3D::Pair<unsigned, unsigned>>;
 
-	void SendAction(unsigned keyCode, bool isDown);
+	void EnableSelf();
+	void DisableSelf();
+	void SendActionDown(unsigned keyCode);
+	void SendActionUp(unsigned keyCode);
 
 	const RemoteBindingsVector& GetRemoteBindings() const noexcept { return remoteBindings_; }
 
 private:
-	virtual bool Enable() = 0;
-	virtual bool Disable() = 0;
-
 	BindingsMap bindings_;											// Key -> Action
 	RemoteBindingsVector remoteBindings_;							// Key -> Flag
 	Urho3D::HashMap<Urho3D::StringHash, unsigned> defaultBindings_; // Action -> Key
 	float sensitivity_;
-	bool enabled_;
 };
 
 inline void InputController::RemoveAllBindings()

@@ -22,38 +22,18 @@
 
 #include <Urho3D/Container/HashSet.h>
 #include <Urho3D/Core/StringUtils.h>
-#include <Urho3D/Input/InputConstants.h>
-#include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/Resource/XMLElement.h>
-#include "Core/Shell.h"
+#include "InputClient.h"
 #include "InputController.h"
 #include "InputEvents.h"
 #include "InputRegistry.h"
-
-#define CB_ITEM_VALUE
 
 using namespace Urho3D;
 
 InputController::InputController(Urho3D::Context* context)
 	: Object(context)
-	, sensitivity_(1.0f)
+	, sensitivity_(0.25f)
 {
-}
-
-bool InputController::EnableController()
-{
-	const bool ret = Enable();
-	if (ret)
-		enabled_ = true;
-	return ret;
-}
-
-bool InputController::DisableController()
-{
-	const bool ret = Disable();
-	if (ret)
-		enabled_ = false;
-	return ret;
 }
 
 bool InputController::LoadXML(const Urho3D::XMLElement& source)
@@ -145,16 +125,19 @@ unsigned InputController::GetBindingKey(Urho3D::StringHash action) const
 	for (auto it = bindings_.Begin(); it != bindings_.End(); ++it)
 		if (it->second_ == action)
 			return it->first_;
-	return KEY_UNKNOWN;
+	return 0;
 }
 
 unsigned InputController::GetDefaultBinding(Urho3D::StringHash action) const
 {
 	const auto it = defaultBindings_.Find(action);
-	return it != defaultBindings_.End() ? it->second_ : KEY_UNKNOWN;
+	return it != defaultBindings_.End() ? it->second_ : 0;
 }
 
-void InputController::SendAction(unsigned keyCode, bool isDown)
+void InputController::EnableSelf() { GetSubsystem<InputClient>()->EnableController(GetType()); }
+void InputController::DisableSelf() { GetSubsystem<InputClient>()->EnableController(GetType()); }
+
+void InputController::SendActionDown(unsigned keyCode)
 {
 	const auto it = bindings_.Find(keyCode);
 	if (it != bindings_.End())
@@ -162,7 +145,19 @@ void InputController::SendAction(unsigned keyCode, bool isDown)
 		using namespace ActionDown;
 		VariantMap& eventData = GetEventDataMap();
 		eventData[P_ACTION] = it->second_;
-		SendEvent(isDown ? E_ACTIONDOWN : E_ACTIONUP, eventData);
+		SendEvent(E_ACTIONDOWN, eventData);
+	}
+}
+
+void InputController::SendActionUp(unsigned keyCode)
+{
+	const auto it = bindings_.Find(keyCode);
+	if (it != bindings_.End())
+	{
+		using namespace ActionDown;
+		VariantMap& eventData = GetEventDataMap();
+		eventData[P_ACTION] = it->second_;
+		SendEvent(E_ACTIONUP, eventData);
 	}
 }
 

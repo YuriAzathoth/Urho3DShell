@@ -33,6 +33,8 @@ class URHO3DSHELLAPI_EXPORT KeyboardController : public InputController
 public:
 	using InputController::InputController;
 
+	bool Enable() override;
+	bool Disable() override;
 	void ReadControls(Urho3D::Controls& controls) const override;
 	Urho3D::String GetKeyName(unsigned keyCode) const override;
 	unsigned GetKeyCode(const Urho3D::String& keyName) const override;
@@ -40,9 +42,6 @@ public:
 	void EndBinding() override;
 
 private:
-	bool Enable() override;
-	bool Disable() override;
-
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnKeyUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnMouseDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);

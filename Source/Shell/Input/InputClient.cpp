@@ -82,7 +82,7 @@ void InputClient::EnableController(Urho3D::StringHash controllerType)
 
 void InputClient::EnableController(InputController* inputController)
 {
-	if (inputController->EnableController())
+	if (inputController->Enable())
 	{
 		XMLFile file(context_);
 		if (file.LoadFile(configPath_ + inputController->GetTypeName() + ".xml"))
@@ -109,7 +109,7 @@ void InputClient::DisableController(Urho3D::StringHash controllerType)
 
 void InputClient::DisableController(InputController* inputController)
 {
-	if (inputController->DisableController())
+	if (inputController->Disable())
 	{
 		XMLFile file(context_);
 		XMLElement root = file.CreateRoot("input");
