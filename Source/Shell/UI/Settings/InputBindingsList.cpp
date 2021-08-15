@@ -46,9 +46,9 @@ InputBindingsList::InputBindingsList(Urho3D::Context* context, Urho3D::ListView*
 	const StringVector controllers = CreateControllersList();
 	CreateSensitivitySlider();
 
-	const StringVector actions = GetSubsystem<InputRegistry>()->GetActions();
-	for (const String& action : actions)
-		CreateActionBinding(action);
+	const InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
+	for (StringHash action : inputRegistry->GetActions())
+		CreateActionBinding(inputRegistry->GetActionName(action));
 
 	if (!controllers.Empty())
 		LoadControllerSettings(GetSubsystem<InputClient>()->GetController(controllers[0]));

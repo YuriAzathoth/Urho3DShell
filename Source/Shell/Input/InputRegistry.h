@@ -31,6 +31,8 @@ class URHO3DSHELLAPI_EXPORT InputRegistry : public Urho3D::Object
 	URHO3D_OBJECT(InputRegistry, Urho3D::Object)
 
 public:
+	using ActionsVector = Urho3D::PODVector<Urho3D::StringHash>;
+
 	explicit InputRegistry(Urho3D::Context* context);
 
 	void RegisterActionLocal(const Urho3D::String& actionName);
@@ -41,14 +43,12 @@ public:
 	unsigned GetActionFlag(Urho3D::StringHash action) const;
 	const Urho3D::String& GetActionName(Urho3D::StringHash action) const;
 	bool IsRemote(Urho3D::StringHash action) const { return remoteFlags_.Contains(action); }
-	const Urho3D::PODVector<Urho3D::StringHash>& GetActionsHandlers() const noexcept { return ordered_; }
-
-	Urho3D::StringVector GetActions() const;
+	const ActionsVector& GetActions() const noexcept { return ordered_; }
 
 	Urho3D::String GetDebugString() const;
 
 private:
-	Urho3D::PODVector<Urho3D::StringHash> ordered_;
+	ActionsVector ordered_;
 	Urho3D::HashMap<Urho3D::StringHash, unsigned> remoteFlags_;
 	Urho3D::StringMap names_;
 	unsigned lastRemoteFlag_;

@@ -87,15 +87,6 @@ const Urho3D::String& InputRegistry::GetActionName(Urho3D::StringHash action) co
 	return it != names_.End() ? it->second_ : String::EMPTY;
 }
 
-Urho3D::StringVector InputRegistry::GetActions() const
-{
-	StringVector ret;
-	ret.Reserve(ordered_.Size());
-	for (const StringHash action : ordered_)
-		ret.Push(*names_[action]);
-	return ret;
-}
-
 Urho3D::String InputRegistry::GetDebugString() const
 {
 	String ret;
