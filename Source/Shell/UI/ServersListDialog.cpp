@@ -40,7 +40,10 @@ ServersListDialog::ServersListDialog(Urho3D::Context* context)
 	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<Shell>()->GetPort());
 }
 
-void ServersListDialog::Start(const Urho3D::String& itemName) { GetSubsystem<Shell>()->StartClient(itemName); }
+void ServersListDialog::Start(const Urho3D::String& itemName)
+{
+	GetSubsystem<Shell>()->StartClient(std::move(itemName));
+}
 
 void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {

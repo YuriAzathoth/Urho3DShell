@@ -25,11 +25,14 @@
 
 using namespace Urho3D;
 
-void HostItemsListWindow::Start(const Urho3D::String& itemName) { GetSubsystem<Shell>()->StartLocalServer(itemName); }
+void HostItemsListWindow::Start(const Urho3D::String& itemName)
+{
+	GetSubsystem<Shell>()->StartLocalServer(std::move(itemName));
+}
 
 void HostItemsListWindow::Start(const Urho3D::String& itemName,
 								const Urho3D::String& serverName,
 								[[maybe_unused]] const Urho3D::String& serverPass)
 {
-	GetSubsystem<Shell>()->StartRemoteServer(serverName, itemName);
+	GetSubsystem<Shell>()->StartRemoteServer(std::move(serverName), std::move(itemName));
 }
