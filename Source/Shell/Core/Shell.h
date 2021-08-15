@@ -42,33 +42,13 @@ public:
 	void StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName);
 	void StartClient(Urho3D::String address);
 
-	void LoadProfile(const Urho3D::String& profileName);
-	void SaveProfile() const;
-	void CreateProfile(const Urho3D::String& profileName);
-	void RemoveProfile(const Urho3D::String& profileName);
-
 	void SetPort(unsigned short port) noexcept { port_ = port; }
 
-	Urho3D::String GetConfigFilename() const;
-	Urho3D::String GetConfigPath() const;
-	Urho3D::String GetInputPath() const;
-	Urho3D::String GetLogsFilename() const;
-	Urho3D::String GetLogsPath() const;
-	Urho3D::String GetPluginsPath() const;
-	Urho3D::String GetProfileFilename() const;
-	Urho3D::String GetSavesPath() const;
-
 	unsigned short GetPort() const noexcept { return port_; }
-	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
 	bool IsClientLaunched() const noexcept { return client_; }
 
 private:
 	bool PreconfigureEngine();
-	void LoadProfile();
-	void LoadProfileName();
-	void SaveProfileName();
-
-	Urho3D::String GetGameDataPath() const;
 
 	void ParseParameters(const Urho3D::StringVector& arguments);
 	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue);
@@ -76,11 +56,7 @@ private:
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	Urho3D::VariantMap shellParameters_;
-	Urho3D::String appName_;
-	Urho3D::String gameName_;
 	Urho3D::String gameLibrary_;
-	Urho3D::String profileName_;
-	Urho3D::String userDataPath_;
 	unsigned short port_; // TODO: Move to something else location
 	bool client_;
 };
