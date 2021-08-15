@@ -45,6 +45,7 @@ void RegisterShellConfiguratorAPI(asIScriptEngine* engine)
 
 	RegisterSubclass<Object, ShellConfigurator>(engine, "Object", "ShellConfigurator");
 	RegisterSubclass<RefCounted, ShellConfigurator>(engine, "RefCounted", "ShellConfigurator");
+
 	RegisterMembers_Object<ShellConfigurator>(engine, "ShellConfigurator");
 
 	engine->RegisterObjectMethod("ShellConfigurator",

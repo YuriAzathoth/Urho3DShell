@@ -39,6 +39,7 @@ void RegisterShellAPI(asIScriptEngine* engine)
 
 	RegisterSubclass<Object, Shell>(engine, "Object", "Shell");
 	RegisterSubclass<RefCounted, Shell>(engine, "RefCounted", "Shell");
+
 	RegisterMembers_Object<Shell>(engine, "Shell");
 
 	engine->RegisterObjectMethod("Shell", "void StartMainMenu()", AS_METHOD(Shell, StartMainMenu), AS_CALL_THISCALL);
