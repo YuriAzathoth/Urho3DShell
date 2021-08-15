@@ -44,15 +44,15 @@ void RegisterShellAPI(asIScriptEngine* engine)
 
 	engine->RegisterObjectMethod("Shell", "void StartMainMenu()", AS_METHOD(Shell, StartMainMenu), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Shell",
-								 "void StartLocalServer(const String&in)",
+								 "void StartLocalServer(String)",
 								 AS_METHOD(Shell, StartLocalServer),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Shell",
-								 "void StartRemoteServer(const String&in, const String&in)",
+								 "void StartRemoteServer(String, String)",
 								 AS_METHOD(Shell, StartRemoteServer),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Shell",
-								 "void StartClient(const String&in)",
+								 "void StartClient(String)",
 								 AS_METHOD(Shell, StartClient),
 								 AS_CALL_THISCALL);
 }
