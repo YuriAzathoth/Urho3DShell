@@ -39,6 +39,10 @@ class URHO3DSHELLAPI_EXPORT Config : public Urho3D::Object
 	URHO3D_OBJECT(Config, Urho3D::Object)
 
 public:
+	using SimpleReaderFunc = std::function<Urho3D::Variant()>;
+	using SimpleWriterFunc = std::function<void(const Urho3D::Variant&)>;
+	using ComplexWriterFunc = std::function<void(const Urho3D::VariantMap&)>;
+
 	struct Reader : public Urho3D::RefCounted
 	{
 		virtual Urho3D::Variant Read() = 0;
@@ -93,11 +97,15 @@ public:
 		}
 	};
 
-	using SimpleReaderFunc = std::function<Urho3D::Variant()>;
-	using SimpleWriterFunc = std::function<void(const Urho3D::Variant&)>;
-	using ComplexWriterFunc = std::function<void(const Urho3D::VariantMap&)>;
 	using EnumVector = Urho3D::Vector<EnumVariant>;
 	using EnumConstructorFunc = std::function<EnumVector()>;
+
+	struct ComplexStorage : public Urho3D::RefCounted
+	{
+		ComplexWriterFunc writer_;
+		Urho3D::VariantMap parameters_;
+		bool isEngine_;
+	};
 
 	using Urho3D::Object::Object;
 
@@ -106,8 +114,6 @@ public:
 	void SaveXML(Urho3D::XMLElement& dst) const;
 
 	void Apply(const Urho3D::VariantMap& parameters);
-	void Clear();
-
 	void ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters);
 
 	void RegisterSettingsTab(const Urho3D::String& tabName);
@@ -163,54 +169,6 @@ private:
 	};
 
 	using ParametersVector = Urho3D::PODVector<Urho3D::StringHash>;
-
-	class SimpleReader : public Reader
-	{
-	public:
-		explicit SimpleReader(SimpleReaderFunc reader)
-			: reader_(reader)
-		{
-		}
-		Urho3D::Variant Read() override { return reader_(); }
-
-	private:
-		const SimpleReaderFunc reader_;
-	};
-
-	class SimpleWriter : public Writer
-	{
-	public:
-		explicit SimpleWriter(SimpleWriterFunc writer)
-			: writer_(writer)
-		{
-		}
-		void Write(const Urho3D::Variant& value) override { writer_(value); }
-
-	private:
-		const SimpleWriterFunc writer_;
-	};
-
-	struct ComplexStorage : public Urho3D::RefCounted
-	{
-		ComplexWriterFunc writer_;
-		Urho3D::VariantMap parameters_;
-		bool isEngine_;
-	};
-
-	class ComplexWriter : public Writer
-	{
-	public:
-		ComplexWriter(Urho3D::SharedPtr<ComplexStorage> storage, Urho3D::StringHash name)
-			: storage_(storage)
-			, name_(name)
-		{
-		}
-		void Write(const Urho3D::Variant& value) override { storage_->parameters_[name_] = value; }
-
-	private:
-		Urho3D::SharedPtr<ComplexStorage> storage_;
-		const Urho3D::StringHash name_;
-	};
 
 	Urho3D::HashMap<Urho3D::StringHash, Parameter> parameters_;
 	Urho3D::HashMap<Urho3D::StringHash, EnumConstructorFunc> enumConstructors_;

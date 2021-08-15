@@ -97,9 +97,4 @@ void SettingsDialog::OnOkPressed(Urho3D::StringHash, Urho3D::VariantMap&)
 }
 
 void SettingsDialog::OnApplyPressed(Urho3D::StringHash, Urho3D::VariantMap&) { settingsList_->Apply(); }
-
-void SettingsDialog::OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-	GetSubsystem<Config>()->Clear();
-	Close();
-}
+void SettingsDialog::OnClosePressed(Urho3D::StringHash, Urho3D::VariantMap&) { Close(); }

@@ -29,6 +29,47 @@
 
 using namespace Urho3D;
 
+class SimpleReader : public Config::Reader
+{
+public:
+	explicit SimpleReader(Config::SimpleReaderFunc reader)
+		: reader_(reader)
+	{
+	}
+	Urho3D::Variant Read() override { return reader_(); }
+
+private:
+	const Config::SimpleReaderFunc reader_;
+};
+
+class SimpleWriter : public Config::Writer
+{
+public:
+	explicit SimpleWriter(Config::SimpleWriterFunc writer)
+		: writer_(writer)
+	{
+	}
+	void Write(const Urho3D::Variant& value) override { writer_(value); }
+
+private:
+	const Config::SimpleWriterFunc writer_;
+};
+
+class ComplexWriter : public Config::Writer
+{
+public:
+	ComplexWriter(Urho3D::SharedPtr<Config::ComplexStorage> storage, Urho3D::StringHash name)
+		: storage_(storage)
+		, name_(name)
+	{
+	}
+	void Write(const Urho3D::Variant& value) override { storage_->parameters_[name_] = value; }
+
+private:
+	Urho3D::SharedPtr<Config::ComplexStorage> storage_;
+	const Urho3D::StringHash name_;
+};
+
 void Config::LoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source)
 {
 	String name;
@@ -86,12 +127,6 @@ void Config::Apply(const Urho3D::VariantMap& parameters)
 			storage->parameters_.Clear();
 		}
 	}
-}
-
-void Config::Clear()
-{
-	for (auto& p : storages_)
-		p.second_->parameters_.Clear();
 }
 
 void Config::ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters)
