@@ -27,13 +27,11 @@
 #include <Urho3D/Engine/DebugHud.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Engine/EngineDefs.h>
-//#include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/ResourceCache.h>
-//#include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
 #include "Config/Config.h"
 #include "Input/InputClient.h"
@@ -43,9 +41,9 @@
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
+#include "ShellConfigurator.h"
 #include "ShellEvents.h"
 #include "UI/UIController.h"
-#include "ShellConfigurator.h"
 
 #define LP_GAME_LIB "GameLib"
 #define LP_NO_CLIENT "NoClient"
