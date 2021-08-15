@@ -115,10 +115,8 @@ void Shell::Initialize()
 		GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(styleFile);
 
 		Engine* engine = GetSubsystem<Engine>();
-		Console* console = engine->CreateConsole();
-		console->SetDefaultStyle(styleFile);
-		DebugHud* debugHud = engine->CreateDebugHud();
-		debugHud->SetDefaultStyle(styleFile);
+		engine->CreateConsole()->SetDefaultStyle(styleFile);
+		engine->CreateDebugHud()->SetDefaultStyle(styleFile);
 
 		context_->RegisterSubsystem<UIController>();
 		StartMainMenu();
