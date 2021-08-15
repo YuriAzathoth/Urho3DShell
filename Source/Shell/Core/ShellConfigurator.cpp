@@ -36,7 +36,7 @@ using namespace Urho3D;
 ShellConfigurator::ShellConfigurator(Urho3D::Context* context)
 	: Object(context)
 	, profileName_(DEFAULT_PROFILE)
-	, userDataPath_("./")
+	, userDataPath_(".")
 {
 	FileSystem* fileSystem = GetSubsystem<FileSystem>();
 	const String path = GetGameDataPath();
