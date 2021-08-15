@@ -168,12 +168,10 @@ private:
 		Urho3D::FlagSet<ParameterFlags> flags_;
 	};
 
-	using ParametersVector = Urho3D::PODVector<Urho3D::StringHash>;
-
 	Urho3D::HashMap<Urho3D::StringHash, Parameter> parameters_;
 	Urho3D::HashMap<Urho3D::StringHash, EnumConstructorFunc> enumConstructors_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<ComplexStorage>> storages_;
-	Urho3D::HashMap<Urho3D::StringHash, ParametersVector> settings_;
+	Urho3D::HashMap<Urho3D::StringHash, Urho3D::PODVector<Urho3D::StringHash>> settings_;
 	Urho3D::StringMap names_;
 
 private:
