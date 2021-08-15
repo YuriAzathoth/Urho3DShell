@@ -38,16 +38,23 @@ Server::Server(Urho3D::Context* context)
 	, pausable_(false)
 	, remote_(false)
 {
+	URHO3D_LOGTRACE("Server::Server");
 	SubscribeToEvent(E_CLIENTCONNECTED, URHO3D_HANDLER(Server, OnClientConnected));
 	SubscribeToEvent(E_CLIENTIDENTITY, URHO3D_HANDLER(Server, OnClientIdentity));
 	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(Server, OnClientSceneLoaded));
 	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(Server, OnServerSceneLoaded));
 }
 
-Server::~Server() { Stop(); }
+Server::~Server()
+{
+	URHO3D_LOGTRACE("Server::~Server");
+	Stop();
+}
 
 void Server::LoadScene(const Urho3D::String& sceneName)
 {
+	URHO3D_LOGTRACEF("Client::LoadScene(%s)", sceneName.CString());
+
 	SharedPtr<File> file = GetSubsystem<ResourceCache>()->GetFile(sceneName);
 	if (sceneName.EndsWith(".xml", false))
 		scene_.LoadAsyncXML(file);
@@ -61,18 +68,24 @@ void Server::LoadScene(const Urho3D::String& sceneName)
 
 void Server::ClearScene()
 {
+	URHO3D_LOGTRACE("Client::ClearScene");
+
 	SetUpdate(true);
 	scene_.Clear();
 }
 
 void Server::Start(unsigned short port)
 {
+	URHO3D_LOGTRACEF("Client::Start(%u)", port);
+
 	GetSubsystem<Network>()->StartServer(port);
 	remote_ = false;
 }
 
 void Server::Stop()
 {
+	URHO3D_LOGTRACE("Client::Stop");
+
 	Network* network = GetSubsystem<Network>();
 	if (network->IsServerRunning())
 	{
@@ -84,6 +97,8 @@ void Server::Stop()
 
 void Server::MakeVisible(const Urho3D::String& serverName)
 {
+	URHO3D_LOGTRACEF("Client::MakeVisible(%s)", serverName.CString());
+
 	VariantMap hostBeacon;
 	hostBeacon[SV_NAME] = serverName;
 	GetSubsystem<Network>()->SetDiscoveryBeacon(hostBeacon);

@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Scene/SceneEvents.h>
 #include "Client.h"
@@ -34,12 +35,19 @@ Client::Client(Urho3D::Context* context)
 	: Object(context)
 	, scene_(context)
 {
+	URHO3D_LOGTRACE("Client::Client");
 }
 
-Client::~Client() { Disconnect(); }
+Client::~Client()
+{
+	URHO3D_LOGTRACE("Client::~Client");
+	Disconnect();
+}
 
 void Client::Connect(const Urho3D::String& address)
 {
+	URHO3D_LOGTRACEF("Client::Connect(%s)", address.CString());
+
 	VariantMap identity;
 	identity[CL_NAME] = "SimpleName";
 
@@ -50,6 +58,8 @@ void Client::Connect(const Urho3D::String& address)
 
 void Client::Disconnect()
 {
+	URHO3D_LOGTRACE("Client::Disconnect");
+
 	Network* network = GetSubsystem<Network>();
 	if (network->GetServerConnection())
 	{
