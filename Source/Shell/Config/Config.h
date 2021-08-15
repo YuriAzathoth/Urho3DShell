@@ -130,7 +130,7 @@ public:
 	bool RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterFunc writer);
 	bool RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory);
 
-	const Urho3D::String& GetName(Urho3D::StringHash parameter) const { return *names_[parameter]; }
+	const Urho3D::String& GetName(Urho3D::StringHash parameter) const;
 	Urho3D::VariantType GetType(Urho3D::StringHash parameter) const;
 	bool IsEnum(Urho3D::StringHash parameter) const;
 	bool IsLocalized(Urho3D::StringHash parameter) const;
@@ -162,10 +162,7 @@ private:
 		Urho3D::FlagSet<ParameterFlags> flags_;
 	};
 
-	struct SettingsTab
-	{
-		Urho3D::PODVector<Urho3D::StringHash> settings_;
-	};
+	using ParametersVector = Urho3D::PODVector<Urho3D::StringHash>;
 
 	class SimpleReader : public Reader
 	{
@@ -218,39 +215,12 @@ private:
 	Urho3D::HashMap<Urho3D::StringHash, Parameter> parameters_;
 	Urho3D::HashMap<Urho3D::StringHash, EnumConstructorFunc> enumConstructors_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<ComplexStorage>> storages_;
-	Urho3D::HashMap<Urho3D::StringHash, SettingsTab> settings_;
+	Urho3D::HashMap<Urho3D::StringHash, ParametersVector> settings_;
 	Urho3D::StringMap names_;
 
 private:
 	static Urho3D::IntVector3 StrToRes(const Urho3D::String& str);
 	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);
 };
-
-inline Urho3D::VariantType Config::GetType(Urho3D::StringHash parameter) const { return parameters_[parameter]->type_; }
-
-inline bool Config::IsEnum(Urho3D::StringHash parameter) const
-{
-	return parameters_[parameter]->flags_ & ParameterFlags::ENUM;
-}
-
-inline bool Config::IsLocalized(Urho3D::StringHash parameter) const
-{
-	return parameters_[parameter]->flags_ & ParameterFlags::LOCALIZED;
-}
-
-inline Urho3D::Variant Config::ReadValue(Urho3D::StringHash parameter) const
-{
-	return parameters_[parameter]->reader_->Read();
-}
-
-inline void Config::WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& value)
-{
-	parameters_[parameter].writer_->Write(value);
-}
-
-inline Config::EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
-{
-	return (*enumConstructors_[parameter])();
-}
 
 #endif // CONFIG_H

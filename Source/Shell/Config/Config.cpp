@@ -167,9 +167,8 @@ Urho3D::StringVector Config::GetSettings(Urho3D::StringHash settingsTab) const
 	if (it != settings_.End())
 	{
 		StringVector ret;
-		const SettingsTab& tab = it->second_;
-		ret.Reserve(tab.settings_.Size());
-		for (StringHash setting : tab.settings_)
+		ret.Reserve(it->second_.Size());
+		for (StringHash setting : it->second_)
 			ret.Push(*names_[setting]);
 		return ret;
 	}
@@ -196,7 +195,7 @@ bool Config::RegisterParameter(const Urho3D::String& parameterName,
 			parameter.flags_ |= ParameterFlags::ENGINE;
 		if (localized)
 			parameter.flags_ |= ParameterFlags::LOCALIZED;
-		it->second_.settings_.Push(parameterName);
+		it->second_.Push(parameterName);
 		names_[parameterName] = parameterName;
 		return true;
 	}
@@ -290,6 +289,50 @@ bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringH
 			URHO3D_LOGWARNING("Failed to assign writer to non-existent complex config storage.");
 		return false;
 	}
+}
+
+
+const Urho3D::String& Config::GetName(Urho3D::StringHash parameter) const
+{
+	const auto it = names_.Find(parameter);
+	return it != names_.End() ? it->second_ : Urho3D::String::EMPTY;
+}
+
+Urho3D::VariantType Config::GetType(Urho3D::StringHash parameter) const
+{
+	const auto it = parameters_.Find(parameter);
+	return it != parameters_.End() ? it->second_.type_ : Urho3D::VariantType::VAR_NONE;
+}
+
+bool Config::IsEnum(Urho3D::StringHash parameter) const
+{
+	const auto it = parameters_.Find(parameter);
+	return it != parameters_.End() ? it->second_.flags_ & ParameterFlags::ENUM : false;
+}
+
+bool Config::IsLocalized(Urho3D::StringHash parameter) const
+{
+	const auto it = parameters_.Find(parameter);
+	return it != parameters_.End() ? it->second_.flags_ & ParameterFlags::LOCALIZED : false;
+}
+
+Urho3D::Variant Config::ReadValue(Urho3D::StringHash parameter) const
+{
+	const auto it = parameters_.Find(parameter);
+	return it != parameters_.End() ? it->second_.reader_->Read() : Urho3D::Variant::EMPTY;
+}
+
+void Config::WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& value)
+{
+	const auto it = parameters_.Find(parameter);
+	if (it != parameters_.End())
+		it->second_.writer_->Write(value);
+}
+
+Config::EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
+{
+	const auto it = enumConstructors_.Find(parameter);
+	return it != enumConstructors_.End() ? it->second_() : EnumVector{};
 }
 
 Urho3D::String Config::GetDebugString() const
