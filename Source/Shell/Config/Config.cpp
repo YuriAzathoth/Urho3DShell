@@ -326,7 +326,6 @@ bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringH
 	}
 }
 
-
 const Urho3D::String& Config::GetName(Urho3D::StringHash parameter) const
 {
 	const auto it = names_.Find(parameter);
