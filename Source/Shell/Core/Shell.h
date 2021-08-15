@@ -24,6 +24,8 @@
 #define SHELL_H
 
 #include <Urho3D/Core/Object.h>
+#include "Network/Client.h"
+#include "Network/Server.h"
 #include "Urho3DShellAPI.h"
 
 class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
@@ -45,7 +47,7 @@ public:
 	void SetPort(unsigned short port) noexcept { port_ = port; }
 
 	unsigned short GetPort() const noexcept { return port_; }
-	bool IsClientLaunched() const noexcept { return client_; }
+	bool IsClientLaunched() const noexcept { return isClient_; }
 
 private:
 	bool PreconfigureEngine();
@@ -57,8 +59,10 @@ private:
 
 	Urho3D::VariantMap shellParameters_;
 	Urho3D::String gameLibrary_;
+	Urho3D::UniquePtr<Client> client_;
+	Urho3D::UniquePtr<Server> server_;
 	unsigned short port_; // TODO: Move to something else location
-	bool client_;
+	bool isClient_;
 };
 
 #endif // SHELL_H

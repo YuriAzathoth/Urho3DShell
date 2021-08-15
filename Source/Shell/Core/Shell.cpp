@@ -36,8 +36,6 @@
 #include "Config/Config.h"
 #include "Input/InputClient.h"
 #include "Input/InputRegistry.h"
-#include "Network/Client.h"
-#include "Network/Server.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
@@ -54,7 +52,7 @@ using namespace Urho3D;
 Shell::Shell(Urho3D::Context* context)
 	: Object(context)
 	, port_(27500)
-	, client_(true)
+	, isClient_(true)
 {
 	context_->RegisterSubsystem<Script>();
 	context_->RegisterSubsystem<Config>();
@@ -67,7 +65,7 @@ Shell::~Shell()
 {
 	context_->RemoveSubsystem<ShellConfigurator>();
 	context_->RemoveSubsystem<PluginsRegistry>();
-	if (client_)
+	if (isClient_)
 		context_->RemoveSubsystem<InputClient>();
 }
 
@@ -81,11 +79,11 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	}
 
 	ParseParameters(GetArguments());
-	client_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
+	isClient_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
 
 	Config* config = GetSubsystem<Config>();
 	config->RegisterServerParameters();
-	if (client_)
+	if (isClient_)
 		config->RegisterClientParameters();
 
 	ShellConfigurator* configurator = GetSubsystem<ShellConfigurator>();
@@ -96,7 +94,7 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 
 	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
 	RegisterServerAPI(engine);
-	if (client_)
+	if (isClient_)
 		RegisterClientAPI(engine);
 }
 
@@ -108,7 +106,7 @@ void Shell::Initialize()
 	if (itScript != shellParameters_.End())
 		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
 
-	if (client_)
+	if (isClient_)
 	{
 		ResourceCache* cache = GetSubsystem<ResourceCache>();
 		XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
@@ -171,8 +169,8 @@ bool Shell::PreconfigureEngine()
 
 void Shell::StartMainMenu()
 {
-	context_->RemoveSubsystem<Client>();
-	context_->RemoveSubsystem<Server>();
+	client_.Reset();
+	server_.Reset();
 
 	UIController* uiController = GetSubsystem<UIController>();
 	uiController->RemoveAllDialogs();
@@ -181,13 +179,15 @@ void Shell::StartMainMenu()
 
 void Shell::StartLocalServer(Urho3D::String sceneName)
 {
-	Server* server = context_->RegisterSubsystem<Server>();
-	server->Start(GetSubsystem<Shell>()->GetPort());
-	server->LoadScene(sceneName);
-	server->SetPausable(true);
+	client_.Reset();
 
-	Client* client = context_->RegisterSubsystem<Client>();
-	client->Connect();
+	server_ = MakeUnique<Server>(context_);
+	server_->Start(GetSubsystem<Shell>()->GetPort());
+	server_->LoadScene(sceneName);
+	server_->SetPausable(true);
+
+	client_ = MakeUnique<Client>(context_);
+	client_->Connect();
 
 	UIController* uiController = GetSubsystem<UIController>();
 	uiController->RemoveAllDialogs();
@@ -195,14 +195,16 @@ void Shell::StartLocalServer(Urho3D::String sceneName)
 
 void Shell::StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName)
 {
-	Server* server = context_->RegisterSubsystem<Server>();
-	server->Start(GetPort());
-	server->MakeVisible(serverName);
-	server->LoadScene(sceneName);
-	server->SetPausable(false);
+	client_.Reset();
 
-	Client* client = context_->RegisterSubsystem<Client>();
-	client->Connect();
+	server_ = MakeUnique<Server>(context_);
+	server_->Start(GetPort());
+	server_->MakeVisible(serverName);
+	server_->LoadScene(sceneName);
+	server_->SetPausable(false);
+
+	client_ = MakeUnique<Client>(context_);
+	client_->Connect();
 
 	UIController* uiController = GetSubsystem<UIController>();
 	uiController->RemoveAllDialogs();
@@ -210,7 +212,7 @@ void Shell::StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneNam
 
 void Shell::StartClient(Urho3D::String address)
 {
-	context_->RemoveSubsystem<Server>();
+	server_.Reset();
 
 	Client* client = context_->RegisterSubsystem<Client>();
 	client->Connect(address);
