@@ -39,6 +39,7 @@ public:
 	void Disconnect();
 
 private:
+	void OnConnectFailed(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
 
 	Urho3D::Scene scene_;
