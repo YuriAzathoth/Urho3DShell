@@ -20,50 +20,58 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/XMLFile.h>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include "Config/Config.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ShellConfigurator.h"
 
 #define CONFIG_ROOT "config"
+#define DEFAULT_APP_NAME "Common"
+#define DEFAULT_GAME_NAME "Urho3DShell"
 #define DEFAULT_PROFILE "Default"
+#define DEFAULT_USER_DATA_PATH ""
 
 using namespace Urho3D;
 
 ShellConfigurator::ShellConfigurator(Urho3D::Context* context)
 	: Object(context)
+	, appName_(DEFAULT_APP_NAME)
+	, gameName_(DEFAULT_GAME_NAME)
 	, profileName_(DEFAULT_PROFILE)
-	, userDataPath_(".")
+	, userDataPath_(DEFAULT_USER_DATA_PATH)
 {
-	FileSystem* fileSystem = GetSubsystem<FileSystem>();
-	const String path = GetGameDataPath();
-	if (fileSystem->DirExists(path))
-	{
-		File file(context_);
-		if (file.Open(GetProfileFilename(), FileMode::FILE_READ))
-			profileName_ = file.ReadString();
-	}
-	else
-		fileSystem->CreateDir(path);
 }
 
 ShellConfigurator::~ShellConfigurator()
 {
 	SaveProfile();
-	File file(context_, GetProfileFilename(), FileMode::FILE_WRITE);
-	file.WriteString(profileName_);
+	JSONFile file(context_);
+	file.GetRoot().Set("profile", JSONValue(profileName_));
+	file.SaveFile(GetProfileFilename());
 }
 
 void ShellConfigurator::Initialize(Urho3D::VariantMap& shellParameters)
 {
+	FileSystem* fileSystem = GetSubsystem<FileSystem>();
+	String path = GetGameDataPath();
+	if (fileSystem->DirExists(path))
+	{
+		path = GetProfileFilename();
+		JSONFile file(context_);
+		if (fileSystem->FileExists(path) && file.LoadFile(GetProfileFilename()))
+			profileName_ = file.GetRoot().Get("profile").GetString(DEFAULT_PROFILE);
+	}
+	else
+		fileSystem->CreateDir(path);
+
 	if (InitProfile())
 	{
-		const String filename = GetConfigFilename();
+		path = GetConfigFilename();
 		XMLFile file(context_);
-		if (GetSubsystem<FileSystem>()->FileExists(filename) && file.LoadFile(filename))
+		if (GetSubsystem<FileSystem>()->FileExists(path) && file.LoadFile(path))
 			GetSubsystem<Config>()->LoadXML(shellParameters, file.GetRoot(CONFIG_ROOT));
 	}
 }
@@ -130,7 +138,7 @@ void ShellConfigurator::CreateProfile(const Urho3D::String& profileName)
 void ShellConfigurator::RemoveProfile(const Urho3D::String& profileName)
 {
 	const String path = GetGameDataPath() + profileName;
-	boost::filesystem::remove_all(path.CString());
+	std::filesystem::remove_all(path.CString());
 }
 
 Urho3D::String ShellConfigurator::GetConfigFilename() const { return GetConfigPath() + appName_ + ".xml"; }
