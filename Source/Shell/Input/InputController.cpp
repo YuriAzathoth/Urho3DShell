@@ -23,7 +23,7 @@
 #include <Urho3D/Container/HashSet.h>
 #include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/Resource/XMLElement.h>
-#include "InputClient.h"
+#include "ControllersRegistry.h"
 #include "InputController.h"
 #include "InputEvents.h"
 #include "InputRegistry.h"
@@ -134,8 +134,8 @@ unsigned InputController::GetDefaultBinding(Urho3D::StringHash action) const
 	return it != defaultBindings_.End() ? it->second_ : 0;
 }
 
-void InputController::EnableSelf() { GetSubsystem<InputClient>()->EnableController(GetType()); }
-void InputController::DisableSelf() { GetSubsystem<InputClient>()->EnableController(GetType()); }
+void InputController::EnableSelf() { GetSubsystem<ControllersRegistry>()->EnableController(GetType()); }
+void InputController::DisableSelf() { GetSubsystem<ControllersRegistry>()->EnableController(GetType()); }
 
 void InputController::SendActionDown(unsigned keyCode)
 {

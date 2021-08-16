@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef INPUTCLIENT_H
-#define INPUTCLIENT_H
+#ifndef CONTROLLERSREGISTRY_H
+#define CONTROLLERSREGISTRY_H
 
 #include <Urho3D/Core/Object.h>
 #include "InputController.h"
@@ -32,13 +32,13 @@ namespace Urho3D
 class XMLElement;
 }
 
-class URHO3DSHELLAPI_EXPORT InputClient : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT ControllersRegistry : public Urho3D::Object
 {
-	URHO3D_OBJECT(InputClient, Urho3D::Object)
+	URHO3D_OBJECT(ControllersRegistry, Urho3D::Object)
 
 public:
-	explicit InputClient(Urho3D::Context* context);
-	~InputClient();
+	explicit ControllersRegistry(Urho3D::Context* context);
+	~ControllersRegistry();
 
 	void ReadControls(Urho3D::Controls& controls) const;
 
@@ -70,20 +70,20 @@ private:
 	Urho3D::String configPath_;
 };
 
-template <typename T> T* InputClient::RegisterController()
+template <typename T> T* ControllersRegistry::RegisterController()
 {
 	Urho3D::SharedPtr<InputController> controller(new T(context_));
 	RegisterController(controller);
 	return static_cast<T*>(controller.Get());
 }
 
-template <typename T> void InputClient::RemoveController() { RemoveController(T::GetTypeInfoStatic()->GetType()); }
-template <typename T> void InputClient::EnableController() { EnableController(T::GetTypeInfoStatic()->GetType()); }
-template <typename T> void InputClient::DisableController() { DisableController(T::GetTypeInfoStatic()->GetType()); }
+template <typename T> void ControllersRegistry::RemoveController() { RemoveController(T::GetTypeInfoStatic()->GetType()); }
+template <typename T> void ControllersRegistry::EnableController() { EnableController(T::GetTypeInfoStatic()->GetType()); }
+template <typename T> void ControllersRegistry::DisableController() { DisableController(T::GetTypeInfoStatic()->GetType()); }
 
-template <typename T> T* InputClient::GetController() const
+template <typename T> T* ControllersRegistry::GetController() const
 {
 	return static_cast<T*>(GetController(T::GetTypeInfoStatic()->GetType()));
 }
 
-#endif // INPUTCLIENT_H
+#endif // CONTROLLERSREGISTRY_H

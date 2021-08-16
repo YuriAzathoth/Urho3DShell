@@ -30,7 +30,7 @@
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIElement.h>
 #include <Urho3D/UI/UIEvents.h>
-#include "Input/InputClient.h"
+#include "Input/ControllersRegistry.h"
 #include "Input/InputEvents.h"
 #include "Input/InputRegistry.h"
 #include "InputBindingsList.h"
@@ -51,7 +51,7 @@ InputBindingsList::InputBindingsList(Urho3D::Context* context, Urho3D::ListView*
 		CreateActionBinding(inputRegistry->GetActionName(action));
 
 	if (!controllers.Empty())
-		LoadControllerSettings(GetSubsystem<InputClient>()->GetController(controllers[0]));
+		LoadControllerSettings(GetSubsystem<ControllersRegistry>()->GetController(controllers[0]));
 
 	SubscribeToEvent(E_INPUTBINDINGEND, URHO3D_HANDLER(InputBindingsList, OnBindingEnd));
 }
@@ -60,13 +60,13 @@ InputBindingsList::~InputBindingsList() { StopBinding(); }
 
 void InputBindingsList::Apply()
 {
-	const InputClient* inputClient = GetSubsystem<InputClient>();
+	const ControllersRegistry* controllers = GetSubsystem<ControllersRegistry>();
 	InputController* controller;
 	const ChangedParameters* parameters;
 	for (const auto& ctrlPair : changedBindings_)
 	{
 		parameters = &ctrlPair.second_;
-		controller = inputClient->GetController(ctrlPair.first_);
+		controller = controllers->GetController(ctrlPair.first_);
 		for (const auto& actionPair : parameters->bindings_)
 			controller->SetBinding(actionPair.first_, actionPair.second_);
 		if (parameters->sensitivityChanged_)
@@ -85,7 +85,7 @@ Urho3D::StringVector InputBindingsList::CreateControllersList()
 	currentCtlr_->SetStyleAuto();
 	SubscribeToEvent(currentCtlr_, E_ITEMSELECTED, URHO3D_HANDLER(InputBindingsList, OnControllerSelected));
 
-	const StringVector controllers = GetSubsystem<InputClient>()->GetEnabledControllers();
+	const StringVector controllers = GetSubsystem<ControllersRegistry>()->GetEnabledControllers();
 	for (const String& controller : controllers)
 	{
 		item = MakeShared<UIElement>(context_);
@@ -180,7 +180,7 @@ const Urho3D::String& InputBindingsList::GetCurrentControllerName() const
 
 InputController* InputBindingsList::GetCurrentController() const
 {
-	return GetSubsystem<InputClient>()->GetController(GetCurrentControllerName());
+	return GetSubsystem<ControllersRegistry>()->GetController(GetCurrentControllerName());
 }
 
 void InputBindingsList::StopBinding()
