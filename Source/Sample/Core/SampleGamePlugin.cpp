@@ -30,9 +30,9 @@
 #include <Urho3D/Scene/Scene.h>
 #include "Core/ShellEvents.h"
 #include "GameEvents.h"
+#include "Input/ActionsRegistry.h"
 #include "Input/ControllersRegistry.h"
 #include "Input/InputController.h"
-#include "Input/ActionsRegistry.h"
 #include "Network/NetworkEvents.h"
 #include "SampleGamePlugin.h"
 

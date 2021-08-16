@@ -36,8 +36,8 @@
 #include <Urho3D/Scene/SceneEvents.h>
 #include <Urho3D/UI/UI.h>
 #include "Config/Config.h"
-#include "Input/ControllersRegistry.h"
 #include "Input/ActionsRegistry.h"
+#include "Input/ControllersRegistry.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
@@ -260,7 +260,6 @@ void Shell::StartClient(Urho3D::String address)
 		SubscribeToEvent(E_SERVERDISCONNECTED, InitClient);
 	else
 		InitClient(StringHash::ZERO, GetEventDataMap());
-
 }
 
 void Shell::ParseParameters(const Urho3D::StringVector& arguments)

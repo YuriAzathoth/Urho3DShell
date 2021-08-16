@@ -77,9 +77,18 @@ template <typename T> T* ControllersRegistry::RegisterController()
 	return static_cast<T*>(controller.Get());
 }
 
-template <typename T> void ControllersRegistry::RemoveController() { RemoveController(T::GetTypeInfoStatic()->GetType()); }
-template <typename T> void ControllersRegistry::EnableController() { EnableController(T::GetTypeInfoStatic()->GetType()); }
-template <typename T> void ControllersRegistry::DisableController() { DisableController(T::GetTypeInfoStatic()->GetType()); }
+template <typename T> void ControllersRegistry::RemoveController()
+{
+	RemoveController(T::GetTypeInfoStatic()->GetType());
+}
+template <typename T> void ControllersRegistry::EnableController()
+{
+	EnableController(T::GetTypeInfoStatic()->GetType());
+}
+template <typename T> void ControllersRegistry::DisableController()
+{
+	DisableController(T::GetTypeInfoStatic()->GetType());
+}
 
 template <typename T> T* ControllersRegistry::GetController() const
 {

@@ -23,10 +23,10 @@
 #include <Urho3D/Container/HashSet.h>
 #include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/Resource/XMLElement.h>
+#include "ActionsRegistry.h"
 #include "ControllersRegistry.h"
 #include "InputController.h"
 #include "InputEvents.h"
-#include "ActionsRegistry.h"
 
 using namespace Urho3D;
 

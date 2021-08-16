@@ -30,9 +30,9 @@
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIElement.h>
 #include <Urho3D/UI/UIEvents.h>
+#include "Input/ActionsRegistry.h"
 #include "Input/ControllersRegistry.h"
 #include "Input/InputEvents.h"
-#include "Input/ActionsRegistry.h"
 #include "InputBindingsList.h"
 
 #define PRESS_A_KEY_TEXT "PressAKey"
