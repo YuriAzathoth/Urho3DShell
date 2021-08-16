@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef INPUTBINDINGS_H
-#define INPUTBINDINGS_H
+#ifndef INPUTCLIENT_H
+#define INPUTCLIENT_H
 
 #include <Urho3D/Core/Object.h>
 #include "InputController.h"
@@ -86,4 +86,4 @@ template <typename T> T* InputClient::GetController() const
 	return static_cast<T*>(GetController(T::GetTypeInfoStatic()->GetType()));
 }
 
-#endif // INPUTBINDINGS_H
+#endif // INPUTCLIENT_H
