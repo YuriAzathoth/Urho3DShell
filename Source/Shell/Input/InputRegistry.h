@@ -24,7 +24,6 @@
 #define INPUTREGISTRY_H
 
 #include <Urho3D/Core/Object.h>
-#include "InputController.h"
 #include "Urho3DShellAPI.h"
 
 class URHO3DSHELLAPI_EXPORT InputRegistry : public Urho3D::Object
@@ -35,7 +34,6 @@ public:
 	using ActionsVector = Urho3D::PODVector<Urho3D::StringHash>;
 
 	explicit InputRegistry(Urho3D::Context* context);
-	~InputRegistry();
 
 	void RegisterActionLocal(const Urho3D::String& actionName);
 	unsigned RegisterActionRemote(const Urho3D::String& actionName);
@@ -44,53 +42,16 @@ public:
 
 	unsigned GetActionFlag(Urho3D::StringHash action) const;
 	const Urho3D::String& GetActionName(Urho3D::StringHash action) const;
-	bool IsActionRemote(Urho3D::StringHash action) const { return remoteFlags_.Contains(action); }
+	bool IsRemote(Urho3D::StringHash action) const { return remoteFlags_.Contains(action); }
 	const ActionsVector& GetActions() const noexcept { return ordered_; }
-
-	void RegisterController(Urho3D::SharedPtr<InputController> controller);
-	void RemoveController(Urho3D::StringHash controllerType);
-	void EnableController(Urho3D::StringHash controllerType);
-	void DisableController(Urho3D::StringHash controllerType);
-	InputController* GetController(Urho3D::StringHash controllerType) const;
-	Urho3D::StringVector GetEnabledControllers() const;
-	void RemoveAllControllers();
 
 	Urho3D::String GetDebugString() const;
 
-	template <typename T> T* RegisterController();
-	template <typename T> void RemoveController();
-	template <typename T> void EnableController();
-	template <typename T> void DisableController();
-	template <typename T> T* GetController() const;
-
 private:
-	void EnableController(InputController* inputController);
-	void DisableController(InputController* inputController);
-
-	using ControllersMap = Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<InputController>>;
-
 	ActionsVector ordered_;
 	Urho3D::HashMap<Urho3D::StringHash, unsigned> remoteFlags_;
-	ControllersMap enabledControllers_;
-	ControllersMap disabledControllers_;
 	Urho3D::StringMap names_;
 	unsigned lastRemoteFlag_;
 };
-
-template <typename T> T* InputRegistry::RegisterController()
-{
-	Urho3D::SharedPtr<InputController> controller(new T(context_));
-	RegisterController(controller);
-	return static_cast<T*>(controller.Get());
-}
-
-template <typename T> void InputRegistry::RemoveController() { RemoveController(T::GetTypeInfoStatic()->GetType()); }
-template <typename T> void InputRegistry::EnableController() { EnableController(T::GetTypeInfoStatic()->GetType()); }
-template <typename T> void InputRegistry::DisableController() { DisableController(T::GetTypeInfoStatic()->GetType()); }
-
-template <typename T> T* InputRegistry::GetController() const
-{
-	return static_cast<T*>(GetController(T::GetTypeInfoStatic()->GetType()));
-}
 
 #endif // INPUTREGISTRY_H

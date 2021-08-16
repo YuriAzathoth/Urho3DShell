@@ -23,6 +23,7 @@
 #include <Urho3D/Container/HashSet.h>
 #include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/Resource/XMLElement.h>
+#include "InputClient.h"
 #include "InputController.h"
 #include "InputEvents.h"
 #include "InputRegistry.h"
@@ -61,7 +62,7 @@ bool InputController::LoadXML(const Urho3D::XMLElement& source)
 		keyCode = GetKeyCode(binding.GetAttribute("key"));
 		action = binding.GetAttribute("action");
 		bindings_[keyCode] = action;
-		if (inputRegistry->IsActionRemote(action))
+		if (inputRegistry->IsRemote(action))
 			remoteBindings_.Push(MakePair(keyCode, inputRegistry->GetActionFlag(action)));
 		unboundActions_.Erase(action);
 	}
@@ -100,7 +101,7 @@ void InputController::SaveXML(Urho3D::XMLElement& dst) const
 void InputController::SetBinding(Urho3D::StringHash action, unsigned keyCode)
 {
 	InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
-	if (inputRegistry->IsActionRemote(action))
+	if (inputRegistry->IsRemote(action))
 	{
 		const unsigned actionFlag = inputRegistry->GetActionFlag(action);
 		for (auto it = remoteBindings_.Begin(); it != remoteBindings_.End();)
@@ -133,8 +134,8 @@ unsigned InputController::GetDefaultBinding(Urho3D::StringHash action) const
 	return it != defaultBindings_.End() ? it->second_ : 0;
 }
 
-void InputController::EnableSelf() { GetSubsystem<InputRegistry>()->EnableController(GetType()); }
-void InputController::DisableSelf() { GetSubsystem<InputRegistry>()->EnableController(GetType()); }
+void InputController::EnableSelf() { GetSubsystem<InputClient>()->EnableController(GetType()); }
+void InputController::DisableSelf() { GetSubsystem<InputClient>()->EnableController(GetType()); }
 
 void InputController::SendActionDown(unsigned keyCode)
 {

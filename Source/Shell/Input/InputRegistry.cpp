@@ -21,8 +21,6 @@
 //
 
 #include <Urho3D/IO/Log.h>
-#include <Urho3D/Resource/XMLFile.h>
-#include "Core/ShellConfigurator.h"
 #include "InputRegistry.h"
 
 using namespace Urho3D;
@@ -33,12 +31,6 @@ InputRegistry::InputRegistry(Urho3D::Context* context)
 	: Object(context)
 	, lastRemoteFlag_(1)
 {
-}
-
-InputRegistry::~InputRegistry()
-{
-	for (const auto& p : enabledControllers_)
-		DisableController(p.second_);
 }
 
 void InputRegistry::RegisterActionLocal(const Urho3D::String& actionName)
@@ -95,125 +87,21 @@ const Urho3D::String& InputRegistry::GetActionName(Urho3D::StringHash action) co
 	return it != names_.End() ? it->second_ : String::EMPTY;
 }
 
-void InputRegistry::RegisterController(Urho3D::SharedPtr<InputController> controller)
-{
-	const StringHash type = controller->GetType();
-	if (!enabledControllers_.Contains(type) && !disabledControllers_.Contains(type))
-		disabledControllers_[type] = controller;
-	else
-		URHO3D_LOGERROR("Failed to register already registered input controller.");
-}
-
-void InputRegistry::RemoveController(Urho3D::StringHash controllerType)
-{
-	if (!enabledControllers_.Erase(controllerType))
-		URHO3D_LOGERROR("Failed to remove non-registered input controller.");
-}
-
-void InputRegistry::EnableController(Urho3D::StringHash controllerType)
-{
-	auto it = disabledControllers_.Find(controllerType);
-	if (it != disabledControllers_.End())
-	{
-		EnableController(it->second_);
-		enabledControllers_.Insert(it);
-		disabledControllers_.Erase(it);
-	}
-	else if (enabledControllers_.Contains(controllerType))
-		URHO3D_LOGERRORF("Failed to enable already activated input controller.");
-	else
-		URHO3D_LOGERRORF("Failed to enable not registered input controller.");
-}
-
-void InputRegistry::EnableController(InputController* inputController)
-{
-	if (inputController->Enable())
-	{
-		XMLFile file(context_);
-		if (file.LoadFile(GetSubsystem<ShellConfigurator>()->GetInputPath() + inputController->GetTypeName() + ".xml"))
-			inputController->LoadXML(file.GetRoot());
-	}
-	else
-		URHO3D_LOGERROR("Failed to enable input controller.");
-}
-
-void InputRegistry::DisableController(Urho3D::StringHash controllerType)
-{
-	auto it = enabledControllers_.Find(controllerType);
-	if (it != enabledControllers_.End())
-	{
-		DisableController(it->second_);
-		disabledControllers_.Insert(it);
-		enabledControllers_.Erase(it);
-	}
-	else if (disabledControllers_.Contains(controllerType))
-		URHO3D_LOGERRORF("Failed to disable not activated input controller.");
-	else
-		URHO3D_LOGERRORF("Failed to disable not registered input controller.");
-}
-
-void InputRegistry::DisableController(InputController* inputController)
-{
-	if (inputController->Disable())
-	{
-		XMLFile file(context_);
-		XMLElement root = file.CreateRoot("input");
-		inputController->SaveXML(root);
-		file.SaveFile(GetSubsystem<ShellConfigurator>()->GetInputPath() + inputController->GetTypeName() + ".xml");
-		inputController->RemoveAllBindings();
-	}
-	else
-		URHO3D_LOGERROR("Failed to disable input controller.");
-}
-
-InputController* InputRegistry::GetController(Urho3D::StringHash controllerType) const
-{
-	auto it = enabledControllers_.Find(controllerType);
-	if (it != enabledControllers_.End())
-		return it->second_;
-	it = disabledControllers_.Find(controllerType);
-	if (it != disabledControllers_.End())
-		return it->second_;
-	return nullptr;
-}
-
-Urho3D::StringVector InputRegistry::GetEnabledControllers() const
-{
-	StringVector ret;
-	ret.Reserve(enabledControllers_.Size());
-	for (const auto& p : enabledControllers_)
-		ret.Push(p.second_->GetTypeName());
-	return ret;
-}
-
-void InputRegistry::RemoveAllControllers()
-{
-	enabledControllers_.Clear();
-	disabledControllers_.Clear();
-}
-
 Urho3D::String InputRegistry::GetDebugString() const
 {
 	String ret;
 	Urho3D::HashMap<Urho3D::StringHash, unsigned>::ConstIterator it;
-	ret.Append("Actions:\n");
 	for (const StringHash action : ordered_)
 	{
-		ret.Append("\tName: ").Append(*names_[action]).Append("\n");
+		ret.Append("Name: ").Append(*names_[action]).Append("\n");
 		it = remoteFlags_.Find(action);
 		if (it == remoteFlags_.End())
-			ret.Append("\t\tType: Local\n");
+			ret.Append("\tType: Local\n");
 		else
 		{
-			ret.Append("\t\tType: Remote\n");
-			ret.Append(ToString("\t\tFlag: %u\n", it->second_));
+			ret.Append("\tType: Remote\n");
+			ret.Append(ToString("\tFlag: %u\n", it->second_));
 		}
 	}
-	ret.Append("Enabled Controllers\n");
-	for (const auto& p : enabledControllers_)
-		ret.Append(p.second_->GetDebugString());
-	ret.Append("Disabled Controllers\n");
-	for (const auto& p : disabledControllers_)
-		ret.Append(p.second_->GetDebugString());
 	return ret;
 }

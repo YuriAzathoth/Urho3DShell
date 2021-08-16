@@ -36,8 +36,8 @@
 #include <Urho3D/Scene/SceneEvents.h>
 #include <Urho3D/UI/UI.h>
 #include "Config/Config.h"
+#include "Input/InputClient.h"
 #include "Input/InputRegistry.h"
-#include "Input/KeyboardController.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
@@ -66,8 +66,9 @@ Shell::Shell(Urho3D::Context* context)
 Shell::~Shell()
 {
 	context_->RemoveSubsystem<ShellConfigurator>();
-	context_->RemoveSubsystem<InputRegistry>();
 	context_->RemoveSubsystem<PluginsRegistry>();
+	if (isClient_)
+		context_->RemoveSubsystem<InputClient>();
 }
 
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
@@ -120,13 +121,12 @@ void Shell::Initialize()
 		context_->RegisterSubsystem<UIController>();
 		StartMainMenu();
 
-		InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
-		context_->RegisterFactory<KeyboardController>();
-		inputRegistry->RegisterController<KeyboardController>();
+		InputClient* inputClient = context_->RegisterSubsystem<InputClient>();
+		inputClient->SetConfigPath(GetSubsystem<ShellConfigurator>()->GetInputPath());
 
 		SendEvent(E_SHELLCLIENTSTARTED);
 
-		inputRegistry->EnableController("KeyboardController");
+		inputClient->EnableController("KeyboardController");
 
 		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
 	}
@@ -260,6 +260,7 @@ void Shell::StartClient(Urho3D::String address)
 		SubscribeToEvent(E_SERVERDISCONNECTED, InitClient);
 	else
 		InitClient(StringHash::ZERO, GetEventDataMap());
+
 }
 
 void Shell::ParseParameters(const Urho3D::StringVector& arguments)
