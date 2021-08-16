@@ -30,8 +30,10 @@
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/InputEvents.h>
+#include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/ResourceCache.h>
+#include <Urho3D/Scene/SceneEvents.h>
 #include <Urho3D/UI/UI.h>
 #include "Config/Config.h"
 #include "Input/InputClient.h"
@@ -179,46 +181,86 @@ void Shell::StartMainMenu()
 
 void Shell::StartLocalServer(Urho3D::String sceneName)
 {
+	auto InitServer = [this](StringHash, VariantMap&)
+	{
+		server_->Start(GetPort());
+		server_->SetPausable(true);
+		client_ = MakeUnique<Client>(context_);
+		client_->Connect(GetPort());
+		UIController* uiController = GetSubsystem<UIController>();
+		uiController->RemoveAllDialogs();
+		UnsubscribeFromEvent(E_ASYNCLOADFINISHED);
+	};
+
+	auto LoadScene =
+		[this, sceneName = std::move(sceneName), InitServer = std::move(InitServer)](StringHash, VariantMap&)
+	{
+		server_ = MakeUnique<Server>(context_);
+		server_->LoadScene(sceneName);
+		SubscribeToEvent(E_ASYNCLOADFINISHED, InitServer);
+		UnsubscribeFromEvent(E_SERVERDISCONNECTED);
+	};
+
+	const bool disconnect = client_.NotNull();
 	client_.Reset();
-
-	server_ = MakeUnique<Server>(context_);
-	server_->Start(GetSubsystem<Shell>()->GetPort());
-	server_->LoadScene(sceneName);
-	server_->SetPausable(true);
-
-	client_ = MakeUnique<Client>(context_);
-	client_->Connect();
-
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
+	server_.Reset();
+	if (disconnect)
+		SubscribeToEvent(E_SERVERDISCONNECTED, LoadScene);
+	else
+		LoadScene(StringHash::ZERO, GetEventDataMap());
 }
 
 void Shell::StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName)
 {
+	auto InitServer = [this, serverName = std::move(serverName)](StringHash, VariantMap&)
+	{
+		server_->Start(GetPort());
+		server_->MakeVisible(serverName);
+		server_->SetPausable(false);
+		client_ = MakeUnique<Client>(context_);
+		client_->Connect(GetPort());
+		UIController* uiController = GetSubsystem<UIController>();
+		uiController->RemoveAllDialogs();
+		UnsubscribeFromEvent(E_ASYNCLOADFINISHED);
+	};
+
+	auto LoadScene =
+		[this, sceneName = std::move(sceneName), InitServer = std::move(InitServer)](StringHash, VariantMap&)
+	{
+		server_ = MakeUnique<Server>(context_);
+		server_->LoadScene(sceneName);
+		SubscribeToEvent(E_ASYNCLOADFINISHED, InitServer);
+		UnsubscribeFromEvent(E_SERVERDISCONNECTED);
+	};
+
+	const bool disconnect = client_.NotNull();
 	client_.Reset();
-
-	server_ = MakeUnique<Server>(context_);
-	server_->Start(GetPort());
-	server_->MakeVisible(serverName);
-	server_->LoadScene(sceneName);
-	server_->SetPausable(false);
-
-	client_ = MakeUnique<Client>(context_);
-	client_->Connect();
-
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
+	server_.Reset();
+	if (disconnect)
+		SubscribeToEvent(E_SERVERDISCONNECTED, LoadScene);
+	else
+		LoadScene(StringHash::ZERO, GetEventDataMap());
 }
 
 void Shell::StartClient(Urho3D::String address)
 {
+	auto InitClient = [this, address = std::move(address)](StringHash, VariantMap&)
+	{
+		client_ = MakeUnique<Client>(context_);
+		client_->Connect(GetPort(), address);
+		UIController* uiController = GetSubsystem<UIController>();
+		uiController->RemoveAllDialogs();
+		UnsubscribeFromEvent(E_SERVERDISCONNECTED);
+	};
+
+	const bool disconnect = client_.NotNull();
+	client_.Reset();
 	server_.Reset();
+	if (disconnect)
+		SubscribeToEvent(E_SERVERDISCONNECTED, InitClient);
+	else
+		InitClient(StringHash::ZERO, GetEventDataMap());
 
-	Client* client = context_->RegisterSubsystem<Client>();
-	client->Connect(address);
-
-	UIController* uiController = GetSubsystem<UIController>();
-	uiController->RemoveAllDialogs();
 }
 
 void Shell::ParseParameters(const Urho3D::StringVector& arguments)
