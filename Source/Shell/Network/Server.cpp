@@ -88,6 +88,8 @@ void Server::Stop()
 		network->StopServer();
 		SendEvent(E_REMOTESERVERSTOPPED);
 	}
+	if (remote_)
+		network->SetDiscoveryBeacon(Variant::emptyVariantMap);
 	remote_ = false;
 }
 
