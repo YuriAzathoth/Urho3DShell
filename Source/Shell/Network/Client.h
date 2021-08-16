@@ -35,7 +35,7 @@ public:
 	explicit Client(Urho3D::Context* context);
 	~Client();
 
-	void Connect(const Urho3D::String& address = "localhost");
+	void Connect(unsigned short port, const Urho3D::String& address = "localhost");
 	void Disconnect();
 
 private:

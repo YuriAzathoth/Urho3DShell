@@ -25,7 +25,6 @@
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Scene/SceneEvents.h>
 #include "Client.h"
-#include "Core/Shell.h"
 #include "Core/ShellEvents.h"
 #include "NetworkEvents.h"
 #include "ServerDefs.h"
@@ -47,12 +46,12 @@ Client::~Client()
 	Disconnect();
 }
 
-void Client::Connect(const Urho3D::String& address)
+void Client::Connect(unsigned short port, const Urho3D::String& address)
 {
 	URHO3D_LOGTRACEF("Client::Connect(%s)", address.CString());
 	VariantMap identity;
 	identity[CL_NAME] = "SimpleName";
-	GetSubsystem<Network>()->Connect(address, GetSubsystem<Shell>()->GetPort(), &scene_, identity);
+	GetSubsystem<Network>()->Connect(address, port, &scene_, identity);
 	SendEvent(E_REMOTECLIENTSTARTED);
 }
 
@@ -68,12 +67,6 @@ void Client::Disconnect()
 	}
 }
 
-void Client::OnConnectFailed(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-	URHO3D_LOGTRACE("Client::OnConnectFailed");
-}
+void Client::OnConnectFailed(Urho3D::StringHash, Urho3D::VariantMap&) { URHO3D_LOGTRACE("Client::OnConnectFailed"); }
 
-void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-	URHO3D_LOGTRACE("Client::OnSceneLoaded");
-}
+void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&) { URHO3D_LOGTRACE("Client::OnSceneLoaded"); }
