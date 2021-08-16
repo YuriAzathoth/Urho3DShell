@@ -22,7 +22,10 @@
 
 #include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/Engine/EngineDefs.h>
+#include <Urho3D/IO/Deserializer.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/IO/Serializer.h>
+#include <Urho3D/Resource/JSONValue.h>
 #include <Urho3D/Resource/XMLElement.h>
 #include "Config.h"
 #include "ConfigDefs.h"
@@ -70,7 +73,7 @@ private:
 	const Urho3D::StringHash name_;
 };
 
-void Config::LoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source)
+void Config::LoadXML(Urho3D::VariantMap& dest, const Urho3D::XMLElement& source)
 {
 	String name;
 	Variant value;
@@ -85,26 +88,93 @@ void Config::LoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source)
 		else if (!parameters_.Contains(name))
 			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: parameter is not registered yet.", name.CString());
 		else
-			dst[name] = value;
+			dest[name] = value;
 	}
 }
 
-void Config::LoadXML(const Urho3D::XMLElement& source)
+bool Config::Load(Urho3D::Deserializer& source)
+{
+	const unsigned size = source.ReadUInt();
+	if (!size)
+		return false;
+	VariantMap parameters;
+	StringHash name;
+	Variant value;
+	for (unsigned i = 0; i < size; ++i)
+	{
+		name = source.ReadStringHash();
+		value = source.ReadVariant();
+		parameters[name] = value;
+	}
+	return true;
+}
+
+bool Config::Save(Urho3D::Serializer& dest) const
+{
+	dest.WriteUInt(parameters_.Size());
+	for (const auto& it : parameters_)
+	{
+		dest.WriteStringHash(it.first_);
+		dest.WriteVariant(it.second_.reader_->Read());
+	}
+	return true;
+}
+
+bool Config::LoadXML(const Urho3D::XMLElement& source)
 {
 	VariantMap parameters;
 	LoadXML(parameters, source);
 	Apply(parameters);
+	return true;
 }
 
-void Config::SaveXML(Urho3D::XMLElement& dst) const
+bool Config::SaveXML(Urho3D::XMLElement& dest) const
 {
 	XMLElement parameter;
 	for (const auto& p : parameters_)
 	{
-		parameter = dst.CreateChild("parameter");
-		parameter.SetAttribute("name", *names_[p.first_]);
+		parameter = dest.CreateChild("parameter");
+		parameter.SetAttribute("name", names_.Find(p.first_)->second_);
 		parameter.SetVariant(p.second_.reader_->Read());
 	}
+	return true;
+}
+
+bool Config::LoadJSON(const Urho3D::JSONValue& source)
+{
+	VariantMap parameters;
+	String name;
+	Variant value;
+	const JSONValue& array = source.Get("Array");
+	for (const JSONValue& parameter : array.GetArray())
+	{
+		name = parameter.Get("name").GetString("");
+		value = parameter.GetVariant();
+		if (name.Empty())
+			URHO3D_LOGWARNING("Failed to setup config parameter: name is empty.");
+		else if (value.IsEmpty())
+			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: value is empty.", name.CString());
+		else if (!parameters_.Contains(name))
+			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: parameter is not registered yet.", name.CString());
+		else
+			parameters[name] = value;
+	}
+	Apply(parameters);
+	return true;
+}
+
+bool Config::SaveJSON(Urho3D::JSONValue& dest) const
+{
+	JSONArray array;
+	JSONValue parameter;
+	for (const auto& p : parameters_)
+	{
+		parameter.Set("name", names_.Find(p.first_)->second_);
+		parameter.SetVariant(p.second_.reader_->Read());
+		array.Push(parameter);
+	}
+	dest.Set("config", array);
+	return true;
 }
 
 void Config::Apply(const Urho3D::VariantMap& parameters)

@@ -30,6 +30,9 @@
 
 namespace Urho3D
 {
+class Deserializer;
+class JSONValue;
+class Serializer;
 class UIElement;
 class XMLElement;
 } // namespace Urho3D
@@ -109,9 +112,13 @@ public:
 
 	using Urho3D::Object::Object;
 
-	void LoadXML(Urho3D::VariantMap& dst, const Urho3D::XMLElement& source);
-	void LoadXML(const Urho3D::XMLElement& source);
-	void SaveXML(Urho3D::XMLElement& dst) const;
+	bool Load(Urho3D::Deserializer& source);
+	bool Save(Urho3D::Serializer& dest) const;
+	void LoadXML(Urho3D::VariantMap& dest, const Urho3D::XMLElement& source);
+	bool LoadXML(const Urho3D::XMLElement& source);
+	bool SaveXML(Urho3D::XMLElement& dest) const;
+    bool LoadJSON(const Urho3D::JSONValue& source);
+    bool SaveJSON(Urho3D::JSONValue& dest) const;
 
 	void Apply(const Urho3D::VariantMap& parameters);
 	void ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters);

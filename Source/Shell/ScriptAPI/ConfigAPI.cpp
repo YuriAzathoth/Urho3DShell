@@ -21,7 +21,7 @@
 //
 
 #include <Urho3D/AngelScript/Generated_Members.h>
-#include <new>
+//#include <new>
 #include "Config/Config.h"
 
 using namespace Urho3D;
@@ -70,16 +70,28 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 	RegisterMembers_Object<Config>(engine, "Config");
 
 	engine->RegisterObjectMethod("Config",
-								 "void LoadXML(VariantMap&, const XMLElement&)",
-								 AS_METHODPR(Config, LoadXML, (VariantMap&, const XMLElement&), void),
+								 "bool Load(const Serializer&in)",
+								 AS_METHOD(Config, Load),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config",
-								 "void LoadXML(const XMLElement&)",
-								 AS_METHODPR(Config, LoadXML, (const XMLElement&), void),
+								 "bool Save(Deserializer&out) const",
+								 AS_METHOD(Config, Save),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config",
-								 "void SaveXML(XMLElement&) const",
+								 "bool LoadXML(const XMLElement&in)",
+								 AS_METHODPR(Config, LoadXML, (const XMLElement&), bool),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "bool SaveXML(XMLElement&out) const",
 								 AS_METHOD(Config, SaveXML),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "bool LoadJSON(const JSONValue&in)",
+								 AS_METHOD(Config, LoadJSON),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config",
+								 "bool SaveJSON(JSONValue&out) const",
+								 AS_METHOD(Config, SaveJSON),
 								 AS_CALL_THISCALL);
 
 	engine->RegisterObjectMethod("Config",
