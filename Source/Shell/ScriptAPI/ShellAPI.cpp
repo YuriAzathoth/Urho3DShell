@@ -51,8 +51,5 @@ void RegisterShellAPI(asIScriptEngine* engine)
 								 "void StartRemoteServer(String, String)",
 								 AS_METHOD(Shell, StartRemoteServer),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Shell",
-								 "void StartClient(String)",
-								 AS_METHOD(Shell, StartClient),
-								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Shell", "void StartClient(String)", AS_METHOD(Shell, StartClient), AS_CALL_THISCALL);
 }
