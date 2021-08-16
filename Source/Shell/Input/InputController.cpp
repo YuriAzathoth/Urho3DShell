@@ -84,7 +84,7 @@ void InputController::SaveXML(Urho3D::XMLElement& dst) const
 
 	dst.CreateChild("sensitivity").SetFloat("value", GetSensitivity());
 
-	ActionsRegistry* inputRegistry = GetSubsystem<ActionsRegistry>();
+	const ActionsRegistry* inputRegistry = GetSubsystem<ActionsRegistry>();
 	const String* action;
 	String keyName;
 	XMLElement binding;
@@ -100,7 +100,7 @@ void InputController::SaveXML(Urho3D::XMLElement& dst) const
 
 void InputController::SetBinding(Urho3D::StringHash action, unsigned keyCode)
 {
-	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
+	const ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
 	if (actions->IsRemote(action))
 	{
 		const unsigned actionFlag = actions->GetActionFlag(action);
