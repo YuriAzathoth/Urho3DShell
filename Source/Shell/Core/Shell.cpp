@@ -37,7 +37,7 @@
 #include <Urho3D/UI/UI.h>
 #include "Config/Config.h"
 #include "Input/ControllersRegistry.h"
-#include "Input/InputRegistry.h"
+#include "Input/ActionsRegistry.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
@@ -58,7 +58,7 @@ Shell::Shell(Urho3D::Context* context)
 {
 	context_->RegisterSubsystem<Script>();
 	context_->RegisterSubsystem<Config>();
-	context_->RegisterSubsystem<InputRegistry>();
+	context_->RegisterSubsystem<ActionsRegistry>();
 	context_->RegisterSubsystem<PluginsRegistry>();
 	context_->RegisterSubsystem<ShellConfigurator>();
 }

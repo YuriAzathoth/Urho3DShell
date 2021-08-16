@@ -20,20 +20,20 @@
 // THE SOFTWARE.
 //
 
-#ifndef INPUTREGISTRY_H
-#define INPUTREGISTRY_H
+#ifndef ACTIONSREGISTRY_H
+#define ACTIONSREGISTRY_H
 
 #include <Urho3D/Core/Object.h>
 #include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT InputRegistry : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT ActionsRegistry : public Urho3D::Object
 {
-	URHO3D_OBJECT(InputRegistry, Urho3D::Object)
+	URHO3D_OBJECT(ActionsRegistry, Urho3D::Object)
 
 public:
 	using ActionsVector = Urho3D::PODVector<Urho3D::StringHash>;
 
-	explicit InputRegistry(Urho3D::Context* context);
+	explicit ActionsRegistry(Urho3D::Context* context);
 
 	void RegisterActionLocal(const Urho3D::String& actionName);
 	unsigned RegisterActionRemote(const Urho3D::String& actionName);
@@ -54,4 +54,4 @@ private:
 	unsigned lastRemoteFlag_;
 };
 
-#endif // INPUTREGISTRY_H
+#endif // ACTIONSREGISTRY_H

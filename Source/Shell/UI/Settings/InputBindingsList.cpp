@@ -32,7 +32,7 @@
 #include <Urho3D/UI/UIEvents.h>
 #include "Input/ControllersRegistry.h"
 #include "Input/InputEvents.h"
-#include "Input/InputRegistry.h"
+#include "Input/ActionsRegistry.h"
 #include "InputBindingsList.h"
 
 #define PRESS_A_KEY_TEXT "PressAKey"
@@ -46,9 +46,9 @@ InputBindingsList::InputBindingsList(Urho3D::Context* context, Urho3D::ListView*
 	const StringVector controllers = CreateControllersList();
 	CreateSensitivitySlider();
 
-	const InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
-	for (StringHash action : inputRegistry->GetActions())
-		CreateActionBinding(inputRegistry->GetActionName(action));
+	const ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
+	for (StringHash action : actions->GetActions())
+		CreateActionBinding(actions->GetActionName(action));
 
 	if (!controllers.Empty())
 		LoadControllerSettings(GetSubsystem<ControllersRegistry>()->GetController(controllers[0]));

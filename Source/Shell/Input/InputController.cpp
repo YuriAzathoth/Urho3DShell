@@ -26,7 +26,7 @@
 #include "ControllersRegistry.h"
 #include "InputController.h"
 #include "InputEvents.h"
-#include "InputRegistry.h"
+#include "ActionsRegistry.h"
 
 using namespace Urho3D;
 
@@ -54,7 +54,7 @@ bool InputController::LoadXML(const Urho3D::XMLElement& source)
 	for (const auto& p : defaultBindings_)
 		unboundActions_.Insert(p.first_);
 
-	InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
+	ActionsRegistry* inputRegistry = GetSubsystem<ActionsRegistry>();
 	StringHash action;
 	unsigned keyCode;
 	for (XMLElement binding = source.GetChild("bind"); !binding.IsNull(); binding = binding.GetNext())
@@ -84,7 +84,7 @@ void InputController::SaveXML(Urho3D::XMLElement& dst) const
 
 	dst.CreateChild("sensitivity").SetFloat("value", GetSensitivity());
 
-	InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
+	ActionsRegistry* inputRegistry = GetSubsystem<ActionsRegistry>();
 	const String* action;
 	String keyName;
 	XMLElement binding;
@@ -100,10 +100,10 @@ void InputController::SaveXML(Urho3D::XMLElement& dst) const
 
 void InputController::SetBinding(Urho3D::StringHash action, unsigned keyCode)
 {
-	InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
-	if (inputRegistry->IsRemote(action))
+	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
+	if (actions->IsRemote(action))
 	{
-		const unsigned actionFlag = inputRegistry->GetActionFlag(action);
+		const unsigned actionFlag = actions->GetActionFlag(action);
 		for (auto it = remoteBindings_.Begin(); it != remoteBindings_.End();)
 			if (it->first_ == keyCode || it->second_ == actionFlag)
 				it = remoteBindings_.Erase(it);
@@ -163,20 +163,20 @@ void InputController::SendActionUp(unsigned keyCode)
 
 Urho3D::String InputController::GetDebugString() const
 {
-	InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
+	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
 	String ret;
 	ret.Append("Name: ").Append(GetTypeName()).Append("\n");
 	ret.Append("\tSensitivity = ").Append(ToString("%f", GetSensitivity())).Append("\n");
 	ret.Append("\tDefault bindings:\n");
 	for (const auto& p : GetDefaultBindings())
 	{
-		ret.Append("\t\tAction: ").Append(inputRegistry->GetActionName(p.first_)).Append("\n");
+		ret.Append("\t\tAction: ").Append(actions->GetActionName(p.first_)).Append("\n");
 		ret.Append("\t\tKey:    ").Append(GetKeyName(p.second_)).Append("\n");
 	}
 	ret.Append("\tBindings:\n");
 	for (const auto& p : GetBindings())
 	{
-		ret.Append("\t\tAction: ").Append(inputRegistry->GetActionName(p.second_)).Append("\n");
+		ret.Append("\t\tAction: ").Append(actions->GetActionName(p.second_)).Append("\n");
 		ret.Append("\t\tKey:    ").Append(GetKeyName(p.first_)).Append("\n");
 	}
 	return ret;

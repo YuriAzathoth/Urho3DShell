@@ -21,25 +21,25 @@
 //
 
 #include <Urho3D/IO/Log.h>
-#include "InputRegistry.h"
+#include "ActionsRegistry.h"
 
 using namespace Urho3D;
 
 static constexpr unsigned LAST_REMOTE_ACTION = 1 << 31;
 
-InputRegistry::InputRegistry(Urho3D::Context* context)
+ActionsRegistry::ActionsRegistry(Urho3D::Context* context)
 	: Object(context)
 	, lastRemoteFlag_(1)
 {
 }
 
-void InputRegistry::RegisterActionLocal(const Urho3D::String& actionName)
+void ActionsRegistry::RegisterActionLocal(const Urho3D::String& actionName)
 {
 	ordered_.Push(actionName);
 	names_[actionName] = actionName;
 }
 
-unsigned InputRegistry::RegisterActionRemote(const Urho3D::String& actionName)
+unsigned ActionsRegistry::RegisterActionRemote(const Urho3D::String& actionName)
 {
 	if (lastRemoteFlag_ < LAST_REMOTE_ACTION)
 	{
@@ -59,7 +59,7 @@ unsigned InputRegistry::RegisterActionRemote(const Urho3D::String& actionName)
 	}
 }
 
-void InputRegistry::RemoveAction(Urho3D::StringHash action)
+void ActionsRegistry::RemoveAction(Urho3D::StringHash action)
 {
 	auto it = ordered_.Find(action);
 	if (it != ordered_.End())
@@ -68,26 +68,26 @@ void InputRegistry::RemoveAction(Urho3D::StringHash action)
 	remoteFlags_.Erase(action);
 }
 
-void InputRegistry::RemoveAllActions()
+void ActionsRegistry::RemoveAllActions()
 {
 	ordered_.Clear();
 	names_.Clear();
 	remoteFlags_.Clear();
 }
 
-unsigned InputRegistry::GetActionFlag(Urho3D::StringHash action) const
+unsigned ActionsRegistry::GetActionFlag(Urho3D::StringHash action) const
 {
 	const auto it = remoteFlags_.Find(action);
 	return it != remoteFlags_.End() ? it->second_ : 0;
 }
 
-const Urho3D::String& InputRegistry::GetActionName(Urho3D::StringHash action) const
+const Urho3D::String& ActionsRegistry::GetActionName(Urho3D::StringHash action) const
 {
 	const auto it = names_.Find(action);
 	return it != names_.End() ? it->second_ : String::EMPTY;
 }
 
-Urho3D::String InputRegistry::GetDebugString() const
+Urho3D::String ActionsRegistry::GetDebugString() const
 {
 	String ret;
 	Urho3D::HashMap<Urho3D::StringHash, unsigned>::ConstIterator it;

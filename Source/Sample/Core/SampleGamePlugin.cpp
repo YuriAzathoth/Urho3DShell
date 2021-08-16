@@ -32,7 +32,7 @@
 #include "GameEvents.h"
 #include "Input/ControllersRegistry.h"
 #include "Input/InputController.h"
-#include "Input/InputRegistry.h"
+#include "Input/ActionsRegistry.h"
 #include "Network/NetworkEvents.h"
 #include "SampleGamePlugin.h"
 
@@ -56,11 +56,11 @@ SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(SampleGamePlugin, OnClientSceneLoaded));
 	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(SampleGamePlugin, OnServerSideSpawned));
 
-	InputRegistry* inputRegistry = GetSubsystem<InputRegistry>();
-	inputRegistry->RegisterActionRemote(MOVE_FORWARD);
-	inputRegistry->RegisterActionRemote(MOVE_BACK);
-	inputRegistry->RegisterActionRemote(MOVE_LEFT);
-	inputRegistry->RegisterActionRemote(MOVE_RIGHT);
+	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
+	actions->RegisterActionRemote(MOVE_FORWARD);
+	actions->RegisterActionRemote(MOVE_BACK);
+	actions->RegisterActionRemote(MOVE_LEFT);
+	actions->RegisterActionRemote(MOVE_RIGHT);
 }
 
 const Urho3D::String& SampleGamePlugin::GetName() const { return PLUGIN_NAME; }

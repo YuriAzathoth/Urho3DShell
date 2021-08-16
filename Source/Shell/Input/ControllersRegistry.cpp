@@ -25,7 +25,6 @@
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include "ControllersRegistry.h"
-#include "InputRegistry.h"
 #include "KeyboardController.h"
 
 using namespace Urho3D;
