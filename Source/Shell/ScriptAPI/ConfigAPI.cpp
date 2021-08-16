@@ -69,10 +69,7 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 
 	RegisterMembers_Object<Config>(engine, "Config");
 
-	engine->RegisterObjectMethod("Config",
-								 "bool Load(const Serializer&in)",
-								 AS_METHOD(Config, Load),
-								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("Config", "bool Load(const Serializer&in)", AS_METHOD(Config, Load), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config",
 								 "bool Save(Deserializer&out) const",
 								 AS_METHOD(Config, Save),
