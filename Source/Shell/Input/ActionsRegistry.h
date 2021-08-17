@@ -42,7 +42,7 @@ public:
 
 	unsigned GetActionFlag(Urho3D::StringHash action) const;
 	const Urho3D::String& GetActionName(Urho3D::StringHash action) const;
-	bool IsRemote(Urho3D::StringHash action) const { return remoteFlags_.Contains(action); }
+	bool IsActionRemote(Urho3D::StringHash action) const { return remoteFlags_.Contains(action); }
 	const ActionsVector& GetActions() const noexcept { return ordered_; }
 
 	Urho3D::String GetDebugString() const;
