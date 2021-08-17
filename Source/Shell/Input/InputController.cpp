@@ -54,16 +54,16 @@ bool InputController::LoadXML(const Urho3D::XMLElement& source)
 	for (const auto& p : defaultBindings_)
 		unboundActions_.Insert(p.first_);
 
-	ActionsRegistry* inputRegistry = GetSubsystem<ActionsRegistry>();
+	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
 	StringHash action;
 	unsigned keyCode;
-	for (XMLElement binding = source.GetChild("bind"); !binding.IsNull(); binding = binding.GetNext())
+	for (XMLElement binding = source.GetChild("binding"); !binding.IsNull(); binding = binding.GetNext())
 	{
 		keyCode = GetKeyCode(binding.GetAttribute("key"));
 		action = binding.GetAttribute("action");
 		bindings_[keyCode] = action;
-		if (inputRegistry->IsRemote(action))
-			remoteBindings_.Push(MakePair(keyCode, inputRegistry->GetActionFlag(action)));
+		if (actions->IsActionRemote(action))
+			remoteBindings_.Push(MakePair(keyCode, actions->GetActionFlag(action)));
 		unboundActions_.Erase(action);
 	}
 
@@ -101,7 +101,7 @@ void InputController::SaveXML(Urho3D::XMLElement& dst) const
 void InputController::SetBinding(Urho3D::StringHash action, unsigned keyCode)
 {
 	const ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
-	if (actions->IsRemote(action))
+	if (actions->IsActionRemote(action))
 	{
 		const unsigned actionFlag = actions->GetActionFlag(action);
 		for (auto it = remoteBindings_.Begin(); it != remoteBindings_.End();)
