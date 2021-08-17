@@ -56,7 +56,7 @@ void KeyboardController::ReadControls(Urho3D::Controls& controls) const
 	controls.pitch_ = static_cast<float>(input->GetMouseMoveY()) * GetSensitivity();
 	controls.yaw_ = static_cast<float>(input->GetMouseMoveX()) * GetSensitivity();
 	for (const auto& p : GetRemoteBindings())
-		controls.Set(input->GetKeyDown(static_cast<Key>(p.first_)), true);
+		controls.Set(p.second_, input->GetKeyDown(static_cast<Key>(p.first_)));
 }
 
 Urho3D::String KeyboardController::GetKeyName(unsigned keyCode) const
