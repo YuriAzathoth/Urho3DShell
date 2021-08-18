@@ -108,7 +108,6 @@ bool ShellConfigurator::InitProfile()
 	path = GetPluginsPath();
 	if (!fileSystem->DirExists(path))
 		fileSystem->CreateDir(path);
-	GetSubsystem<PluginsRegistry>()->SetPluginsPath(path);
 
 	path = GetSavesPath();
 	if (!fileSystem->DirExists(path))

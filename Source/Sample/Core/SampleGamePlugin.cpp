@@ -30,6 +30,7 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Scene/SmoothedTransform.h>
 #include "ActionsDefs.h"
+#include "Core/ShellConfigurator.h"
 #include "Core/ShellEvents.h"
 #include "GameEvents.h"
 #include "Input/ActionsRegistry.h"
@@ -47,6 +48,8 @@ const String SampleGamePlugin::PLUGIN_NAME = "Sample game";
 SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	: PluginInterface(context)
 {
+	GetSubsystem<ShellConfigurator>()->SetGameName("SampleGame");
+
 	SubscribeToEvent(E_SHELLCLIENTSTARTED, URHO3D_HANDLER(SampleGamePlugin, OnShellClientStarted));
 	SubscribeToEvent(E_REMOTECLIENTSTARTED, URHO3D_HANDLER(SampleGamePlugin, OnRemoteClientStarted));
 	SubscribeToEvent(E_REMOTECLIENTSTOPPED, URHO3D_HANDLER(SampleGamePlugin, OnRemoteClientStopped));

@@ -68,13 +68,4 @@ void RegisterPluginsRegistryAPI(asIScriptEngine* engine)
 								 "void RemoveAllPlugins()",
 								 AS_METHOD(PluginsRegistry, RemoveAllPlugins),
 								 AS_CALL_THISCALL);
-
-	engine->RegisterObjectMethod("PluginsRegistry",
-								 "void set_pluginsPath(const String&in)",
-								 AS_METHOD(PluginsRegistry, SetPluginsPath),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("PluginsRegistry",
-								 "const String& get_pluginsPath() const",
-								 AS_METHOD(PluginsRegistry, GetPluginsPath),
-								 AS_CALL_THISCALL);
 }

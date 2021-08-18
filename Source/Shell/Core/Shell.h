@@ -50,15 +50,12 @@ public:
 	bool IsClientLaunched() const noexcept { return isClient_; }
 
 private:
-	bool PreconfigureEngine();
-
 	void ParseParameters(const Urho3D::StringVector& arguments);
 	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue);
 
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	Urho3D::VariantMap shellParameters_;
-	Urho3D::String gameLibrary_;
 	Urho3D::UniquePtr<Client> client_;
 	Urho3D::UniquePtr<Server> server_;
 	unsigned short port_; // TODO: Move to something else location

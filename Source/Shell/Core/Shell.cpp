@@ -31,7 +31,6 @@
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/Network/NetworkEvents.h>
-#include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Scene/SceneEvents.h>
 #include <Urho3D/UI/UI.h>
@@ -46,7 +45,6 @@
 #include "ShellEvents.h"
 #include "UI/UIController.h"
 
-#define LP_GAME_LIB "GameLib"
 #define LP_NO_CLIENT "NoClient"
 #define LP_SCRIPT "Script"
 
@@ -59,28 +57,23 @@ Shell::Shell(Urho3D::Context* context)
 {
 	context_->RegisterSubsystem<Script>();
 	context_->RegisterSubsystem<Config>();
+	context_->RegisterSubsystem<ShellConfigurator>();
 	context_->RegisterSubsystem<ActionsRegistry>();
 	context_->RegisterSubsystem<PluginsRegistry>();
-	context_->RegisterSubsystem<ShellConfigurator>();
 }
 
 Shell::~Shell()
 {
-	context_->RemoveSubsystem<ShellConfigurator>();
-	context_->RemoveSubsystem<PluginsRegistry>();
+	client_.Reset();
+	server_.Reset();
 	if (isClient_)
 		context_->RemoveSubsystem<ControllersRegistry>();
+	context_->RemoveSubsystem<ShellConfigurator>();
+	context_->RemoveSubsystem<PluginsRegistry>();
 }
 
 void Shell::Setup(Urho3D::VariantMap& engineParameters)
 {
-	if (!PreconfigureEngine())
-	{
-		URHO3D_LOGERRORF("Failed to load and configure game library.");
-		GetSubsystem<Engine>()->Exit();
-		return;
-	}
-
 	ParseParameters(GetArguments());
 	isClient_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
 
@@ -104,7 +97,6 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 void Shell::Initialize()
 {
 	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
-	pluginsRegistry->RegisterPlugin(gameLibrary_);
 	const auto itScript = shellParameters_.Find(LP_SCRIPT);
 	if (itScript != shellParameters_.End())
 		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
@@ -137,40 +129,6 @@ void Shell::Initialize()
 
 	GetSubsystem<Config>()->Apply(shellParameters_);
 	shellParameters_.Clear();
-}
-
-bool Shell::PreconfigureEngine()
-{
-	if (shellParameters_.Contains(LP_GAME_LIB))
-		return true;
-
-	JSONFile file(context_);
-	if (!file.LoadFile(GetSubsystem<FileSystem>()->GetProgramDir() + "/Engine.dat"))
-		return false;
-
-	const JSONValue& root = file.GetRoot();
-	if (root.IsNull())
-		return false;
-
-	const JSONValue& libraryNameValue = root.Get("lib");
-	if (libraryNameValue.IsNull())
-		return false;
-
-	gameLibrary_ = libraryNameValue.GetString();
-	if (gameLibrary_.Empty())
-		return false;
-
-	const JSONValue& dirNameValue = root.Get("dir");
-	if (dirNameValue.IsNull())
-		return false;
-
-	const String& gameName = dirNameValue.GetString();
-	if (!gameName.Empty())
-		GetSubsystem<ShellConfigurator>()->SetGameName(gameName);
-	else
-		return false;
-
-	return true;
 }
 
 void Shell::StartMainMenu()
@@ -280,8 +238,6 @@ void Shell::ParseParameters(const Urho3D::StringVector& arguments)
 				configurator->SetAppName(value);
 				++i;
 			}
-			else if (argument == "gamelib")
-				shellParameters_[LP_GAME_LIB] = value;
 			else if (argument == "noclient")
 				shellParameters_[LP_NO_CLIENT] = true;
 			else if (argument == "script")

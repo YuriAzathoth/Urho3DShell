@@ -20,11 +20,21 @@
 // THE SOFTWARE.
 //
 
+#include <Core/ShellConfigurator.h>
 #include "BinaryPlugin.h"
 #include "PluginsRegistry.h"
 #include "ScriptPlugin.h"
 
+#define MAIN_PLUGIN_LIB "Game"
+
 using namespace Urho3D;
+
+PluginsRegistry::PluginsRegistry(Urho3D::Context* context)
+	: Object(context)
+{
+	mainPlugin_.StaticCast(MakeShared<BinaryPlugin>(context_));
+	mainPlugin_->Load(MAIN_PLUGIN_LIB);
+}
 
 bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
 {
@@ -34,15 +44,13 @@ bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
 
-	if (plugin.Null())
+	const String pluginsPath = GetSubsystem<ShellConfigurator>()->GetPluginsPath();
+	if (plugin.NotNull() && plugin->Load(pluginsPath + pluginName))
+	{
+		plugins_[pluginName] = plugin;
+		return true;
+	}
 		return false;
-
-	if (!plugin->Load(pluginName))
-		if (!plugin->Load(pluginsPath_ + "/" + pluginName))
-			return false;
-
-	plugins_[pluginName] = plugin;
-	return true;
 }
 
 void PluginsRegistry::RemovePlugin(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
