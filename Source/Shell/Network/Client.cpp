@@ -28,7 +28,6 @@
 #include "Client.h"
 #include "Core/ShellEvents.h"
 #include "Input/ControllersRegistry.h"
-#include "Input/InputController.h"
 #include "NetworkEvents.h"
 #include "ServerDefs.h"
 
@@ -37,16 +36,11 @@ using namespace Urho3D;
 Client::Client(Urho3D::Context* context)
 	: Object(context)
 	, scene_(context)
+	, connection_(nullptr)
 {
 	URHO3D_LOGTRACE("Client::Client");
-
-	// TODO: Player controller selection
-	controller_ = GetSubsystem<ControllersRegistry>()->GetController("KeyboardController");
-
 	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(Client, OnSceneLoaded));
 	SubscribeToEvent(E_CONNECTFAILED, URHO3D_HANDLER(Client, OnConnectFailed));
-	SubscribeToEvent(E_SCENEUPDATE, URHO3D_HANDLER(Client, OnSceneUpdated));
-	SubscribeToEvent(E_PHYSICSPRESTEP, URHO3D_HANDLER(Client, OnPhysicsPreStep));
 }
 
 Client::~Client()
@@ -62,6 +56,7 @@ void Client::Connect(unsigned short port, const Urho3D::String& address)
 	identity[CL_NAME] = "SimpleName";
 	GetSubsystem<Network>()->Connect(address, port, &scene_, identity);
 	SendEvent(E_REMOTECLIENTSTARTED);
+	SubscribeToEvent(E_SERVERCONNECTED, URHO3D_HANDLER(Client, OnServerConnected));
 }
 
 void Client::Disconnect()
@@ -76,18 +71,24 @@ void Client::Disconnect()
 	}
 }
 
+void Client::OnServerConnected(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	connection_ = GetSubsystem<Network>()->GetServerConnection();
+	SubscribeToEvent(E_SCENEUPDATE, URHO3D_HANDLER(Client, OnSceneUpdated));
+	SubscribeToEvent(E_PHYSICSPRESTEP, URHO3D_HANDLER(Client, OnPhysicsPreStep));
+}
+
 void Client::OnConnectFailed(Urho3D::StringHash, Urho3D::VariantMap&) { URHO3D_LOGTRACE("Client::OnConnectFailed"); }
 
 void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&) { URHO3D_LOGTRACE("Client::OnSceneLoaded"); }
 
 void Client::OnSceneUpdated(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	controller_->ReadControls(controls_);
+	GetSubsystem<ControllersRegistry>()->ReadControls(controls_);
 }
 
 void Client::OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	Connection* connection = GetSubsystem<Network>()->GetServerConnection();
-	connection->SetControls(controls_);
+	connection_->SetControls(controls_);
 	controls_.Reset();
 }

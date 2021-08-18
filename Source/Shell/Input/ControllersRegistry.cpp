@@ -44,7 +44,6 @@ ControllersRegistry::~ControllersRegistry()
 
 void ControllersRegistry::ReadControls(Urho3D::Controls& controls) const
 {
-	controls.Reset();
 	for (const auto& p : enabledControllers_)
 		p.second_->ReadControls(controls);
 }
