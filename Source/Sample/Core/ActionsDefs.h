@@ -29,5 +29,8 @@ static const Urho3D::String MOVE_FORWARD = "MoveForward";
 static const Urho3D::String MOVE_BACK = "MoveBack";
 static const Urho3D::String MOVE_LEFT = "MoveLeft";
 static const Urho3D::String MOVE_RIGHT = "MoveRight";
+static const Urho3D::String MOVE_UP = "MoveUp";
+static const Urho3D::String MOVE_DOWN = "MoveDown";
+static const Urho3D::String WALK = "Walk";
 
 #endif // ACTIONSDEFS_H

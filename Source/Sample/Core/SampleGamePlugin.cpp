@@ -62,6 +62,9 @@ SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	actions->RegisterActionRemote(MOVE_BACK);
 	actions->RegisterActionRemote(MOVE_LEFT);
 	actions->RegisterActionRemote(MOVE_RIGHT);
+	actions->RegisterActionRemote(MOVE_UP);
+	actions->RegisterActionRemote(MOVE_DOWN);
+	actions->RegisterActionRemote(WALK);
 }
 
 const Urho3D::String& SampleGamePlugin::GetName() const { return PLUGIN_NAME; }
@@ -76,6 +79,9 @@ void SampleGamePlugin::OnShellClientStarted(Urho3D::StringHash, Urho3D::VariantM
 		keyboard->SetDefaultBinding(MOVE_BACK, KEY_S);
 		keyboard->SetDefaultBinding(MOVE_LEFT, KEY_A);
 		keyboard->SetDefaultBinding(MOVE_RIGHT, KEY_D);
+		keyboard->SetDefaultBinding(MOVE_UP, KEY_SPACE);
+		keyboard->SetDefaultBinding(MOVE_DOWN, KEY_CTRL);
+		keyboard->SetDefaultBinding(WALK, KEY_SHIFT);
 	}
 }
 void SampleGamePlugin::OnRemoteClientStarted(Urho3D::StringHash, Urho3D::VariantMap&)

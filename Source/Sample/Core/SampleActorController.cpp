@@ -29,6 +29,7 @@
 #include "Input/InputReceiver.h"
 #include "SampleActorController.h"
 
+#define WALK_SPEED 5.0f
 #define MOVE_SPEED 20.0f
 #define LOOK_SPEED 1.0f
 #define PITCH_MIN -80.0f
@@ -45,14 +46,20 @@ SampleActorController::SampleActorController(Urho3D::Context* context)
 void SampleActorController::FixedUpdate(float timeStep)
 {
 	const ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
-	const InputReceiver* receiver = GetComponent<InputReceiver>();
-	const Controls& controls = receiver->GetControls();
+	const Controls& controls = GetComponent<InputReceiver>()->GetControls();
+
 	Vector3 translation;
 	translation.x_ = static_cast<float>(controls.IsDown(actions->GetActionFlag(MOVE_RIGHT)) -
 										controls.IsDown(actions->GetActionFlag(MOVE_LEFT)));
+	translation.y_ = static_cast<float>(controls.IsDown(actions->GetActionFlag(MOVE_UP)) -
+										controls.IsDown(actions->GetActionFlag(MOVE_DOWN)));
 	translation.z_ = static_cast<float>(controls.IsDown(actions->GetActionFlag(MOVE_FORWARD)) -
 										controls.IsDown(actions->GetActionFlag(MOVE_BACK)));
-	translation *= timeStep * MOVE_SPEED;
+	translation.Normalize();
+
+	const bool walk = controls.IsDown(actions->GetActionFlag(WALK));
+	translation *= timeStep;
+	translation *= walk ? WALK_SPEED : MOVE_SPEED;
 
 	const float pitch = Clamp(node_->GetRotation().PitchAngle() + controls.pitch_, PITCH_MIN, PITCH_MAX);
 	const float yaw = node_->GetRotation().YawAngle() + controls.yaw_;
