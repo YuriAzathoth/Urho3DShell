@@ -23,9 +23,12 @@
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
+#include <Urho3D/Physics/PhysicsEvents.h>
 #include <Urho3D/Scene/SceneEvents.h>
 #include "Client.h"
 #include "Core/ShellEvents.h"
+#include "Input/ControllersRegistry.h"
+#include "Input/InputController.h"
 #include "NetworkEvents.h"
 #include "ServerDefs.h"
 
@@ -36,8 +39,14 @@ Client::Client(Urho3D::Context* context)
 	, scene_(context)
 {
 	URHO3D_LOGTRACE("Client::Client");
+
+	// TODO: Player controller selection
+	controller_ = GetSubsystem<ControllersRegistry>()->GetController("KeyboardController");
+
 	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(Client, OnSceneLoaded));
 	SubscribeToEvent(E_CONNECTFAILED, URHO3D_HANDLER(Client, OnConnectFailed));
+	SubscribeToEvent(E_SCENEUPDATE, URHO3D_HANDLER(Client, OnSceneUpdated));
+	SubscribeToEvent(E_PHYSICSPRESTEP, URHO3D_HANDLER(Client, OnPhysicsPreStep));
 }
 
 Client::~Client()
@@ -70,3 +79,15 @@ void Client::Disconnect()
 void Client::OnConnectFailed(Urho3D::StringHash, Urho3D::VariantMap&) { URHO3D_LOGTRACE("Client::OnConnectFailed"); }
 
 void Client::OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&) { URHO3D_LOGTRACE("Client::OnSceneLoaded"); }
+
+void Client::OnSceneUpdated(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	controller_->ReadControls(controls_);
+}
+
+void Client::OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	Connection* connection = GetSubsystem<Network>()->GetServerConnection();
+	connection->SetControls(controls_);
+	controls_.Reset();
+}

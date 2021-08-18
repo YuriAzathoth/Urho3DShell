@@ -24,8 +24,11 @@
 #define CLIENT_H
 
 #include <Urho3D/Core/Object.h>
+#include <Urho3D/Input/Controls.h>
 #include <Urho3D/Scene/Scene.h>
 #include "Urho3DShellAPI.h"
+
+class InputController;
 
 class URHO3DSHELLAPI_EXPORT Client : public Urho3D::Object
 {
@@ -41,7 +44,11 @@ public:
 private:
 	void OnConnectFailed(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnSceneUpdated(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&);
 
+	Urho3D::Controls controls_;
+	const InputController* controller_; // TODO: Move it to propper place
 	Urho3D::Scene scene_;
 };
 

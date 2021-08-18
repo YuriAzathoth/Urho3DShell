@@ -39,7 +39,6 @@
 #include "Input/ActionsRegistry.h"
 #include "Input/ControllersRegistry.h"
 #include "Input/InputReceiver.h"
-#include "Input/InputSender.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
@@ -114,8 +113,6 @@ void Shell::Initialize()
 
 	if (isClient_)
 	{
-		InputSender::RegisterObject(context_);
-
 		ResourceCache* cache = GetSubsystem<ResourceCache>();
 		XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
 		GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(styleFile);

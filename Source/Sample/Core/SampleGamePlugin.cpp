@@ -36,7 +36,6 @@
 #include "Input/ControllersRegistry.h"
 #include "Input/InputController.h"
 #include "Input/InputReceiver.h"
-#include "Input/InputSender.h"
 #include "Network/NetworkEvents.h"
 #include "SampleActorController.h"
 #include "SampleGamePlugin.h"
@@ -126,10 +125,6 @@ void SampleGamePlugin::OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMa
 	const unsigned nodeId = eventData[P_NODE].GetInt();
 	Scene* scene = connection->GetScene();
 	Node* node = scene->GetNode(nodeId);
-
-	InputSender* sender = node->CreateComponent<InputSender>(LOCAL);
-	sender->SetController(GetSubsystem<ControllersRegistry>()->GetController("KeyboardController"));
-	sender->SetTemporary(true);
 
 	Camera* camera = node->CreateComponent<Camera>();
 	camera->SetTemporary(true);
