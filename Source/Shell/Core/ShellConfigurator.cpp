@@ -145,6 +145,7 @@ Urho3D::String ShellConfigurator::GetConfigPath() const { return userDataPath_ +
 Urho3D::String ShellConfigurator::GetInputPath() const { return userDataPath_ + "Input/"; }
 Urho3D::String ShellConfigurator::GetLogsFilename() const { return GetLogsPath() + appName_ + ".log"; }
 Urho3D::String ShellConfigurator::GetLogsPath() const { return userDataPath_ + "Errorlogs/"; }
+Urho3D::String ShellConfigurator::GetPluginsFilename() const { return :GetPluginsPath() + "Plugins.txt"; }
 Urho3D::String ShellConfigurator::GetPluginsPath() const { return userDataPath_ + "Plugins/"; }
 Urho3D::String ShellConfigurator::GetProfileFilename() const { return GetGameDataPath() + "Profile.txt"; }
 Urho3D::String ShellConfigurator::GetSavesPath() const { return userDataPath_ + "Saves/"; }

@@ -45,6 +45,7 @@ public:
 	Urho3D::String GetInputPath() const;
 	Urho3D::String GetLogsFilename() const;
 	Urho3D::String GetLogsPath() const;
+	Urho3D::String GetPluginsFilename() const;
 	Urho3D::String GetPluginsPath() const;
 	Urho3D::String GetProfileFilename() const;
 	Urho3D::String GetSavesPath() const;
