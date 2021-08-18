@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 
-#include <Core/ShellConfigurator.h>
 #include "BinaryPlugin.h"
+#include "Core/ShellConfigurator.h"
 #include "PluginsRegistry.h"
 #include "ScriptPlugin.h"
 
