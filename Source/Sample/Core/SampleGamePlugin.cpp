@@ -28,12 +28,16 @@
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Scene/Scene.h>
+#include <Urho3D/Scene/SmoothedTransform.h>
 #include "Core/ShellEvents.h"
 #include "GameEvents.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/ControllersRegistry.h"
 #include "Input/InputController.h"
+#include "Input/InputReceiver.h"
+#include "Input/InputSender.h"
 #include "Network/NetworkEvents.h"
+#include "SampleActorController.h"
 #include "SampleGamePlugin.h"
 
 using namespace Urho3D;
@@ -55,6 +59,8 @@ SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	SubscribeToEvent(E_REMOTESERVERSTOPPED, URHO3D_HANDLER(SampleGamePlugin, OnRemoteServerStopped));
 	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(SampleGamePlugin, OnClientSceneLoaded));
 	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(SampleGamePlugin, OnServerSideSpawned));
+
+	SampleActorController::RegisterObject(context);
 
 	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
 	actions->RegisterActionRemote(MOVE_FORWARD);
@@ -104,6 +110,12 @@ void SampleGamePlugin::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMa
 	node->SetPosition({0.0f, 4.0f, 0.0f});
 	node->Pitch(30.0f);
 
+	node->CreateComponent<SampleActorController>(REPLICATED);
+
+	InputReceiver* receiver = node->CreateComponent<InputReceiver>(REPLICATED);
+	receiver->SetConnection(connection);
+	receiver->SetTemporary(true);
+
 	using namespace ServerSideSpawned;
 	eventData[P_NODE] = node->GetID();
 	connection->SendRemoteEvent(E_SERVERSIDESPAWNED, true, eventData);
@@ -119,7 +131,12 @@ void SampleGamePlugin::OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMa
 	Scene* scene = connection->GetScene();
 	Node* node = scene->GetNode(nodeId);
 
+	InputSender* sender = node->CreateComponent<InputSender>(LOCAL);
+	sender->SetController(GetSubsystem<ControllersRegistry>()->GetController("KeyboardController"));
+	sender->SetTemporary(true);
+
 	Camera* camera = node->CreateComponent<Camera>();
+	camera->SetTemporary(true);
 	SharedPtr<Viewport> viewport = MakeShared<Viewport>(context_, scene, camera);
 	Renderer* renderer = GetSubsystem<Renderer>();
 	renderer->SetViewport(0, viewport);
