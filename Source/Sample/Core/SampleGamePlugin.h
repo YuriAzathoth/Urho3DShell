@@ -44,6 +44,8 @@ private:
 	void OnRemoteServerStopped(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+
+	static const Urho3D::String PLUGIN_NAME;
 };
 
 #endif // SAMPLEGAMEPLUGIN_H

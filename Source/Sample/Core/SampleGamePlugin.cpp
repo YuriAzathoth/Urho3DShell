@@ -42,7 +42,7 @@
 
 using namespace Urho3D;
 
-static const String PLUGIN_NAME = "Sample game";
+const String SampleGamePlugin::PLUGIN_NAME = "Sample game";
 
 SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	: PluginInterface(context)
