@@ -69,6 +69,7 @@ Shell::~Shell()
 	if (isClient_)
 		context_->RemoveSubsystem<ControllersRegistry>();
 	context_->RemoveSubsystem<ShellConfigurator>();
+	const_cast<HashMap<StringHash, SharedPtr<ObjectFactory>>&>(context_->GetObjectFactories()).Clear();
 	context_->RemoveSubsystem<PluginsRegistry>();
 }
 
