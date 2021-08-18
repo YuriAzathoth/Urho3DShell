@@ -62,10 +62,4 @@ private:
 	bool remote_;
 };
 
-inline void Server::SetUpdate(bool update)
-{
-	if (pausable_)
-		scene_.SetUpdateEnabled(update);
-}
-
 #endif // SERVER_H

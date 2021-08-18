@@ -103,6 +103,12 @@ void Server::MakeVisible(const Urho3D::String& serverName)
 	SendEvent(E_REMOTESERVERSTARTED);
 }
 
+void Server::SetUpdate(bool update)
+{
+	if (pausable_)
+		scene_.SetUpdateEnabled(update);
+}
+
 void Server::OnClientConnected(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
 	using namespace ClientConnected;
