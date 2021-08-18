@@ -24,7 +24,6 @@
 #define SERVER_H
 
 #include <Urho3D/Core/Object.h>
-#include <Urho3D/Network/Connection.h>
 #include <Urho3D/Scene/Scene.h>
 #include "Urho3DShellAPI.h"
 
