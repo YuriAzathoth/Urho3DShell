@@ -73,7 +73,7 @@ private:
 	const Urho3D::StringHash name_;
 };
 
-void Config::LoadXML(Urho3D::VariantMap& dest, const Urho3D::XMLElement& source)
+void Config::Initialize(Urho3D::VariantMap& dest, const Urho3D::XMLElement& source)
 {
 	String name;
 	Variant value;
@@ -97,14 +97,13 @@ bool Config::Load(Urho3D::Deserializer& source)
 	const unsigned size = source.ReadUInt();
 	if (!size)
 		return false;
-	VariantMap parameters;
 	StringHash name;
 	Variant value;
 	for (unsigned i = 0; i < size; ++i)
 	{
 		name = source.ReadStringHash();
 		value = source.ReadVariant();
-		parameters[name] = value;
+		Apply(name, value);
 	}
 	return true;
 }
@@ -122,9 +121,21 @@ bool Config::Save(Urho3D::Serializer& dest) const
 
 bool Config::LoadXML(const Urho3D::XMLElement& source)
 {
-	VariantMap parameters;
-	LoadXML(parameters, source);
-	Apply(parameters);
+	String name;
+	Variant value;
+	for (XMLElement parameter = source.GetChild("parameter"); !parameter.IsNull(); parameter = parameter.GetNext())
+	{
+		name = parameter.GetAttribute("name");
+		value = parameter.GetVariant();
+		if (name.Empty())
+			URHO3D_LOGWARNING("Failed to setup config parameter: name is empty.");
+		else if (value.IsEmpty())
+			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: value is empty.", name.CString());
+		else if (!parameters_.Contains(name))
+			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: parameter is not registered yet.", name.CString());
+		else
+			Apply(name, value);
+	}
 	return true;
 }
 
@@ -142,7 +153,6 @@ bool Config::SaveXML(Urho3D::XMLElement& dest) const
 
 bool Config::LoadJSON(const Urho3D::JSONValue& source)
 {
-	VariantMap parameters;
 	String name;
 	Variant value;
 	const JSONValue& array = source.Get("Array");
@@ -157,9 +167,8 @@ bool Config::LoadJSON(const Urho3D::JSONValue& source)
 		else if (!parameters_.Contains(name))
 			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: parameter is not registered yet.", name.CString());
 		else
-			parameters[name] = value;
+			Apply(name, value);
 	}
-	Apply(parameters);
 	return true;
 }
 
@@ -179,24 +188,26 @@ bool Config::SaveJSON(Urho3D::JSONValue& dest) const
 
 void Config::Apply(const Urho3D::VariantMap& parameters)
 {
-	decltype(parameters_)::Iterator it;
 	for (const auto& p : parameters)
-	{
-		it = parameters_.Find(p.first_);
-		if (it != parameters_.End())
-			it->second_.writer_->Write(p.second_);
-	}
+		Apply(p.first_, p.second_);
+	ApplyComplex();
+}
 
-	ComplexStorage* storage;
+void Config::Apply(Urho3D::StringHash name, const Urho3D::Variant& value)
+{
+	auto it = parameters_.Find(name);
+	if (it != parameters_.End())
+		it->second_.writer_->Write(value);
+}
+
+void Config::ApplyComplex()
+{
 	for (auto& p : storages_)
-	{
-		storage = p.second_.Get();
-		if (!storage->parameters_.Empty())
+		if (!p.second_->parameters_.Empty())
 		{
-			storage->writer_(p.second_->parameters_);
-			storage->parameters_.Clear();
+			p.second_->writer_(p.second_->parameters_);
+			p.second_->parameters_.Clear();
 		}
-	}
 }
 
 void Config::ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters)

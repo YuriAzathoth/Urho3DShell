@@ -72,7 +72,7 @@ void ShellConfigurator::Initialize(Urho3D::VariantMap& shellParameters)
 		path = GetConfigFilename();
 		XMLFile file(context_);
 		if (GetSubsystem<FileSystem>()->FileExists(path) && file.LoadFile(path))
-			GetSubsystem<Config>()->LoadXML(shellParameters, file.GetRoot(CONFIG_ROOT));
+			GetSubsystem<Config>()->Initialize(shellParameters, file.GetRoot(CONFIG_ROOT));
 	}
 }
 

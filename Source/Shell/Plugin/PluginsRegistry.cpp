@@ -50,7 +50,7 @@ bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
 		plugins_[pluginName] = plugin;
 		return true;
 	}
-		return false;
+	return false;
 }
 
 void PluginsRegistry::RemovePlugin(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
