@@ -50,13 +50,16 @@ bool KeyboardController::Disable()
 	return true;
 }
 
+#include <cstdio>
+
 void KeyboardController::ReadControls(Urho3D::Controls& controls) const
 {
 	const Input* input = GetSubsystem<Input>();
-	controls.pitch_ = static_cast<float>(input->GetMouseMoveY()) * GetSensitivity();
-	controls.yaw_ = static_cast<float>(input->GetMouseMoveX()) * GetSensitivity();
+	controls.pitch_ += static_cast<float>(input->GetMouseMoveY()) * GetSensitivity();
+	controls.yaw_ += static_cast<float>(input->GetMouseMoveX()) * GetSensitivity();
 	for (const auto& p : GetRemoteBindings())
-		controls.Set(p.second_, input->GetKeyDown(static_cast<Key>(p.first_)));
+		if (input->GetKeyDown(static_cast<Key>(p.first_)))
+			controls.buttons_ |= p.second_;
 }
 
 Urho3D::String KeyboardController::GetKeyName(unsigned keyCode) const

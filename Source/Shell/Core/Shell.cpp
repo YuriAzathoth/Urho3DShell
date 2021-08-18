@@ -38,6 +38,8 @@
 #include "Config/Config.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/ControllersRegistry.h"
+#include "Input/InputReceiver.h"
+#include "Input/InputSender.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/ScriptAPI.h"
 #include "Shell.h"
@@ -108,8 +110,12 @@ void Shell::Initialize()
 	if (itScript != shellParameters_.End())
 		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
 
+	InputReceiver::RegisterObject(context_);
+
 	if (isClient_)
 	{
+		InputSender::RegisterObject(context_);
+
 		ResourceCache* cache = GetSubsystem<ResourceCache>();
 		XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
 		GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(styleFile);
@@ -119,6 +125,7 @@ void Shell::Initialize()
 		engine->CreateDebugHud()->SetDefaultStyle(styleFile);
 
 		context_->RegisterSubsystem<UIController>();
+
 		StartMainMenu();
 
 		ControllersRegistry* controllers = context_->RegisterSubsystem<ControllersRegistry>();
