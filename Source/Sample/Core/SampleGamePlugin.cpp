@@ -29,6 +29,7 @@
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Scene/SmoothedTransform.h>
+#include "ActionsDefs.h"
 #include "Core/ShellEvents.h"
 #include "GameEvents.h"
 #include "Input/ActionsRegistry.h"
@@ -43,11 +44,6 @@
 using namespace Urho3D;
 
 static const String PLUGIN_NAME = "Sample game";
-
-static const String MOVE_FORWARD = "MoveForward";
-static const String MOVE_BACK = "MoveBack";
-static const String MOVE_LEFT = "MoveLeft";
-static const String MOVE_RIGHT = "MoveRight";
 
 SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	: PluginInterface(context)

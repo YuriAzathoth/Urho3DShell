@@ -24,6 +24,7 @@
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Scene/Node.h>
 #include <Urho3D/Scene/SmoothedTransform.h>
+#include "ActionsDefs.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
 #include "SampleActorController.h"
@@ -34,11 +35,6 @@
 #define PITCH_MAX 80.0f
 
 using namespace Urho3D;
-
-static const StringHash MOVE_FORWARD = "MoveForward";
-static const StringHash MOVE_BACK = "MoveBack";
-static const StringHash MOVE_LEFT = "MoveLeft";
-static const StringHash MOVE_RIGHT = "MoveRight";
 
 SampleActorController::SampleActorController(Urho3D::Context* context)
 	: LogicComponent(context)
