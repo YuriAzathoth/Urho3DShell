@@ -50,6 +50,8 @@ public:
 	bool IsClientLaunched() const noexcept { return isClient_; }
 
 private:
+	void InitializeClient();
+
 	void ParseParameters(const Urho3D::StringVector& arguments);
 	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue);
 

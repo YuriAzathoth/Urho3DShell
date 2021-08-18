@@ -105,31 +105,34 @@ void Shell::Initialize()
 	InputReceiver::RegisterObject(context_);
 
 	if (isClient_)
-	{
-		ResourceCache* cache = GetSubsystem<ResourceCache>();
-		XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
-		GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(styleFile);
-
-		Engine* engine = GetSubsystem<Engine>();
-		engine->CreateConsole()->SetDefaultStyle(styleFile);
-		engine->CreateDebugHud()->SetDefaultStyle(styleFile);
-
-		context_->RegisterSubsystem<UIController>();
-
-		StartMainMenu();
-
-		ControllersRegistry* controllers = context_->RegisterSubsystem<ControllersRegistry>();
-		controllers->SetConfigPath(GetSubsystem<ShellConfigurator>()->GetInputPath());
-
-		SendEvent(E_SHELLCLIENTSTARTED);
-
-		controllers->EnableController("KeyboardController");
-
-		SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
-	}
+		InitializeClient();
 
 	GetSubsystem<Config>()->Apply(shellParameters_);
 	shellParameters_.Clear();
+}
+
+void Shell::InitializeClient()
+{
+	ResourceCache* cache = GetSubsystem<ResourceCache>();
+	XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
+	GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(styleFile);
+
+	Engine* engine = GetSubsystem<Engine>();
+	engine->CreateConsole()->SetDefaultStyle(styleFile);
+	engine->CreateDebugHud()->SetDefaultStyle(styleFile);
+
+	context_->RegisterSubsystem<UIController>();
+
+	StartMainMenu();
+
+	ControllersRegistry* controllers = context_->RegisterSubsystem<ControllersRegistry>();
+	controllers->SetConfigPath(GetSubsystem<ShellConfigurator>()->GetInputPath());
+
+	SendEvent(E_SHELLCLIENTSTARTED);
+
+	controllers->EnableController("KeyboardController");
+
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
 }
 
 void Shell::StartMainMenu()
