@@ -156,8 +156,6 @@ public:
 
 	Urho3D::String GetDebugString() const;
 
-	void CreateParameterControl(Urho3D::StringHash parameter, Urho3D::UIElement* parent);
-
 	void RegisterClientParameters();
 	void RegisterServerParameters();
 
