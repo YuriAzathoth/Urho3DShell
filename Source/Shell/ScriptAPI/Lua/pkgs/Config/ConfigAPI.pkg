@@ -1,0 +1,62 @@
+$#include "Config/Config.h"
+
+class Config : public Object
+{
+	struct EnumVariant
+	{
+		String caption_;
+		Variant value_;
+		EnumVariant(const char* caption, Urho3D::Variant value);
+		EnumVariant(const Urho3D::String& caption, Urho3D::Variant value);
+		EnumVariant(const EnumVariant& src);
+	}
+
+	bool Load(Deserializer& source);
+	bool Save(Serializer& dest) const;
+	bool LoadXML(const XMLElement& source);
+	bool SaveXML(XMLElement& dest) const;
+	bool LoadJSON(const JSONValue& source);
+	bool SaveJSON(JSONValue& dest) const;
+
+	void Apply(const VariantMap& parameters);
+	void Apply(StringHash name, const Variant& value);
+	void ApplyComplex();
+	void ExtractEngineParameters(VariantMap& engineParameters, VariantMap& shellParameters);
+
+	void RegisterSettingsTab(const String& tabName);
+	void RemoveSettingsTab(StringHash tab);
+	StringVector GetSettingsTabs() const;
+	StringVector GetSettings(StringHash settingsTab) const;
+
+	bool RegisterParameter(const String& parameterName,
+						   VariantType type,
+						   StringHash settingsTab,
+						   bool isEngine,
+						   bool localized);
+
+	void RemoveParameter(StringHash parameter);
+
+	const String& GetName(StringHash parameter) const;
+	VariantType GetType(StringHash parameter) const;
+	bool IsEnum(StringHash parameter) const;
+	bool IsLocalized(StringHash parameter) const;
+	Variant ReadValue(StringHash parameter) const;
+	void WriteValue(StringHash parameter, const Variant& value);
+	Vector<EnumVariant> ConstructEnum(StringHash parameter) const;
+
+	String GetDebugString() const;
+}
+
+Config* GetConfig();
+tolua_readonly tolua_property__get_set Config* config;
+
+${
+#define TOLUA_DISABLE_tolua_ConfigAPI_GetConfig00
+static int tolua_ConfigAPI_GetConfig00(lua_State* tolua_S)
+{
+    return ToluaGetSubsystem<Config>(tolua_S);
+}
+
+#define TOLUA_DISABLE_tolua_get_config_ptr
+#define tolua_get_config_ptr tolua_ConfigAPI_GetConfig00
+$}

@@ -1,0 +1,23 @@
+$#include "Core/Shell.h"
+
+class Shell : public Object
+{
+	void StartMainMenu();
+	void StartLocalServer(String sceneName);
+	void StartRemoteServer(String serverName, String sceneName);
+	void StartClient(String address);
+}
+
+Shell* GetShell();
+tolua_readonly tolua_property__get_set Shell* shell;
+
+${
+#define TOLUA_DISABLE_tolua_CoreAPI_GetShell00
+static int tolua_CoreAPI_GetShell00(lua_State* tolua_S)
+{
+    return ToluaGetSubsystem<Shell>(tolua_S);
+}
+
+#define TOLUA_DISABLE_tolua_get_shell_ptr
+#define tolua_get_shell_ptr tolua_CoreAPI_GetShell00
+$}

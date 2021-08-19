@@ -30,6 +30,7 @@
 #include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/InputEvents.h>
+#include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Scene/SceneEvents.h>
@@ -39,7 +40,8 @@
 #include "Input/ControllersRegistry.h"
 #include "Input/InputReceiver.h"
 #include "Plugin/PluginsRegistry.h"
-#include "ScriptAPI/ScriptAPI.h"
+#include "ScriptAPI/AngelScript/ScriptAPI.h"
+#include "ScriptAPI/Lua/LuaScriptAPI.h"
 #include "Shell.h"
 #include "ShellConfigurator.h"
 #include "ShellEvents.h"
@@ -55,6 +57,7 @@ Shell::Shell(Urho3D::Context* context)
 	, port_(27500)
 	, isClient_(true)
 {
+	context_->RegisterSubsystem<LuaScript>();
 	context_->RegisterSubsystem<Script>();
 	context_->RegisterSubsystem<Config>();
 	context_->RegisterSubsystem<ShellConfigurator>();
@@ -90,9 +93,14 @@ void Shell::Setup(Urho3D::VariantMap& engineParameters)
 	engineParameters[EP_LOG_NAME] = configurator->GetLogsFilename();
 
 	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
+	lua_State* state = GetSubsystem<LuaScript>()->GetState();
 	RegisterServerAPI(engine);
+	RegisterServerLuaAPI(state);
 	if (isClient_)
+	{
 		RegisterClientAPI(engine);
+		RegisterClientLuaAPI(state);
+	}
 }
 
 void Shell::Initialize()

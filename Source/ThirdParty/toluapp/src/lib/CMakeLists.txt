@@ -1,4 +1,5 @@
 #
+# Copyright (c) 2008-2021 the Urho3D project.
 # Copyright (c) 2021 Yuriy Zinchenko.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,9 +21,24 @@
 # THE SOFTWARE.
 #
 
-ADD_SUBDIRECTORY (ThirdParty)
-ADD_SUBDIRECTORY (Shell)
+# Define target name
+set (TARGET_NAME toluapp)
 
-IF (URHO3DSHELL_SAMPLE)
-	ADD_SUBDIRECTORY (Sample)
-ENDIF ()
+# Define source files
+define_source_files (GLOB_CPP_PATTERNS *.c)
+
+# Setup target
+setup_library ()
+
+# Install headers for building and using the Urho3D library (no direct dependencies but library user may need them)
+install (DIRECTORY ../../include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ThirdParty/toluapp FILES_MATCHING PATTERN *.h)  # Note: the trailing slash is significant
+
+# Install and export package
+target_include_directories (${TARGET_NAME} PUBLIC
+	 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../include>"
+	 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../Lua${JIT}/src>"
+	 "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ThirdParty/toluapp>"
+)
+install (TARGETS ${TARGET_NAME} EXPORT ${TARGET_NAME}Targets)
+export (TARGETS ${TARGET_NAME} FILE ${TARGET_NAME}Targets.cmake)
+install (EXPORT ${TARGET_NAME}Targets FILE ${TARGET_NAME}Targets.cmake DESTINATION ${CMAKE_CONFIG_OUTPUT_DIRECTORY})
