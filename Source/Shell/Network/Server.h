@@ -52,6 +52,7 @@ public:
 
 private:
 	void OnClientConnected(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnClientDisconnected(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnClientIdentity(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnServerSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);

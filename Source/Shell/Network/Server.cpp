@@ -40,6 +40,7 @@ Server::Server(Urho3D::Context* context)
 {
 	URHO3D_LOGTRACE("Server::Server");
 	SubscribeToEvent(E_CLIENTCONNECTED, URHO3D_HANDLER(Server, OnClientConnected));
+	SubscribeToEvent(E_CLIENTDISCONNECTED, URHO3D_HANDLER(Server, OnClientDisconnected));
 	SubscribeToEvent(E_CLIENTIDENTITY, URHO3D_HANDLER(Server, OnClientIdentity));
 	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(Server, OnClientSceneLoaded));
 	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(Server, OnServerSceneLoaded));
@@ -113,7 +114,14 @@ void Server::OnClientConnected(Urho3D::StringHash, Urho3D::VariantMap& eventData
 {
 	using namespace ClientConnected;
 	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-	URHO3D_LOGTRACEF("Server::OnServerConnected %s", connection->ToString().CString());
+	URHO3D_LOGTRACEF("Server::OnClientConnected %s", connection->ToString().CString());
+}
+
+void Server::OnClientDisconnected(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace ClientConnected;
+	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
+	URHO3D_LOGTRACEF("Server::OnClientDisconnected %s", connection->ToString().CString());
 }
 
 void Server::OnClientIdentity(Urho3D::StringHash, Urho3D::VariantMap& eventData)
