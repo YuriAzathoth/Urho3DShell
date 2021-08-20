@@ -58,7 +58,7 @@ SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(SampleGamePlugin, OnClientSceneLoaded));
 	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(SampleGamePlugin, OnServerSideSpawned));
 
-	SampleActorController::RegisterObject(context);
+	REGISTER_OBJECT(SampleActorController);
 
 	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
 	actions->RegisterActionRemote(MOVE_FORWARD);

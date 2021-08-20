@@ -20,30 +20,17 @@
 // THE SOFTWARE.
 //
 
-#ifndef PLUGININTERFACE_H
-#define PLUGININTERFACE_H
+#include <Urho3D/Core/Context.h>
+#include "PluginInterface.h"
 
-#include <Urho3D/Core/Object.h>
-#include "Urho3DShellAPI.h"
+using namespace Urho3D;
 
-#define REGISTER_OBJECT(CLASS)                                                                                         \
-	CLASS::RegisterObject(context_);                                                                                   \
-	RegisterObject(CLASS::GetTypeInfoStatic()->GetType())
-
-class URHO3DSHELLAPI_EXPORT PluginInterface : public Urho3D::Object
+PluginInterface::~PluginInterface()
 {
-	URHO3D_OBJECT(PluginInterface, Urho3D::Object)
+	using FactoriesMap = HashMap<StringHash, SharedPtr<ObjectFactory>>;
+	FactoriesMap& factories = const_cast<FactoriesMap&>(context_->GetObjectFactories());
+	for (StringHash objectType : factories_)
+		factories.Erase(objectType);
+}
 
-public:
-	using Urho3D::Object::Object;
-	virtual ~PluginInterface();
-
-	virtual const Urho3D::String& GetName() const = 0;
-
-	void RegisterObject(Urho3D::StringHash objectType);
-
-private:
-	Urho3D::PODVector<Urho3D::StringHash> factories_;
-};
-
-#endif // PLUGININTERFACE_H
+void PluginInterface::RegisterObject(Urho3D::StringHash objectType) { factories_.Push(objectType); }
