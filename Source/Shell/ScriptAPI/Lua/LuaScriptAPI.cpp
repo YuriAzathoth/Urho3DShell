@@ -26,7 +26,7 @@ int tolua_ConfigAPI_open(lua_State*);
 int tolua_CoreAPI_open(lua_State*);
 int tolua_PluginAPI_open(lua_State*);
 
-void RegisterClientLuaAPI([[maybe_unused]]lua_State* state) {}
+void RegisterClientLuaAPI([[maybe_unused]] lua_State* state) {}
 
 void RegisterServerLuaAPI(lua_State* state)
 {

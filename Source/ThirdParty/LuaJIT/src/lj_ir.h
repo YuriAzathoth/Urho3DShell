@@ -314,8 +314,10 @@ LJ_DATA const uint8_t lj_ir_mode[IR__MAX + 1];
 	_(P32, 4)                                                                                                          \
 	_(THREAD, 4)                                                                                                       \
 	_(PROTO, 4)                                                                                                        \
-	_(FUNC, 4) _(P64, 8) _(CDATA, 4) _(TAB, 4) _(UDATA, 4) _(FLOAT, 4) _(NUM, 8) _(I8, 1) _(U8, 1) _(I16, 2) _(U16, 2) \
-		_(INT, 4) _(U32, 4) _(I64, 8) _(U64, 8) _(SOFTFP, 4) /* There is room for 9 more types. */
+	_(FUNC, 4)                                                                                                         \
+	_(P64, 8)                                                                                                          \
+	_(CDATA, 4) _(TAB, 4) _(UDATA, 4) _(FLOAT, 4) _(NUM, 8) _(I8, 1) _(U8, 1) _(I16, 2) _(U16, 2) _(INT, 4) _(U32, 4)  \
+		_(I64, 8) _(U64, 8) _(SOFTFP, 4) /* There is room for 9 more types. */
 
 /* IR result type and flags (8 bit). */
 typedef enum

@@ -345,8 +345,8 @@ enum
 	_(LONG)                                                                                                            \
 	_(LONGLONG)                                                                                                        \
 	_(SHORT)                                                                                                           \
-	_(COMPLEX) _(SIGNED) _(UNSIGNED) _(CONST) _(VOLATILE) _(RESTRICT) _(INLINE) _(TYPEDEF) _(EXTERN) _(STATIC) _(AUTO) \
-		_(REGISTER)
+	_(COMPLEX)                                                                                                         \
+	_(SIGNED) _(UNSIGNED) _(CONST) _(VOLATILE) _(RESTRICT) _(INLINE) _(TYPEDEF) _(EXTERN) _(STATIC) _(AUTO) _(REGISTER)
 
 /* C keywords. */
 #define CKWDEF(_)                                                                                                      \
