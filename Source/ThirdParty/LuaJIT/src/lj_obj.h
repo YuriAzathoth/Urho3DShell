@@ -575,7 +575,11 @@ enum
 	_(call) /* The following must be in ORDER ARITH. */                                                                \
 	_(add)                                                                                                             \
 	_(sub)                                                                                                             \
-	_(mul) _(div) _(mod) _(pow) _(unm) /* The following are used in the standard libraries. */                         \
+	_(mul)                                                                                                             \
+	_(div)                                                                                                             \
+	_(mod)                                                                                                             \
+	_(pow)                                                                                                             \
+	_(unm) /* The following are used in the standard libraries. */                                                     \
 		_(metatable) _(tostring) MMDEF_FFI(_) MMDEF_PAIRS(_)
 
 typedef enum
