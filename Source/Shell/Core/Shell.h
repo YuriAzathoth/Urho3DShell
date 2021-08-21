@@ -27,6 +27,7 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 #include "Urho3DShellAPI.h"
+#include "Utility/StaticPtr.h"
 
 class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
 {
@@ -58,8 +59,8 @@ private:
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	Urho3D::VariantMap shellParameters_;
-	Urho3D::UniquePtr<Client> client_;
-	Urho3D::UniquePtr<Server> server_;
+	StaticPtr<Client> client_;
+	StaticPtr<Server> server_;
 	unsigned short port_; // TODO: Move to something else location
 	bool isClient_;
 };
