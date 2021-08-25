@@ -20,10 +20,8 @@
 // THE SOFTWARE.
 //
 
-#include <algorithm>
 #include <vector>
-#include <boost/dll/import.hpp>
-#include <boost/function.hpp>
+#include "Core/Launch.h"
 
 #if defined (__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic push
@@ -35,34 +33,13 @@
 #pragma clang diagnostic ignored "-Wwrite-strings"
 #endif // defined(__clang__)
 
-#define SETUP_FUNCTION "SetArguments"
-#define LAUNCH_FUNCTION "LaunchShell"
-
-#ifdef NDEBUG
-#define LIBRARY_FILENAME "Urho3DShell"
-#else
-#define LIBRARY_FILENAME "Urho3DShell_d"
-#endif // NDEBUG
-
 int main(int argc, char** argv)
 {
-	using LaunchFunc = int(int, char**, int, char**);
-	boost::function<LaunchFunc> launchFunc;
-	try
-	{
-		launchFunc =
-			boost::dll::import<LaunchFunc>(LIBRARY_FILENAME, LAUNCH_FUNCTION, boost::dll::load_mode::append_decorations);
-	}
-	catch (boost::system::system_error& e)
-	{
-		fprintf(stderr, "An exception has occured: %s\n", e.what());
-		return 1;
-	}
 	char* launcher_args[] =
 	{
 		@LAUNCHER_ARGUMENTS@
 	};
-	return launchFunc(argc, argv, std::size(launcher_args), launcher_args);
+	return LaunchShell(argc, argv, std::size(launcher_args), launcher_args);
 }
 
 #ifdef _WIN32
