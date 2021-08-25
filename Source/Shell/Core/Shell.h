@@ -47,8 +47,6 @@ public:
 	unsigned short GetPort() const noexcept { return port_; }
 
 private:
-	void InitializeClient();
-
 	StaticPtr<Client> client_;
 	StaticPtr<Server> server_;
 	unsigned short port_; // TODO: Move to something else location
