@@ -20,38 +20,21 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELL_H
-#define SHELL_H
+#ifndef FRONTAPPLICATION_H
+#define FRONTAPPLICATION_H
 
-#include <Urho3D/Core/Object.h>
-#include "Network/Client.h"
-#include "Network/Server.h"
-#include "Urho3DShellAPI.h"
-#include "Utility/StaticPtr.h"
+#include "CoreApplication.h"
 
-class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
+class FrontApplication : public CoreApplication
 {
-	URHO3D_OBJECT(Shell, Urho3D::Object)
-
 public:
-	explicit Shell(Urho3D::Context* context);
-	~Shell();
-
-	void StartMainMenu();
-	void StartLocalServer(Urho3D::String sceneName);
-	void StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName);
-	void StartClient(Urho3D::String address);
-
-	void SetPort(unsigned short port) noexcept { port_ = port; }
-
-	unsigned short GetPort() const noexcept { return port_; }
+	FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters);
+	void Setup() override;
+	void Start() override;
+	void Stop() override;
 
 private:
-	void InitializeClient();
-
-	StaticPtr<Client> client_;
-	StaticPtr<Server> server_;
-	unsigned short port_; // TODO: Move to something else location
+	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
-#endif // SHELL_H
+#endif // FRONTAPPLICATION_H

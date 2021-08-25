@@ -73,7 +73,9 @@ private:
 	const Urho3D::StringHash name_;
 };
 
-void Config::Initialize(Urho3D::VariantMap& dest, const Urho3D::XMLElement& source)
+void Config::Initialize(Urho3D::VariantMap& engineParameters,
+						Urho3D::VariantMap& shellParameters,
+						const Urho3D::XMLElement& source)
 {
 	String name;
 	Variant value;
@@ -88,7 +90,25 @@ void Config::Initialize(Urho3D::VariantMap& dest, const Urho3D::XMLElement& sour
 		else if (!parameters_.Contains(name))
 			URHO3D_LOGWARNINGF("Failed to setup config parameter %s: parameter is not registered yet.", name.CString());
 		else
-			dest[name] = value;
+			(IsEngine(name) ? engineParameters : shellParameters)[name] = value;
+	}
+
+	auto it = engineParameters.Find(ECP_RESOLUTION);
+	if (it != engineParameters.End())
+	{
+		const IntVector3 resolution = StrToRes(it->second_.GetString());
+		engineParameters[EP_WINDOW_WIDTH] = resolution.x_;
+		engineParameters[EP_WINDOW_HEIGHT] = resolution.y_;
+		engineParameters[EP_REFRESH_RATE] = resolution.z_;
+		engineParameters.Erase(ECP_RESOLUTION);
+	}
+	it = engineParameters.Find(ECP_WINDOW_MODE);
+	if (it != engineParameters.End())
+	{
+		const int windowMode = it->second_.GetInt();
+		engineParameters[EP_FULL_SCREEN] = windowMode >= 1;
+		engineParameters[EP_BORDERLESS] = windowMode == 2;
+		engineParameters.Erase(ECP_WINDOW_MODE);
 	}
 }
 
@@ -208,39 +228,6 @@ void Config::ApplyComplex()
 			p.second_->writer_(p.second_->parameters_);
 			p.second_->parameters_.Clear();
 		}
-}
-
-void Config::ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters)
-{
-	// TODO: Implement registrable engine parameters forwarding
-	auto it = shellParameters.Find(ECP_RESOLUTION);
-	if (it != shellParameters.End())
-	{
-		const IntVector3 resolution = StrToRes(it->second_.GetString());
-		engineParameters[EP_WINDOW_WIDTH] = resolution.x_;
-		engineParameters[EP_WINDOW_HEIGHT] = resolution.y_;
-		engineParameters[EP_REFRESH_RATE] = resolution.z_;
-	}
-	it = shellParameters.Find(ECP_WINDOW_MODE);
-	if (it != shellParameters.End())
-	{
-		const int windowMode = it->second_.GetInt();
-		engineParameters[EP_FULL_SCREEN] = windowMode >= 1;
-		engineParameters[EP_BORDERLESS] = windowMode == 2;
-	}
-
-	decltype(parameters_)::Iterator itParameter;
-	for (it = shellParameters.Begin(); it != shellParameters.End();)
-	{
-		itParameter = parameters_.Find(it->first_);
-		if (itParameter != parameters_.End() && itParameter->second_.flags_ & ParameterFlags::ENGINE)
-		{
-			engineParameters.Insert(it);
-			it = shellParameters.Erase(it);
-		}
-		else
-			++it;
-	}
 }
 
 void Config::RegisterSettingsTab(const Urho3D::String& tabName)
@@ -417,6 +404,12 @@ Urho3D::VariantType Config::GetType(Urho3D::StringHash parameter) const
 {
 	const auto it = parameters_.Find(parameter);
 	return it != parameters_.End() ? it->second_.type_ : Urho3D::VariantType::VAR_NONE;
+}
+
+bool Config::IsEngine(Urho3D::StringHash parameter) const
+{
+	const auto it = parameters_.Find(parameter);
+	return it != parameters_.End() ? it->second_.flags_ & ParameterFlags::ENGINE : false;
 }
 
 bool Config::IsEnum(Urho3D::StringHash parameter) const

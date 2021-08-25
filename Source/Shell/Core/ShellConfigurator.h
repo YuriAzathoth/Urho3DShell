@@ -34,7 +34,7 @@ public:
 	explicit ShellConfigurator(Urho3D::Context* context);
 	~ShellConfigurator();
 
-	void Initialize(Urho3D::VariantMap& shellParameters);
+	void Initialize(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters);
 	void LoadProfile(const Urho3D::String& profileName);
 	void SaveProfile() const;
 	void CreateProfile(const Urho3D::String& profileName);
@@ -50,7 +50,6 @@ public:
 	Urho3D::String GetProfileFilename() const;
 	Urho3D::String GetSavesPath() const;
 
-	void SetAppName(const Urho3D::String& appName) { appName_ = appName; }
 	void SetGameName(const Urho3D::String& gameName) { gameName_ = gameName; }
 
 	const Urho3D::String& GetAppName() const noexcept { return appName_; }

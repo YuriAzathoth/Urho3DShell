@@ -20,25 +20,13 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELLAPPLICATION_H
-#define SHELLAPPLICATION_H
+#ifndef SHELLDEFS_H
+#define SHELLDEFS_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Urho3DShellAPI.h"
+#include <Urho3D/Math/StringHash.h>
 
-class ShellApplication : public Urho3D::Application
-{
-public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
-};
+static Urho3D::StringHash SP_APP_NAME = "AppName";
+static Urho3D::StringHash SP_NO_CLIENT = "NoClient";
+static Urho3D::StringHash SP_SCRIPT = "Script";
 
-extern "C"
-{
-	void URHO3DSHELLAPI_EXPORT SetArguments(int argc, char** argv);
-	int URHO3DSHELLAPI_EXPORT LaunchShell();
-}
-
-#endif // SHELLAPPLICATION_H
+#endif // SHELLDEFS_H

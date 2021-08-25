@@ -20,13 +20,17 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/Container/Str.h>
+#include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Resource/JSONFile.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <filesystem>
 #include "Config/Config.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ShellConfigurator.h"
+#include "ShellDefs.h"
 
 #define CONFIG_ROOT "config"
 #define DEFAULT_APP_NAME "Common"
@@ -53,7 +57,7 @@ ShellConfigurator::~ShellConfigurator()
 	file.SaveFile(GetProfileFilename());
 }
 
-void ShellConfigurator::Initialize(Urho3D::VariantMap& shellParameters)
+void ShellConfigurator::Initialize(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters)
 {
 	FileSystem* fileSystem = GetSubsystem<FileSystem>();
 	String path = GetGameDataPath();
@@ -67,12 +71,18 @@ void ShellConfigurator::Initialize(Urho3D::VariantMap& shellParameters)
 	else
 		fileSystem->CreateDir(path);
 
+	const auto it = shellParameters.Find(SP_APP_NAME);
+	appName_ = it != shellParameters.End() ? it->second_.GetString() : "Unnamed";
+
 	if (InitProfile())
 	{
 		path = GetConfigFilename();
 		XMLFile file(context_);
 		if (GetSubsystem<FileSystem>()->FileExists(path) && file.LoadFile(path))
-			GetSubsystem<Config>()->Initialize(shellParameters, file.GetRoot(CONFIG_ROOT));
+		{
+			GetSubsystem<Config>()->Initialize(engineParameters, shellParameters, file.GetRoot(CONFIG_ROOT));
+			engineParameters[EP_LOG_NAME] = GetLogsFilename();
+		}
 	}
 }
 

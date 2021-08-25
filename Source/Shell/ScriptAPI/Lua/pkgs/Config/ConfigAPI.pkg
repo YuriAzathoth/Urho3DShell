@@ -21,7 +21,6 @@ class Config : public Object
 	void Apply(const VariantMap& parameters);
 	void Apply(StringHash name, const Variant& value);
 	void ApplyComplex();
-	void ExtractEngineParameters(VariantMap& engineParameters, VariantMap& shellParameters);
 
 	void RegisterSettingsTab(const String& tabName);
 	void RemoveSettingsTab(StringHash tab);

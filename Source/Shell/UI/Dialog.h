@@ -28,6 +28,10 @@
 #include <boost/noncopyable.hpp>
 #include "Urho3DShellAPI.h"
 
+#ifdef _WIN32
+#undef CreateDialog
+#endif // _WIN32
+
 class URHO3DSHELLAPI_EXPORT Dialog : public Urho3D::Object, private boost::noncopyable
 {
 	URHO3D_OBJECT(Dialog, Urho3D::Object)

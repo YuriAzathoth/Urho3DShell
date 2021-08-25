@@ -100,10 +100,6 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_METHODPR(Config, Apply, (StringHash, const Variant&), void),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("Config", "void ApplyComplex()", AS_METHOD(Config, ApplyComplex), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "void ExtractEngineParameters(VariantMap&, VariantMap&) const",
-								 AS_METHOD(Config, ExtractEngineParameters),
-								 AS_CALL_THISCALL);
 
 	engine->RegisterObjectMethod("Config",
 								 "void RegisterSettingsTab(const String&in)",

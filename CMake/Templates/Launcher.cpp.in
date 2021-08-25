@@ -46,14 +46,10 @@
 
 int main(int argc, char** argv)
 {
-	using SetupFunc = void(int, char**);
-	using LaunchFunc = int();
-	boost::function<SetupFunc> setupFunc;
+	using LaunchFunc = int(int, char**, int, char**);
 	boost::function<LaunchFunc> launchFunc;
 	try
 	{
-		setupFunc =
-			boost::dll::import<SetupFunc>(LIBRARY_FILENAME, SETUP_FUNCTION, boost::dll::load_mode::append_decorations);
 		launchFunc =
 			boost::dll::import<LaunchFunc>(LIBRARY_FILENAME, LAUNCH_FUNCTION, boost::dll::load_mode::append_decorations);
 	}
@@ -62,17 +58,11 @@ int main(int argc, char** argv)
 		fprintf(stderr, "An exception has occured: %s\n", e.what());
 		return 1;
 	}
+	char* launcher_args[] =
 	{
-		const std::vector<char*> console_args { argv, argv + argc };
-		const std::vector<char*> launcher_args
-		{
-			@LAUNCHER_ARGUMENTS@
-		};
-		std::vector<char*> result_args(console_args.size() + launcher_args.size());
-		std::merge(launcher_args.begin(), launcher_args.end(), console_args.begin(), console_args.end(), result_args.begin());
-		setupFunc(static_cast<int>(result_args.size()), static_cast<char**>(result_args.data()));
-	}
-	return launchFunc();
+		@LAUNCHER_ARGUMENTS@
+	};
+	return launchFunc(argc, argv, std::size(launcher_args), launcher_args);
 }
 
 #ifdef _WIN32

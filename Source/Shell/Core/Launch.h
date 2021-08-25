@@ -20,20 +20,11 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Core/Context.h>
-#include "Shell.h"
-#include "ShellApplication.h"
+#ifndef LAUNCH_H
+#define LAUNCH_H
 
-using namespace Urho3D;
+#include "Urho3DShellAPI.h"
 
-void ShellApplication::Setup() { context_->RegisterSubsystem<Shell>()->Setup(engineParameters_); }
-void ShellApplication::Start() { GetSubsystem<Shell>()->Initialize(); }
-void ShellApplication::Stop() { context_->RemoveSubsystem<Shell>(); }
-void SetArguments(int argc, char** argv) { ParseArguments(argc, argv); }
+extern "C" int URHO3DSHELLAPI_EXPORT LaunchShell(int argc1, char** argv1, int argc2, char** argv2);
 
-int LaunchShell()
-{
-	Context context;
-	ShellApplication app(&context);
-	return app.Run();
-}
+#endif // LAUNCH_H

@@ -112,7 +112,9 @@ public:
 
 	using Urho3D::Object::Object;
 
-	void Initialize(Urho3D::VariantMap& dest, const Urho3D::XMLElement& source);
+	void Initialize(Urho3D::VariantMap& engineParameters,
+					Urho3D::VariantMap& shellParameters,
+					const Urho3D::XMLElement& source);
 
 	bool Load(Urho3D::Deserializer& source);
 	bool Save(Urho3D::Serializer& dest) const;
@@ -124,7 +126,6 @@ public:
 	void Apply(const Urho3D::VariantMap& parameters);
 	void Apply(Urho3D::StringHash name, const Urho3D::Variant& value);
 	void ApplyComplex();
-	void ExtractEngineParameters(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters);
 
 	void RegisterSettingsTab(const Urho3D::String& tabName);
 	void RemoveSettingsTab(Urho3D::StringHash tab);
@@ -149,6 +150,7 @@ public:
 	const Urho3D::String& GetName(Urho3D::StringHash parameter) const;
 	Urho3D::VariantType GetType(Urho3D::StringHash parameter) const;
 	bool IsEnum(Urho3D::StringHash parameter) const;
+	bool IsEngine(Urho3D::StringHash parameter) const;
 	bool IsLocalized(Urho3D::StringHash parameter) const;
 	Urho3D::Variant ReadValue(Urho3D::StringHash parameter) const;
 	void WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& value);

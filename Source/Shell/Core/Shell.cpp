@@ -44,102 +44,22 @@
 #include "ScriptAPI/Lua/LuaScriptAPI.h"
 #include "Shell.h"
 #include "ShellConfigurator.h"
+#include "ShellDefs.h"
 #include "ShellEvents.h"
 #include "UI/UIController.h"
-
-#define LP_NO_CLIENT "NoClient"
-#define LP_SCRIPT "Script"
 
 using namespace Urho3D;
 
 Shell::Shell(Urho3D::Context* context)
 	: Object(context)
 	, port_(27500)
-	, isClient_(true)
 {
-	context_->RegisterSubsystem<LuaScript>();
-	context_->RegisterSubsystem<Script>();
-	context_->RegisterSubsystem<Config>();
-	context_->RegisterSubsystem<ShellConfigurator>();
-	context_->RegisterSubsystem<ActionsRegistry>();
-	context_->RegisterSubsystem<PluginsRegistry>();
 }
 
 Shell::~Shell()
 {
 	client_.Delete();
 	server_.Delete();
-	if (isClient_)
-		context_->RemoveSubsystem<ControllersRegistry>();
-	context_->RemoveSubsystem<ShellConfigurator>();
-	context_->RemoveSubsystem<PluginsRegistry>();
-}
-
-void Shell::Setup(Urho3D::VariantMap& engineParameters)
-{
-	ParseParameters(GetArguments());
-	isClient_ = !(GetParameter(LP_NO_CLIENT, false).GetBool() || GetParameter(EP_HEADLESS, false).GetBool());
-
-	Config* config = GetSubsystem<Config>();
-	config->RegisterServerParameters();
-	if (isClient_)
-		config->RegisterClientParameters();
-
-	ShellConfigurator* configurator = GetSubsystem<ShellConfigurator>();
-	configurator->Initialize(shellParameters_);
-	config->ExtractEngineParameters(engineParameters, shellParameters_);
-
-	engineParameters[EP_LOG_NAME] = configurator->GetLogsFilename();
-
-	asIScriptEngine* engine = GetSubsystem<Script>()->GetScriptEngine();
-	lua_State* state = GetSubsystem<LuaScript>()->GetState();
-	RegisterServerAPI(engine);
-	RegisterServerLuaAPI(state);
-	if (isClient_)
-	{
-		RegisterClientAPI(engine);
-		RegisterClientLuaAPI(state);
-	}
-}
-
-void Shell::Initialize()
-{
-	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
-	const auto itScript = shellParameters_.Find(LP_SCRIPT);
-	if (itScript != shellParameters_.End())
-		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
-
-	InputReceiver::RegisterObject(context_);
-
-	if (isClient_)
-		InitializeClient();
-
-	GetSubsystem<Config>()->Apply(shellParameters_);
-	shellParameters_.Clear();
-}
-
-void Shell::InitializeClient()
-{
-	ResourceCache* cache = GetSubsystem<ResourceCache>();
-	XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
-	GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(styleFile);
-
-	Engine* engine = GetSubsystem<Engine>();
-	engine->CreateConsole()->SetDefaultStyle(styleFile);
-	engine->CreateDebugHud()->SetDefaultStyle(styleFile);
-
-	context_->RegisterSubsystem<UIController>();
-
-	StartMainMenu();
-
-	ControllersRegistry* controllers = context_->RegisterSubsystem<ControllersRegistry>();
-	controllers->SetConfigPath(GetSubsystem<ShellConfigurator>()->GetInputPath());
-
-	SendEvent(E_SHELLCLIENTSTARTED);
-
-	controllers->EnableController("KeyboardController");
-
-	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Shell, OnKeyDown));
 }
 
 void Shell::StartMainMenu()
@@ -233,46 +153,4 @@ void Shell::StartClient(Urho3D::String address)
 		SubscribeToEvent(E_SERVERDISCONNECTED, InitClient);
 	else
 		InitClient(StringHash::ZERO, GetEventDataMap());
-}
-
-void Shell::ParseParameters(const Urho3D::StringVector& arguments)
-{
-	ShellConfigurator* configurator = GetSubsystem<ShellConfigurator>();
-	String argument, value;
-	for (unsigned i = 0; i < arguments.Size(); ++i)
-		if (arguments[i].Length() > 1 && arguments[i][0] == '-')
-		{
-			argument = arguments[i].Substring(1).ToLower();
-			value = i + 1 < arguments.Size() ? arguments[i + 1] : String::EMPTY;
-			if (argument == "appname")
-			{
-				configurator->SetAppName(value);
-				++i;
-			}
-			else if (argument == "noclient")
-				shellParameters_[LP_NO_CLIENT] = true;
-			else if (argument == "script")
-			{
-				shellParameters_[LP_SCRIPT] = value;
-				++i;
-			}
-		}
-}
-
-Urho3D::Variant Shell::GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue)
-{
-	const auto it = shellParameters_.Find(parameter);
-	return it != shellParameters_.End() ? it->second_ : defaultValue;
-}
-
-void Shell::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
-{
-	using namespace KeyDown;
-	const int key = eventData[P_KEY].GetInt();
-	switch (key)
-	{
-	case KEY_F1:
-		GetSubsystem<Console>()->Toggle();
-		break;
-	}
 }

@@ -26,15 +26,12 @@
 #include "PluginsRegistry.h"
 #include "ScriptPlugin.h"
 
-#define MAIN_PLUGIN_LIB "Game"
-
 using namespace Urho3D;
 
-PluginsRegistry::PluginsRegistry(Urho3D::Context* context)
-	: Object(context)
+void PluginsRegistry::RegisterMainPlugin(Urho3D::String pluginName)
 {
 	mainPlugin_.StaticCast(MakeShared<BinaryPlugin>(context_));
-	mainPlugin_->Load(MAIN_PLUGIN_LIB);
+	mainPlugin_->Load(pluginName);
 }
 
 bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
