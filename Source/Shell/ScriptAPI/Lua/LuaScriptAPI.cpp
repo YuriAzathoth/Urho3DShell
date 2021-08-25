@@ -20,17 +20,21 @@
 // THE SOFTWARE.
 //
 
+#include <toluapp/tolua++.h>
 #include "LuaScriptAPI.h"
 
-int tolua_ConfigAPI_open(lua_State*);
-int tolua_CoreAPI_open(lua_State*);
-int tolua_PluginAPI_open(lua_State*);
+#define DECLARE_LUA_API(APINAME) extern int tolua_##APINAME##API_open(lua_State*)
+#define REGISTER_LUA_API(APINAME) lua_pushcfunction(state, tolua_##APINAME##API_open)
+
+DECLARE_LUA_API(Config);
+DECLARE_LUA_API(Core);
+DECLARE_LUA_API(Plugin);
 
 void RegisterClientLuaAPI([[maybe_unused]] lua_State* state) {}
 
 void RegisterServerLuaAPI(lua_State* state)
 {
-	tolua_ConfigAPI_open(state);
-	tolua_CoreAPI_open(state);
-	tolua_PluginAPI_open(state);
+	REGISTER_LUA_API(Config);
+	REGISTER_LUA_API(Core);
+	REGISTER_LUA_API(Plugin);
 }
