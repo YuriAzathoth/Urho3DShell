@@ -22,6 +22,7 @@
 
 #include "BinaryPlugin.h"
 #include "Core/ShellConfigurator.h"
+#include "LuaScriptPlugin.h"
 #include "PluginsRegistry.h"
 #include "ScriptPlugin.h"
 
@@ -41,11 +42,13 @@ bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
 	SharedPtr<Plugin> plugin;
 	if (pluginName.EndsWith(".as", false))
 		plugin.StaticCast(MakeShared<ScriptPlugin>(context_));
+	else if (pluginName.EndsWith(".lua", false))
+		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
 
 	const String pluginsPath = GetSubsystem<ShellConfigurator>()->GetPluginsPath();
-	if (plugin.NotNull() && plugin->Load(pluginsPath + pluginName))
+	if (plugin.NotNull() && plugin->Load(/*pluginsPath + */pluginName))
 	{
 		plugins_[pluginName] = plugin;
 		return true;
