@@ -24,6 +24,8 @@
 # Based on src/Makefile from http://luajit.org
 # The cross-compiling logic is ported to CMake as faithful as possible although currently Urho3D does not support all target archs supported by LuaJIT
 
+SET (URHO3D_LUAJIT_AMALG ON CACHE BOOL "Enable LuaJIT amalgamated build (LuaJIT only); default to true when LuaJIT is enabled")
+
 # Makefile: Compiler options
 if (NOT MSVC)
     # Since the assembler part does NOT maintain a frame pointer, it's pointless
