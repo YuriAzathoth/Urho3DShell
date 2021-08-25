@@ -56,8 +56,6 @@ public:
 	template <typename T> void DisableController();
 	template <typename T> T* GetController() const;
 
-	void SetConfigPath(const Urho3D::String& configPath) { configPath_ = configPath; }
-
 	Urho3D::String GetDebugString() const;
 
 private:
@@ -67,7 +65,6 @@ private:
 	using ControllersMap = Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<InputController>>;
 	ControllersMap enabledControllers_;
 	ControllersMap disabledControllers_;
-	Urho3D::String configPath_;
 };
 
 template <typename T> T* ControllersRegistry::RegisterController()

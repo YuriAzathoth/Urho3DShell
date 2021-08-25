@@ -20,32 +20,9 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/AngelScript/Script.h>
-#include <Urho3D/Core/Context.h>
-#include <Urho3D/Core/ProcessUtils.h>
-#include <Urho3D/Engine/Console.h>
-#include <Urho3D/Engine/DebugHud.h>
-#include <Urho3D/Engine/Engine.h>
-#include <Urho3D/Engine/EngineDefs.h>
-#include <Urho3D/IO/FileSystem.h>
-#include <Urho3D/IO/Log.h>
-#include <Urho3D/Input/InputEvents.h>
-#include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Network/NetworkEvents.h>
-#include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Scene/SceneEvents.h>
-#include <Urho3D/UI/UI.h>
-#include "Config/Config.h"
-#include "Input/ActionsRegistry.h"
-#include "Input/ControllersRegistry.h"
-#include "Input/InputReceiver.h"
-#include "Plugin/PluginsRegistry.h"
-#include "ScriptAPI/AngelScript/ScriptAPI.h"
-#include "ScriptAPI/Lua/LuaScriptAPI.h"
 #include "Shell.h"
-#include "ShellConfigurator.h"
-#include "ShellDefs.h"
-#include "ShellEvents.h"
 #include "UI/UIController.h"
 
 using namespace Urho3D;

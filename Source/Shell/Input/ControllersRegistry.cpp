@@ -25,6 +25,7 @@
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include "ControllersRegistry.h"
+#include "Core/ShellConfigurator.h"
 #include "KeyboardController.h"
 
 using namespace Urho3D;
@@ -83,7 +84,7 @@ void ControllersRegistry::EnableController(InputController* inputController)
 	if (inputController->Enable())
 	{
 		XMLFile file(context_);
-		if (file.LoadFile(configPath_ + inputController->GetTypeName() + ".xml"))
+		if (file.LoadFile(GetSubsystem<ShellConfigurator>()->GetInputPath() + inputController->GetTypeName() + ".xml"))
 			inputController->LoadXML(file.GetRoot());
 	}
 	else
@@ -112,7 +113,7 @@ void ControllersRegistry::DisableController(InputController* inputController)
 		XMLFile file(context_);
 		XMLElement root = file.CreateRoot("input");
 		inputController->SaveXML(root);
-		file.SaveFile(configPath_ + inputController->GetTypeName() + ".xml");
+		file.SaveFile(GetSubsystem<ShellConfigurator>()->GetInputPath() + inputController->GetTypeName() + ".xml");
 		inputController->RemoveAllBindings();
 	}
 	else
