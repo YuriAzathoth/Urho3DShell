@@ -23,8 +23,12 @@
 #ifndef SCRIPTPLUGIN_H
 #define SCRIPTPLUGIN_H
 
-#include <Urho3D/AngelScript/ScriptFile.h>
 #include "Plugin.h"
+
+namespace Urho3D
+{
+class ScriptFile;
+}
 
 class ScriptPlugin : public Plugin
 {
