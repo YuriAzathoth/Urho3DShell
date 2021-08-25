@@ -48,7 +48,7 @@ bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
 
 	const String pluginsPath = GetSubsystem<ShellConfigurator>()->GetPluginsPath();
-	if (plugin.NotNull() && plugin->Load(/*pluginsPath + */pluginName))
+	if (plugin.NotNull() && plugin->Load(/*pluginsPath + */ pluginName))
 	{
 		plugins_[pluginName] = plugin;
 		return true;

@@ -41,7 +41,7 @@ LuaScriptPlugin::~LuaScriptPlugin()
 		Execute("Stop");
 }
 
-bool LuaScriptPlugin::Load([[maybe_unused]]const Urho3D::String& fileName)
+bool LuaScriptPlugin::Load([[maybe_unused]] const Urho3D::String& fileName)
 {
 #if 0
 	script_ = GetSubsystem<ResourceCache>()->GetResource<LuaFile>(fileName);
@@ -78,7 +78,9 @@ bool LuaScriptPlugin::Execute(const Urho3D::String& functionName,
 
 	if (!function->BeginCall())
 	{
-		URHO3D_LOGERRORF("Failed to call function %s in file %s.", functionName.CString(), script_->GetName().CString());
+		URHO3D_LOGERRORF("Failed to call function %s in file %s.",
+						 functionName.CString(),
+						 script_->GetName().CString());
 		return false;
 	}
 
