@@ -34,16 +34,11 @@ public:
 	{
 	}
 
-	template<typename... TArgs>
-	StaticPtr(TArgs&&... args)
-	{
-		New(std::forward<TArgs...>(args...));
-	}
+	template <typename... TArgs> StaticPtr(TArgs&&... args) { New(std::forward<TArgs...>(args...)); }
 
 	~StaticPtr() { Delete(); }
 
-	template<typename... TArgs>
-	void New(TArgs&&... args)
+	template <typename... TArgs> void New(TArgs&&... args)
 	{
 		Delete();
 		new (Get()) T(std::forward<TArgs...>(args...));
