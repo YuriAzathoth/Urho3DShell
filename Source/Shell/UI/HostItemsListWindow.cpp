@@ -37,5 +37,5 @@ void HostItemsListWindow::Start(const Urho3D::String& sceneName,
 								[[maybe_unused]] const Urho3D::String& serverPass)
 {
 	Shell* shell = GetSubsystem<Shell>();
-	shell->NewShellState<RemoteServerState>(serverName, sceneName, shell->GetPort());
+	shell->NewShellState<RemoteServerState>(sceneName, serverName, shell->GetPort());
 }

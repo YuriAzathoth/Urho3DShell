@@ -24,31 +24,29 @@
 #define LOCALSERVERSTATE_H
 
 #include "Network/Client.h"
-#include "Network/Server.h"
-#include "ShellState.h"
+#include "ServerState.h"
 
-class URHO3DSHELLAPI_EXPORT LocalServerState : public ShellState
+#define LOCAL_SERVER_PORT 10
+
+class URHO3DSHELLAPI_EXPORT LocalServerState : public ServerState
 {
-	URHO3D_OBJECT(LocalServerState, ShellState)
+	URHO3D_OBJECT(LocalServerState, ServerState)
 
 public:
-	explicit LocalServerState(Urho3D::Context* context, const Urho3D::String& sceneName);
+	explicit LocalServerState(Urho3D::Context* context,
+							  const Urho3D::String& sceneName,
+							  unsigned short port = LOCAL_SERVER_PORT);
 
-	void Enter() override;
 	void Exit() override;
 
 protected:
-	void BackState() override;
-	void SetSceneUpdate(bool update) override;
+	void OnSceneLoaded() override;
 
-	// On Start
-	void OnAsyncLoadFinished(Urho3D::StringHash, Urho3D::VariantMap&);
+	Client client_;
+
+private:
 	// On Shutdown
 	void OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&);
-
-	Server server_;
-	Client client_;
-	Urho3D::String sceneName_;
 };
 
 #endif // LOCALSERVERSTATE_H

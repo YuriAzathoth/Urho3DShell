@@ -20,8 +20,6 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Network/NetworkEvents.h>
-#include <Urho3D/Scene/SceneEvents.h>
 #include "RemoteServerState.h"
 
 using namespace Urho3D;
@@ -30,39 +28,13 @@ RemoteServerState::RemoteServerState(Urho3D::Context* context,
 									 const Urho3D::String& sceneName,
 									 const Urho3D::String& serverName,
 									 unsigned short port)
-	: ShellState(context)
-	, server_(context)
-	, client_(context)
-	, sceneName_(sceneName)
+	: LocalServerState(context, sceneName, port)
 	, serverName_(serverName)
-	, port_(port)
 {
 }
 
-void RemoteServerState::Enter()
+void RemoteServerState::OnSceneLoaded()
 {
-	server_.LoadScene(sceneName_);
-	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(RemoteServerState, OnAsyncLoadFinished));
-}
-
-void RemoteServerState::Exit()
-{
-	client_.Disconnect();
-	server_.Stop();
-	SubscribeToEvent(E_SERVERDISCONNECTED, URHO3D_HANDLER(RemoteServerState, OnServerDisconnected));
-}
-
-void RemoteServerState::BackState() {}
-
-void RemoteServerState::SetSceneUpdate(bool update) { server_.SetUpdate(update); }
-
-void RemoteServerState::OnAsyncLoadFinished(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-	server_.Start(port_);
-	client_.Connect(port_);
+	LocalServerState::OnSceneLoaded();
 	server_.MakeVisible(serverName_);
-	RemoveAllDialogs();
-	UnsubscribeFromEvent(E_ASYNCLOADFINISHED);
 }
-
-void RemoteServerState::OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&) { ReleaseSelf(); }

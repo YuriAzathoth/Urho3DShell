@@ -23,13 +23,11 @@
 #ifndef REMOTESERVERSTATE_H
 #define REMOTESERVERSTATE_H
 
-#include "Network/Client.h"
-#include "Network/Server.h"
-#include "ShellState.h"
+#include "LocalServerState.h"
 
-class URHO3DSHELLAPI_EXPORT RemoteServerState : public ShellState
+class URHO3DSHELLAPI_EXPORT RemoteServerState : public LocalServerState
 {
-	URHO3D_OBJECT(RemoteServerState, ShellState)
+	URHO3D_OBJECT(RemoteServerState, LocalServerState)
 
 public:
 	explicit RemoteServerState(Urho3D::Context* context,
@@ -37,23 +35,10 @@ public:
 							   const Urho3D::String& serverName,
 							   unsigned short port);
 
-	void Enter() override;
-	void Exit() override;
-
 protected:
-	void BackState() override;
-	void SetSceneUpdate(bool update) override;
+	void OnSceneLoaded() override;
 
-	// On Start
-	void OnAsyncLoadFinished(Urho3D::StringHash, Urho3D::VariantMap&);
-	// On Shutdown
-	void OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&);
-
-	Server server_;
-	Client client_;
-	Urho3D::String sceneName_;
 	Urho3D::String serverName_;
-	unsigned short port_;
 };
 
 #endif // REMOTESERVERSTATE_H

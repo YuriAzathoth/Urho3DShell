@@ -26,7 +26,7 @@
 using namespace Urho3D;
 
 ClientState::ClientState(Urho3D::Context* context, const Urho3D::String& address, unsigned short port)
-	: ShellState(context)
+	: GameState(context)
 	, client_(context)
 	, address_(address)
 	, port_(port)
@@ -40,9 +40,5 @@ void ClientState::Exit()
 	client_.Disconnect();
 	SubscribeToEvent(E_SERVERDISCONNECTED, URHO3D_HANDLER(ClientState, OnServerDisconnected));
 }
-
-void ClientState::BackState() {}
-
-void ClientState::SetSceneUpdate(bool) {}
 
 void ClientState::OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&) { ReleaseSelf(); }

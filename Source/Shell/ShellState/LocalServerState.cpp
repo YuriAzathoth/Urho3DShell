@@ -24,22 +24,12 @@
 #include <Urho3D/Scene/SceneEvents.h>
 #include "LocalServerState.h"
 
-#define LOCAL_SERVER_PORT 1
-
 using namespace Urho3D;
 
-LocalServerState::LocalServerState(Urho3D::Context* context, const Urho3D::String& sceneName)
-	: ShellState(context)
-	, server_(context)
+LocalServerState::LocalServerState(Urho3D::Context* context, const Urho3D::String& sceneName, unsigned short port)
+	: ServerState(context, sceneName, port)
 	, client_(context)
-	, sceneName_(sceneName)
 {
-}
-
-void LocalServerState::Enter()
-{
-	server_.LoadScene(sceneName_);
-	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(LocalServerState, OnAsyncLoadFinished));
 }
 
 void LocalServerState::Exit()
@@ -49,17 +39,10 @@ void LocalServerState::Exit()
 	SubscribeToEvent(E_SERVERDISCONNECTED, URHO3D_HANDLER(LocalServerState, OnServerDisconnected));
 }
 
-void LocalServerState::BackState() {}
-
-void LocalServerState::SetSceneUpdate(bool update) { server_.SetUpdate(update); }
-
-void LocalServerState::OnAsyncLoadFinished(Urho3D::StringHash, Urho3D::VariantMap&)
+void LocalServerState::OnSceneLoaded()
 {
-	server_.Start(LOCAL_SERVER_PORT);
-	server_.SetPausable(true);
-	client_.Connect(LOCAL_SERVER_PORT);
-	RemoveAllDialogs();
-	UnsubscribeFromEvent(E_ASYNCLOADFINISHED);
+	ServerState::OnSceneLoaded();
+	client_.Connect(port_);
 }
 
 void LocalServerState::OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&) { ReleaseSelf(); }

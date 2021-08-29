@@ -23,12 +23,12 @@
 #ifndef CLIENTSTATE_H
 #define CLIENTSTATE_H
 
+#include "GameState.h"
 #include "Network/Client.h"
-#include "ShellState.h"
 
-class URHO3DSHELLAPI_EXPORT ClientState : public ShellState
+class URHO3DSHELLAPI_EXPORT ClientState : public GameState
 {
-	URHO3D_OBJECT(ClientState, ShellState)
+	URHO3D_OBJECT(ClientState, GameState)
 
 public:
 	explicit ClientState(Urho3D::Context* context, const Urho3D::String& address, unsigned short port);
@@ -37,10 +37,6 @@ public:
 	void Exit() override;
 
 private:
-	void BackState() override;
-	void SetSceneUpdate(bool update) override;
-
-	// On Start
 	// On Shutdown
 	void OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&);
 
