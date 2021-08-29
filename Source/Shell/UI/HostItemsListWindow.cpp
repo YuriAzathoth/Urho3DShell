@@ -22,17 +22,20 @@
 
 #include "Core/Shell.h"
 #include "HostItemsListWindow.h"
+#include "ShellState/LocalServerState.h"
+#include "ShellState/RemoteServerState.h"
 
 using namespace Urho3D;
 
-void HostItemsListWindow::Start(const Urho3D::String& itemName)
+void HostItemsListWindow::Start(const Urho3D::String& sceneName)
 {
-	GetSubsystem<Shell>()->StartLocalServer(std::move(itemName));
+	GetSubsystem<Shell>()->NewShellState<LocalServerState>(sceneName);
 }
 
-void HostItemsListWindow::Start(const Urho3D::String& itemName,
+void HostItemsListWindow::Start(const Urho3D::String& sceneName,
 								const Urho3D::String& serverName,
 								[[maybe_unused]] const Urho3D::String& serverPass)
 {
-	GetSubsystem<Shell>()->StartRemoteServer(std::move(serverName), std::move(itemName));
+	Shell* shell = GetSubsystem<Shell>();
+	shell->NewShellState<RemoteServerState>(serverName, sceneName, shell->GetPort());
 }

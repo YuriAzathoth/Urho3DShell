@@ -24,15 +24,15 @@
 #include <Urho3D/Scene/SceneEvents.h>
 #include "LocalServerState.h"
 
-#define LOCAL_SERVER_PORT 0
+#define LOCAL_SERVER_PORT 1
 
 using namespace Urho3D;
 
-LocalServerState::LocalServerState(Urho3D::Context* context, Urho3D::String&& sceneName)
+LocalServerState::LocalServerState(Urho3D::Context* context, const Urho3D::String& sceneName)
 	: ShellState(context)
 	, server_(context)
 	, client_(context)
-	, sceneName_(std::move(sceneName))
+	, sceneName_(sceneName)
 {
 }
 

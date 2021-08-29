@@ -25,10 +25,10 @@
 
 using namespace Urho3D;
 
-ClientState::ClientState(Urho3D::Context* context, Urho3D::String&& address, unsigned short port)
+ClientState::ClientState(Urho3D::Context* context, const Urho3D::String& address, unsigned short port)
 	: ShellState(context)
 	, client_(context)
-	, address_(std::move(address))
+	, address_(address)
 	, port_(port)
 {
 }

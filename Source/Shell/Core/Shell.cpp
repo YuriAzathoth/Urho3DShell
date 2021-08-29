@@ -41,24 +41,7 @@ void Shell::Initialize()
 	currState_->Enter();
 }
 
-void Shell::StartMainMenu() { PushNewState(new MainMenuState(context_)); }
-
-void Shell::StartLocalServer(Urho3D::String sceneName)
-{
-	PushNewState(new LocalServerState(context_, std::move(sceneName)));
-}
-
-void Shell::StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName)
-{
-	PushNewState(new RemoteServerState(context_, std::move(sceneName), std::move(serverName), port_));
-}
-
-void Shell::StartClient(Urho3D::String address)
-{
-	PushNewState(new ClientState(context_, std::move(address), port_));
-}
-
-void Shell::PushNewState(ShellState* newState)
+void Shell::NewShellState(ShellState* newState)
 {
 	nextState_ = newState;
 	currState_->Exit();
@@ -66,15 +49,7 @@ void Shell::PushNewState(ShellState* newState)
 
 bool Shell::ProcessStateChanging()
 {
-	if (nextState_.NotNull())
-	{
-		currState_ = std::move(nextState_);
-		currState_->Enter();
-		return true;
-	}
-	else
-	{
-		URHO3D_LOGERRORF("Failed to change shell state: command queue is empty.");
-		return false;
-	}
+	currState_ = std::move(nextState_);
+	currState_->Enter();
+	return true;
 }

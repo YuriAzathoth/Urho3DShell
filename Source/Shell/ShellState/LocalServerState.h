@@ -32,7 +32,7 @@ class URHO3DSHELLAPI_EXPORT LocalServerState : public ShellState
 	URHO3D_OBJECT(LocalServerState, ShellState)
 
 public:
-	explicit LocalServerState(Urho3D::Context* context, Urho3D::String&& sceneName);
+	explicit LocalServerState(Urho3D::Context* context, const Urho3D::String& sceneName);
 
 	void Enter() override;
 	void Exit() override;

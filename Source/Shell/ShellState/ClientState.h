@@ -31,7 +31,7 @@ class URHO3DSHELLAPI_EXPORT ClientState : public ShellState
 	URHO3D_OBJECT(ClientState, ShellState)
 
 public:
-	explicit ClientState(Urho3D::Context* context, Urho3D::String&& address, unsigned short port);
+	explicit ClientState(Urho3D::Context* context, const Urho3D::String& address, unsigned short port);
 
 	void Enter() override;
 	void Exit() override;

@@ -41,15 +41,4 @@ void RegisterShellAPI(asIScriptEngine* engine)
 	RegisterSubclass<RefCounted, Shell>(engine, "RefCounted", "Shell");
 
 	RegisterMembers_Object<Shell>(engine, "Shell");
-
-	engine->RegisterObjectMethod("Shell", "void StartMainMenu()", AS_METHOD(Shell, StartMainMenu), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Shell",
-								 "void StartLocalServer(String)",
-								 AS_METHOD(Shell, StartLocalServer),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Shell",
-								 "void StartRemoteServer(String, String)",
-								 AS_METHOD(Shell, StartRemoteServer),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Shell", "void StartClient(String)", AS_METHOD(Shell, StartClient), AS_CALL_THISCALL);
 }

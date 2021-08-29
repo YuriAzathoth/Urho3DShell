@@ -33,8 +33,8 @@ class URHO3DSHELLAPI_EXPORT RemoteServerState : public ShellState
 
 public:
 	explicit RemoteServerState(Urho3D::Context* context,
-							   Urho3D::String&& sceneName,
-							   Urho3D::String&& serverName,
+							   const Urho3D::String& sceneName,
+							   const Urho3D::String& serverName,
 							   unsigned short port);
 
 	void Enter() override;

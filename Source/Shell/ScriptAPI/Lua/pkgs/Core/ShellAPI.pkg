@@ -2,10 +2,6 @@ $#include "Core/Shell.h"
 
 class Shell : public Object
 {
-	void StartMainMenu();
-	void StartLocalServer(String sceneName);
-	void StartRemoteServer(String serverName, String sceneName);
-	void StartClient(String address);
 }
 
 Shell* GetShell();

@@ -27,14 +27,14 @@
 using namespace Urho3D;
 
 RemoteServerState::RemoteServerState(Urho3D::Context* context,
-									 Urho3D::String&& sceneName,
-									 Urho3D::String&& serverName,
+									 const Urho3D::String& sceneName,
+									 const Urho3D::String& serverName,
 									 unsigned short port)
 	: ShellState(context)
 	, server_(context)
 	, client_(context)
-	, sceneName_(std::move(sceneName))
-	, serverName_(std::move(serverName))
+	, sceneName_(sceneName)
+	, serverName_(serverName)
 	, port_(port)
 {
 }

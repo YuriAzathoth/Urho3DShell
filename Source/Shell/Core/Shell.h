@@ -35,18 +35,15 @@ public:
 	explicit Shell(Urho3D::Context* context);
 	void Initialize();
 
-	void StartMainMenu();
-	void StartLocalServer(Urho3D::String sceneName);
-	void StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName);
-	void StartClient(Urho3D::String address);
+	void NewShellState(ShellState* newState);
+	ShellState* GetShellState() const { return currState_.Get(); }
+
+	template <typename T, typename... TArgs> void NewShellState(TArgs&&... args);
 
 	unsigned short GetPort() const noexcept { return port_; }
-	ShellState* GetShellState() const { return currState_.Get(); }
 	void SetPort(unsigned short port) noexcept { port_ = port; }
 
 private:
-	void PushNewState(ShellState* newState);
-
 	Urho3D::UniquePtr<ShellState> currState_;
 	Urho3D::UniquePtr<ShellState> nextState_;
 	unsigned short port_; // TODO: Move to something else location
@@ -54,5 +51,10 @@ private:
 	bool ProcessStateChanging(); // May be called only from Shell
 	friend class ShellState;	 // Allow to call ProcessStateChanging only from ShellState
 };
+
+template <typename T, typename... TArgs> void Shell::NewShellState(TArgs&&... args)
+{
+	NewShellState(new T(context_, std::forward<TArgs>(args)...));
+}
 
 #endif // SHELL_H
