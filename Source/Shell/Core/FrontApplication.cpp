@@ -32,8 +32,8 @@
 #include "Input/ControllersRegistry.h"
 #include "ScriptAPI/AngelScript/ScriptAPI.h"
 #include "ScriptAPI/Lua/LuaScriptAPI.h"
-#include "Shell.h"
 #include "ShellEvents.h"
+#include "ShellState/ShellStateMachine.h"
 
 using namespace Urho3D;
 
@@ -46,7 +46,7 @@ FrontApplication::FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&
 void FrontApplication::Setup()
 {
 	CoreApplication::Setup();
-	context_->RegisterSubsystem<Shell>();
+	context_->RegisterSubsystem<ShellStateMachine>();
 	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
 	RegisterClientLuaAPI(GetSubsystem<LuaScript>()->GetState());
 }
@@ -63,7 +63,7 @@ void FrontApplication::Start()
 	engine->CreateConsole()->SetDefaultStyle(styleFile);
 	engine->CreateDebugHud()->SetDefaultStyle(styleFile);
 
-	GetSubsystem<Shell>()->Initialize();
+	GetSubsystem<ShellStateMachine>()->Initialize();
 
 	ControllersRegistry* controllers = context_->RegisterSubsystem<ControllersRegistry>();
 
@@ -74,7 +74,7 @@ void FrontApplication::Start()
 
 void FrontApplication::Stop()
 {
-	context_->RemoveSubsystem<Shell>();
+	context_->RemoveSubsystem<ShellStateMachine>();
 	context_->RemoveSubsystem<ControllersRegistry>();
 	CoreApplication::Stop();
 }

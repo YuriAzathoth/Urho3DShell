@@ -1,0 +1,19 @@
+$#include "ShellState/ShellStateMachine.h"
+
+class ShellStateMachine : public Object
+{
+}
+
+ShellStateMachine* GetShellStateMachine();
+tolua_readonly tolua_property__get_set ShellStateMachine* ssm;
+
+${
+#define TOLUA_DISABLE_tolua_ShellStateAPI_GetShellStateMachine00
+static int tolua_ShellStateAPI_GetShellStateMachine00(lua_State* tolua_S)
+{
+    return ToluaGetSubsystem<ShellStateMachine>(tolua_S);
+}
+
+#define TOLUA_DISABLE_tolua_get_ssm_ptr
+#define tolua_get_ssm_ptr tolua_ShellStateAPI_GetShellStateMachine00
+$}

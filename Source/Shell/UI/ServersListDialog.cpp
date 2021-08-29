@@ -22,10 +22,10 @@
 
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
-#include "Core/Shell.h"
 #include "Network/ServerDefs.h"
 #include "ServersListDialog.h"
 #include "ShellState/ClientState.h"
+#include "ShellState/ShellStateMachine.h"
 
 using namespace Urho3D;
 
@@ -38,13 +38,13 @@ ServersListDialog::ServersListDialog(Urho3D::Context* context)
 
 	SubscribeToEvent(E_NETWORKHOSTDISCOVERED, URHO3D_HANDLER(ServersListDialog, OnNetworkHostDiscovered));
 
-	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<Shell>()->GetPort());
+	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<ShellStateMachine>()->GetPort());
 }
 
 void ServersListDialog::Start(const Urho3D::String& address)
 {
-	Shell* shell = GetSubsystem<Shell>();
-	shell->NewShellState<ClientState>(address, shell->GetPort());
+	ShellStateMachine* ssm = GetSubsystem<ShellStateMachine>();
+	ssm->NewShellState<ClientState>(address, ssm->GetPort());
 }
 
 void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)

@@ -27,12 +27,11 @@ void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
 void RegisterShellAPI(asIScriptEngine* engine);
 void RegisterShellConfiguratorAPI(asIScriptEngine* engine);
 
-void RegisterClientAPI([[maybe_unused]] asIScriptEngine* engine) {}
+void RegisterClientAPI(asIScriptEngine* engine) { RegisterShellAPI(engine); }
 
 void RegisterServerAPI(asIScriptEngine* engine)
 {
 	RegisterConfigAPI(engine);
 	RegisterPluginsRegistryAPI(engine);
-	RegisterShellAPI(engine);
 	RegisterShellConfiguratorAPI(engine);
 }

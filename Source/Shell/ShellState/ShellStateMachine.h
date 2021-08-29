@@ -20,19 +20,19 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELL_H
-#define SHELL_H
+#ifndef SHELLSTATEMACHINE_H
+#define SHELLSTATEMACHINE_H
 
 #include <Urho3D/Core/Object.h>
 #include "ShellState/ShellState.h"
 #include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT ShellStateMachine : public Urho3D::Object
 {
-	URHO3D_OBJECT(Shell, Urho3D::Object)
+	URHO3D_OBJECT(ShellStateMachine, Urho3D::Object)
 
 public:
-	explicit Shell(Urho3D::Context* context);
+	explicit ShellStateMachine(Urho3D::Context* context);
 	void Initialize();
 
 	void NewShellState(ShellState* newState);
@@ -52,9 +52,9 @@ private:
 	friend class ShellState;	 // Allow to call ProcessStateChanging only from ShellState
 };
 
-template <typename T, typename... TArgs> void Shell::NewShellState(TArgs&&... args)
+template <typename T, typename... TArgs> void ShellStateMachine::NewShellState(TArgs&&... args)
 {
 	NewShellState(new T(context_, std::forward<TArgs>(args)...));
 }
 
-#endif // SHELL_H
+#endif // SHELLSTATEMACHINE_H

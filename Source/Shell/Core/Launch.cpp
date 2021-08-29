@@ -25,7 +25,6 @@
 #include "CoreApplication.h"
 #include "FrontApplication.h"
 #include "Launch.h"
-#include "Shell.h"
 #include "ShellDefs.h"
 
 using namespace Urho3D;

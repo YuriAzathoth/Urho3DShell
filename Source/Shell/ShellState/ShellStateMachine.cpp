@@ -20,25 +20,36 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/AngelScript/Generated_Members.h>
-#include "Core/Shell.h"
+#include <Urho3D/IO/Log.h>
+#include "ShellState/ClientState.h"
+#include "ShellState/LocalServerState.h"
+#include "ShellState/MainMenuState.h"
+#include "ShellState/RemoteServerState.h"
+#include "ShellStateMachine.h"
 
 using namespace Urho3D;
 
-static Shell* CreateShell() { return new Shell(GetScriptContext()); }
-
-static Shell* GetShell() { return GetScriptContext()->GetSubsystem<Shell>(); }
-
-void RegisterShellAPI(asIScriptEngine* engine)
+ShellStateMachine::ShellStateMachine(Urho3D::Context* context)
+	: Object(context)
+	, port_(27500)
 {
-	engine->RegisterObjectType("Shell", 0, asOBJ_REF);
+}
 
-	engine->RegisterGlobalFunction("Shell@+ get_shell()", AS_FUNCTION(GetShell), AS_CALL_CDECL);
+void ShellStateMachine::Initialize()
+{
+	currState_ = new MainMenuState(context_);
+	currState_->Enter();
+}
 
-	engine->RegisterObjectBehaviour("Shell", asBEHAVE_FACTORY, "Shell@+ f()", AS_FUNCTION(CreateShell), AS_CALL_CDECL);
+void ShellStateMachine::NewShellState(ShellState* newState)
+{
+	nextState_ = newState;
+	currState_->Exit();
+}
 
-	RegisterSubclass<Object, Shell>(engine, "Object", "Shell");
-	RegisterSubclass<RefCounted, Shell>(engine, "RefCounted", "Shell");
-
-	RegisterMembers_Object<Shell>(engine, "Shell");
+bool ShellStateMachine::ProcessStateChanging()
+{
+	currState_ = std::move(nextState_);
+	currState_->Enter();
+	return true;
 }

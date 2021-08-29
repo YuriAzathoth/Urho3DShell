@@ -26,8 +26,8 @@
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Input/InputEvents.h>
-#include "Core/Shell.h"
 #include "ShellState.h"
+#include "ShellStateMachine.h"
 #include "UI/LoadGameDialog.h"
 #include "UI/MainMenuDialog.h"
 #include "UI/NewGameDialog.h"
@@ -91,7 +91,7 @@ bool ShellState::ReleaseSelf()
 {
 	if (interactives_)
 		GetSubsystem<Input>()->SetMouseVisible(false);
-	return GetSubsystem<Shell>()->ProcessStateChanging();
+	return GetSubsystem<ShellStateMachine>()->ProcessStateChanging();
 }
 
 void ShellState::PostWidgetAdd(Dialog* widget)

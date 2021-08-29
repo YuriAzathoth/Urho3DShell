@@ -20,10 +20,10 @@
 // THE SOFTWARE.
 //
 
-#include "Core/Shell.h"
 #include "GameState.h"
 #include "ShellState/MainMenuState.h"
+#include "ShellState/ShellStateMachine.h"
 
 using namespace Urho3D;
 
-void GameState::BackState() { GetSubsystem<Shell>()->NewShellState<MainMenuState>(); }
+void GameState::BackState() { GetSubsystem<ShellStateMachine>()->NewShellState<MainMenuState>(); }
