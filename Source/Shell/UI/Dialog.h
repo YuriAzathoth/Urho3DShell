@@ -32,6 +32,8 @@
 #undef CreateDialog
 #endif // _WIN32
 
+class ShellState;
+
 class URHO3DSHELLAPI_EXPORT Dialog : public Urho3D::Object, private boost::noncopyable
 {
 	URHO3D_OBJECT(Dialog, Urho3D::Object)
@@ -51,14 +53,15 @@ public:
 	bool IsFrontElement() const;
 	bool IsInteractive() const noexcept { return interactive_; }
 
-	void CreateDialog(Urho3D::StringHash type);
-	void RemoveDialog(Urho3D::StringHash type);
+	ShellState* GetParent() const { return parent_; }
+	void SetParent(ShellState* parent) { parent_ = parent; }
 
 protected:
 	void Close();
 	void BindButtonToClose(Urho3D::UIElement* button);
 
 	Urho3D::SharedPtr<Urho3D::UIElement> root_;
+	ShellState* parent_;
 	bool closeable_;
 	bool interactive_;
 };

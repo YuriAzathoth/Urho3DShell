@@ -20,39 +20,25 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELL_H
-#define SHELL_H
+#ifndef MAINMENUSTATE_H
+#define MAINMENUSTATE_H
 
-#include <Urho3D/Core/Object.h>
-#include "ShellState/ShellState.h"
-#include "Urho3DShellAPI.h"
+#include <Urho3D/Scene/Scene.h>
+#include "ShellState.h"
 
-class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT MainMenuState : public ShellState
 {
-	URHO3D_OBJECT(Shell, Urho3D::Object)
+	URHO3D_OBJECT(MainMenuState, ShellState)
 
 public:
-	explicit Shell(Urho3D::Context* context);
-	void Initialize();
+	explicit MainMenuState(Urho3D::Context* context);
 
-	void StartMainMenu();
-	void StartLocalServer(Urho3D::String sceneName);
-	void StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName);
-	void StartClient(Urho3D::String address);
-
-	unsigned short GetPort() const noexcept { return port_; }
-	ShellState* GetShellState() const { return currState_.Get(); }
-	void SetPort(unsigned short port) noexcept { port_ = port; }
+	void Enter() override;
 
 private:
-	void PushNewState(ShellState* newState);
+	void BackState() override;
 
-	Urho3D::UniquePtr<ShellState> currState_;
-	Urho3D::UniquePtr<ShellState> nextState_;
-	unsigned short port_; // TODO: Move to something else location
-
-	bool ProcessStateChanging(); // May be called only from Shell
-	friend class ShellState;	 // Allow to call ProcessStateChanging only from ShellState
+	Urho3D::Scene scene_;
 };
 
-#endif // SHELL_H
+#endif // MAINMENUSTATE_H

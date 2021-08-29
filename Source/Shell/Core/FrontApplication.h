@@ -32,9 +32,6 @@ public:
 	void Setup() override;
 	void Start() override;
 	void Stop() override;
-
-private:
-	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
 #endif // FRONTAPPLICATION_H

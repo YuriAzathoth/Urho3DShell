@@ -24,8 +24,9 @@
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
+#include "Core/Shell.h"
 #include "Dialog.h"
-#include "UI/UIController.h"
+#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 
@@ -59,12 +60,9 @@ void Dialog::LoadLayout(const Urho3D::String& layoutName)
 
 void Dialog::ShrinkSize() { root_->SetSize(IntVector2(0, 0)); }
 bool Dialog::IsFrontElement() const { return GetSubsystem<UI>()->GetFrontElement() == root_.Get(); }
-void Dialog::Close() { RemoveDialog(GetType()); }
+void Dialog::Close() { GetParent()->RemoveDialog(GetType()); }
 
 void Dialog::BindButtonToClose(Urho3D::UIElement* button)
 {
 	SubscribeToEvent(button, E_PRESSED, [this](StringHash, VariantMap&) { Close(); });
 }
-
-void Dialog::CreateDialog(Urho3D::StringHash type) { GetSubsystem<UIController>()->CreateDialog(type); }
-void Dialog::RemoveDialog(Urho3D::StringHash type) { GetSubsystem<UIController>()->RemoveDialog(type); }

@@ -21,22 +21,23 @@
 //
 
 #include <Urho3D/Core/Context.h>
+#include <Urho3D/Engine/Console.h>
+#include <Urho3D/Engine/DebugHud.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Input/InputEvents.h>
-#include <Urho3D/UI/Cursor.h>
-#include <Urho3D/UI/UI.h>
-#include "LoadGameDialog.h"
-#include "MainMenuDialog.h"
-#include "NewGameDialog.h"
-#include "ServersListDialog.h"
-#include "SettingsDialog.h"
-#include "UIController.h"
+#include "Core/Shell.h"
+#include "ShellState.h"
+#include "UI/LoadGameDialog.h"
+#include "UI/MainMenuDialog.h"
+#include "UI/NewGameDialog.h"
+#include "UI/ServersListDialog.h"
+#include "UI/SettingsDialog.h"
 
 using namespace Urho3D;
 
-UIController::UIController(Urho3D::Context* context)
-	: Urho3D::Object(context)
+ShellState::ShellState(Urho3D::Context* context)
+	: Object(context)
 	, interactives_(0)
 {
 	context->RegisterFactory<LoadGameDialog>();
@@ -45,10 +46,12 @@ UIController::UIController(Urho3D::Context* context)
 	context->RegisterFactory<ServersListDialog>();
 	context->RegisterFactory<SettingsDialog>();
 
-	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(UIController, OnKeyDown));
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ShellState, OnKeyDown));
 }
 
-void UIController::CreateDialog(Urho3D::StringHash type)
+void ShellState::Exit() { ReleaseSelf(); }
+
+void ShellState::CreateDialog(Urho3D::StringHash type)
 {
 	SharedPtr<Object> object = context_->CreateObject(type);
 	if (object.Null())
@@ -63,11 +66,12 @@ void UIController::CreateDialog(Urho3D::StringHash type)
 		URHO3D_LOGERROR("Failed to create UI widget: given type is not a widget.");
 		return;
 	}
+	widget->SetParent(this);
 	widgets_[type] = widget;
 	PostWidgetAdd(widget);
 }
 
-void UIController::RemoveDialog(Urho3D::StringHash type)
+void ShellState::RemoveDialog(Urho3D::StringHash type)
 {
 	auto it = widgets_.Find(type);
 	if (it != widgets_.End())
@@ -77,50 +81,62 @@ void UIController::RemoveDialog(Urho3D::StringHash type)
 	}
 }
 
-void UIController::RemoveAllDialogs()
+void ShellState::RemoveAllDialogs()
 {
 	widgets_.Clear();
 	interactives_ = 0;
 }
 
-void UIController::PostWidgetAdd(Dialog* widget)
+bool ShellState::ReleaseSelf()
+{
+	if (interactives_)
+		GetSubsystem<Input>()->SetMouseVisible(false);
+	return GetSubsystem<Shell>()->ProcessStateChanging();
+}
+
+void ShellState::PostWidgetAdd(Dialog* widget)
 {
 	if (widget->IsCloseable())
 		++closeables_;
 	if (widget->IsInteractive())
+		IncInteractives();
+}
+
+void ShellState::PreWidgetRemove(Dialog* widget)
+{
+	if (widget->IsCloseable())
+		--closeables_;
+	if (widget->IsInteractive())
+		DecInteractives();
+}
+
+void ShellState::IncInteractives()
+{
+	if (interactives_ == 0)
 	{
-		if (interactives_ == 0)
-			SetMouseVisible(true);
+		SetMouseVisible(true);
+		SetSceneUpdate(false);
+	}
+	if (interactives_ < 0xff)
 		++interactives_;
-	}
 }
 
-void UIController::PreWidgetRemove(Dialog* widget)
+void ShellState::DecInteractives()
 {
-	if (widget->IsCloseable())
-		++closeables_;
-	if (widget->IsInteractive())
+	if (interactives_ == 1)
 	{
-		if (interactives_ == 1)
-			SetMouseVisible(false);
+		SetMouseVisible(false);
+		SetSceneUpdate(true);
+	}
+	if (interactives_ > 0)
 		--interactives_;
-	}
 }
 
-void UIController::SetMouseVisible(bool visible) const
-{
-	Cursor* cursor = nullptr;
-	if (visible)
-	{
-		cursor = new Cursor(context_);
-		cursor->SetPosition(GetSubsystem<Input>()->GetMousePosition());
-		cursor->SetStyleAuto();
-	}
-	GetSubsystem<UI>()->SetCursor(cursor);
-}
+void ShellState::SetMouseVisible(bool visible) const { GetSubsystem<Input>()->SetMouseVisible(visible); }
 
-void UIController::CloseFrontDialog()
+void ShellState::CloseFrontDialog()
 {
+	// TODO: Optimize for faster lookup
 	for (auto it = widgets_.Begin(); it != widgets_.End(); ++it)
 		if (it->second_->IsFrontElement() && it->second_->IsCloseable())
 		{
@@ -130,9 +146,34 @@ void UIController::CloseFrontDialog()
 		}
 }
 
-void UIController::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+void ShellState::OnEscapePressed()
+{
+	if (interactives_)
+		CloseFrontDialog();
+	else
+		BackState();
+}
+
+void ShellState::ToggleConsole()
+{
+	Console* console = GetSubsystem<Console>();
+	console->Toggle();
+	if (console->IsVisible())
+		IncInteractives();
+	else
+		DecInteractives();
+}
+
+void ShellState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
 	using namespace KeyDown;
-	if (eventData[P_KEY].GetInt() == Key::KEY_ESCAPE)
-		CloseFrontDialog();
+	switch (eventData[P_KEY].GetInt())
+	{
+	case Key::KEY_ESCAPE:
+		OnEscapePressed();
+		break;
+	case KEY_F1:
+		ToggleConsole();
+		break;
+	}
 }

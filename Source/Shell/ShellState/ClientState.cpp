@@ -20,39 +20,29 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELL_H
-#define SHELL_H
+#include <Urho3D/Network/NetworkEvents.h>
+#include "ClientState.h"
 
-#include <Urho3D/Core/Object.h>
-#include "ShellState/ShellState.h"
-#include "Urho3DShellAPI.h"
+using namespace Urho3D;
 
-class URHO3DSHELLAPI_EXPORT Shell : public Urho3D::Object
+ClientState::ClientState(Urho3D::Context* context, Urho3D::String&& address, unsigned short port)
+	: ShellState(context)
+	, client_(context)
+	, address_(std::move(address))
+	, port_(port)
 {
-	URHO3D_OBJECT(Shell, Urho3D::Object)
+}
 
-public:
-	explicit Shell(Urho3D::Context* context);
-	void Initialize();
+void ClientState::Enter() { client_.Connect(port_, address_); }
 
-	void StartMainMenu();
-	void StartLocalServer(Urho3D::String sceneName);
-	void StartRemoteServer(Urho3D::String serverName, Urho3D::String sceneName);
-	void StartClient(Urho3D::String address);
+void ClientState::Exit()
+{
+	client_.Disconnect();
+	SubscribeToEvent(E_SERVERDISCONNECTED, URHO3D_HANDLER(ClientState, OnServerDisconnected));
+}
 
-	unsigned short GetPort() const noexcept { return port_; }
-	ShellState* GetShellState() const { return currState_.Get(); }
-	void SetPort(unsigned short port) noexcept { port_ = port; }
+void ClientState::BackState() {}
 
-private:
-	void PushNewState(ShellState* newState);
+void ClientState::SetSceneUpdate(bool) {}
 
-	Urho3D::UniquePtr<ShellState> currState_;
-	Urho3D::UniquePtr<ShellState> nextState_;
-	unsigned short port_; // TODO: Move to something else location
-
-	bool ProcessStateChanging(); // May be called only from Shell
-	friend class ShellState;	 // Allow to call ProcessStateChanging only from ShellState
-};
-
-#endif // SHELL_H
+void ClientState::OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&) { ReleaseSelf(); }

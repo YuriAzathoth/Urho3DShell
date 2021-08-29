@@ -24,7 +24,6 @@
 #include <Urho3D/Engine/Console.h>
 #include <Urho3D/Engine/DebugHud.h>
 #include <Urho3D/Engine/Engine.h>
-#include <Urho3D/Input/InputEvents.h>
 #include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/UI.h>
@@ -35,7 +34,6 @@
 #include "ScriptAPI/Lua/LuaScriptAPI.h"
 #include "Shell.h"
 #include "ShellEvents.h"
-#include "UI/UIController.h"
 
 using namespace Urho3D;
 
@@ -65,17 +63,13 @@ void FrontApplication::Start()
 	engine->CreateConsole()->SetDefaultStyle(styleFile);
 	engine->CreateDebugHud()->SetDefaultStyle(styleFile);
 
-	context_->RegisterSubsystem<UIController>();
-
-	GetSubsystem<Shell>()->StartMainMenu();
+	GetSubsystem<Shell>()->Initialize();
 
 	ControllersRegistry* controllers = context_->RegisterSubsystem<ControllersRegistry>();
 
 	SendEvent(E_SHELLCLIENTSTARTED);
 
 	controllers->EnableController("KeyboardController");
-
-	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(FrontApplication, OnKeyDown));
 }
 
 void FrontApplication::Stop()
@@ -83,16 +77,4 @@ void FrontApplication::Stop()
 	context_->RemoveSubsystem<Shell>();
 	context_->RemoveSubsystem<ControllersRegistry>();
 	CoreApplication::Stop();
-}
-
-void FrontApplication::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
-{
-	using namespace KeyDown;
-	const int key = eventData[P_KEY].GetInt();
-	switch (key)
-	{
-	case KEY_F1:
-		GetSubsystem<Console>()->Toggle();
-		break;
-	}
 }

@@ -22,6 +22,7 @@
 
 #include <Urho3D/UI/UIEvents.h>
 #include "MainMenuDialog.h"
+#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 
@@ -39,10 +40,19 @@ MainMenuDialog::MainMenuDialog(Urho3D::Context* context)
 	SubscribeToEvent(root_->GetChild("Exit", true), E_PRESSED, URHO3D_HANDLER(MainMenuDialog, OnExit));
 }
 
-void MainMenuDialog::OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("NewGameDialog"); }
-void MainMenuDialog::OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("LoadGameDialog"); }
-void MainMenuDialog::OnConnect(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("ServersListDialog"); }
+void MainMenuDialog::OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&) { GetParent()->CreateDialog("NewGameDialog"); }
+void MainMenuDialog::OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	GetParent()->CreateDialog("LoadGameDialog");
+}
+void MainMenuDialog::OnConnect(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	GetParent()->CreateDialog("ServersListDialog");
+}
 void MainMenuDialog::OnMods(Urho3D::StringHash, Urho3D::VariantMap&) {}
-void MainMenuDialog::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&) { CreateDialog("SettingsDialog"); }
+void MainMenuDialog::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	GetParent()->CreateDialog("SettingsDialog");
+}
 
 void MainMenuDialog::OnExit(Urho3D::StringHash, Urho3D::VariantMap&) {}
