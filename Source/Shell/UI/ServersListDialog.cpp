@@ -45,8 +45,7 @@ ServersListDialog::ServersListDialog(Urho3D::Context* context)
 void ServersListDialog::Start(const Urho3D::String& address)
 {
 	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
-	GetSubsystem<ShellStateMachine>()->NewShellState<ClientState>(address,
-																  port);
+	GetSubsystem<ShellStateMachine>()->NewShellState<ClientState>(address, port);
 }
 
 void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)

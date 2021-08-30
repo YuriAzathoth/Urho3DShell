@@ -38,7 +38,5 @@ void HostItemsListWindow::Start(const Urho3D::String& sceneName,
 								[[maybe_unused]] const Urho3D::String& serverPass)
 {
 	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
-	GetSubsystem<ShellStateMachine>()->NewShellState<RemoteServerState>(sceneName,
-																		serverName,
-																		port);
+	GetSubsystem<ShellStateMachine>()->NewShellState<RemoteServerState>(sceneName, serverName, port);
 }
