@@ -27,6 +27,10 @@
 #include "UI/Dialog.h"
 #include "Urho3DShellAPI.h"
 
+#ifdef _WIN32
+#undef CreateDialog
+#endif // _WIN32
+
 class URHO3DSHELLAPI_EXPORT ShellState : public Urho3D::Object
 {
 	URHO3D_OBJECT(ShellState, Urho3D::Object)

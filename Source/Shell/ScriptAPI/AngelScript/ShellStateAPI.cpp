@@ -42,8 +42,6 @@ using namespace Urho3D;
 
 template <typename T> void RegisterMembers_ShellState(asIScriptEngine* engine, const char* className)
 {
-	engine->RegisterObjectType("Dialog", 0, asOBJ_REF); // TODO: Dialog AS binding
-
 	RegisterMembers_Object<T>(engine, className);
 	engine->RegisterObjectMethod(className, "void Enter()", AS_METHOD(T, Enter), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "void Exit()", AS_METHOD(T, Exit), AS_CALL_THISCALL);
@@ -78,6 +76,8 @@ template <typename T> void RegisterMembers_ShellState(asIScriptEngine* engine, c
 #pragma clang diagnostic pop
 #endif // defined(__clang__)
 
+extern void RegisterDialogAPI(asIScriptEngine* engine);
+
 static ClientState* Create_ClientState(const String& address, unsigned short port)
 {
 	return new ClientState(GetScriptContext(), address, port);
@@ -103,6 +103,8 @@ static ServerState* Create_ServerState(const String& sceneName, unsigned short p
 
 void RegisterShellStateAPI(asIScriptEngine* engine)
 {
+	RegisterDialogAPI(engine);
+
 	engine->RegisterObjectType("ClientState", 0, asOBJ_REF);
 	engine->RegisterObjectType("GameState", 0, asOBJ_REF);
 	engine->RegisterObjectType("LocalServerState", 0, asOBJ_REF);
