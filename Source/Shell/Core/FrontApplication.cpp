@@ -49,14 +49,14 @@
 using namespace Urho3D;
 
 FrontApplication::FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters)
-	: CoreApplication(context, std::move(shellParameters))
+	: ShellApplication(context, std::move(shellParameters))
 {
 	GetSubsystem<Config>()->RegisterClientParameters();
 }
 
 void FrontApplication::Setup()
 {
-	CoreApplication::Setup();
+	ShellApplication::Setup();
 	context_->RegisterSubsystem<ShellStateMachine>();
 	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
 
@@ -67,7 +67,7 @@ void FrontApplication::Setup()
 
 void FrontApplication::Start()
 {
-	CoreApplication::Start();
+	ShellApplication::Start();
 
 	ResourceCache* cache = GetSubsystem<ResourceCache>();
 	XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
@@ -115,5 +115,5 @@ void FrontApplication::Stop()
 {
 	context_->RemoveSubsystem<ShellStateMachine>();
 	context_->RemoveSubsystem<ControllersRegistry>();
-	CoreApplication::Stop();
+	ShellApplication::Stop();
 }
