@@ -55,12 +55,32 @@ static Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments)
 				ret[SP_APP_NAME] = value;
 				++i;
 			}
+			if (argument == "client")
+			{
+				ret[SP_CLIENT] = value;
+				++i;
+			}
 			else if (argument == "headless" || argument == "noclient")
 				ret[SP_NO_CLIENT] = true;
+			else if (argument == "scene")
+			{
+				ret[SP_SCENE] = value;
+				++i;
+			}
 			else if (argument == "script")
 			{
 				ret[SP_SCRIPT] = value;
 				++i;
+			}
+			else if (argument == "server")
+			{
+				if (value.Empty() || value[0] == '-')
+					ret[SP_SERVER] = String::EMPTY;
+				else
+				{
+					ret[SP_SERVER] = value;
+					++i;
+				}
 			}
 		}
 	return ret;

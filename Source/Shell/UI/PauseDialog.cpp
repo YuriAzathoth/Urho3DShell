@@ -43,7 +43,9 @@ PauseDialog::PauseDialog(Urho3D::Context* context)
 
 void PauseDialog::OnResume(Urho3D::StringHash, Urho3D::VariantMap&) { Close(); }
 void PauseDialog::OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&) { GetParent()->CreateDialog("LoadGameDialog"); }
-void PauseDialog::OnSaveGame(Urho3D::StringHash, Urho3D::VariantMap&) { /*TODO: SaveGameDialog*/ }
+void PauseDialog::OnSaveGame(Urho3D::StringHash, Urho3D::VariantMap&)
+{ /*TODO: SaveGameDialog*/
+}
 void PauseDialog::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&) { GetParent()->CreateDialog("SettingsDialog"); }
 
 void PauseDialog::OnExit(Urho3D::StringHash, Urho3D::VariantMap&)

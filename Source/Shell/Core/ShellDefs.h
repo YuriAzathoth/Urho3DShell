@@ -26,7 +26,10 @@
 #include <Urho3D/Math/StringHash.h>
 
 static Urho3D::StringHash SP_APP_NAME = "AppName";
+static Urho3D::StringHash SP_CLIENT = "Client";
 static Urho3D::StringHash SP_NO_CLIENT = "NoClient";
+static Urho3D::StringHash SP_SERVER = "Server";
+static Urho3D::StringHash SP_SCENE = "Scene";
 static Urho3D::StringHash SP_SCRIPT = "Script";
 
 #endif // SHELLDEFS_H

@@ -32,7 +32,13 @@
 #include "FrontApplication.h"
 #include "Input/ControllersRegistry.h"
 #include "ScriptAPI/AngelScript/ScriptAPI.h"
+#include "ShellConfigurator.h"
+#include "ShellDefs.h"
 #include "ShellEvents.h"
+#include "ShellState/ClientState.h"
+#include "ShellState/LocalServerState.h"
+#include "ShellState/MainMenuState.h"
+#include "ShellState/RemoteServerState.h"
 #include "ShellState/ShellStateMachine.h"
 #include "Urho3DShellConfig.h"
 
@@ -71,13 +77,38 @@ void FrontApplication::Start()
 	engine->CreateConsole()->SetDefaultStyle(styleFile);
 	engine->CreateDebugHud()->SetDefaultStyle(styleFile);
 
-	GetSubsystem<ShellStateMachine>()->Initialize();
-
 	ControllersRegistry* controllers = context_->RegisterSubsystem<ControllersRegistry>();
 
 	SendEvent(E_SHELLCLIENTSTARTED);
 
 	controllers->EnableController("KeyboardController");
+
+	ShellStateMachine* ssm = GetSubsystem<ShellStateMachine>();
+	auto it = shellParameters_.Find(SP_SCENE);
+	if (it != shellParameters_.End())
+	{
+		const String& sceneName = it->second_.GetString();
+		it = shellParameters_.Find(SP_SERVER);
+		if (it == shellParameters_.End())
+			ssm->Initialize<LocalServerState>(sceneName);
+		else
+		{
+			const String& serverName = it->second_.IsZero()
+										   ? GetSubsystem<ShellConfigurator>()->GetGameName() + " Server"
+										   : it->second_.GetString();
+			const unsigned short port = 27500;
+			ssm->Initialize<RemoteServerState>(sceneName, serverName, port);
+		}
+		return;
+	}
+	it = shellParameters_.Find(SP_CLIENT);
+	if (it != shellParameters_.End())
+	{
+		const unsigned short port = 27500;
+		ssm->Initialize<ClientState>(it->second_.GetString(), port);
+		return;
+	}
+	ssm->Initialize<MainMenuState>();
 }
 
 void FrontApplication::Stop()

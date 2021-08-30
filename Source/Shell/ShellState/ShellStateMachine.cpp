@@ -35,9 +35,9 @@ ShellStateMachine::ShellStateMachine(Urho3D::Context* context)
 {
 }
 
-void ShellStateMachine::Initialize()
+void ShellStateMachine::Initialize(ShellState* newState)
 {
-	currState_ = new MainMenuState(context_);
+	currState_ = newState;
 	currState_->Enter();
 }
 

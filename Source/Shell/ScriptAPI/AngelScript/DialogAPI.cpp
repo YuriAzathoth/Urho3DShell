@@ -38,12 +38,21 @@ using namespace Urho3D;
 template <typename T> void RegisterMembers_Dialog(asIScriptEngine* engine, const char* className)
 {
 	RegisterMembers_Object<T>(engine, className);
-	engine->RegisterObjectMethod(className, "void LoadLayout(const String&in)", AS_METHOD(T, LoadLayout), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "void LoadLayout(const String&in)",
+								 AS_METHOD(T, LoadLayout),
+								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "void ShrinkSize()", AS_METHOD(T, ShrinkSize), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "void set_closeable(bool)", AS_METHOD(T, SetCloseable), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod(className, "void set_interactive(bool)", AS_METHOD(T, SetInteractive), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "void set_interactive(bool)",
+								 AS_METHOD(T, SetInteractive),
+								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "bool get_closeable() const", AS_METHOD(T, IsCloseable), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod(className, "bool get_interactive() const", AS_METHOD(T, IsInteractive), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "bool get_interactive() const",
+								 AS_METHOD(T, IsInteractive),
+								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "bool get_isFront() const", AS_METHOD(T, IsFrontElement), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "UIElement@+ get_root() const", AS_METHOD(T, GetRoot), AS_CALL_THISCALL);
 }
