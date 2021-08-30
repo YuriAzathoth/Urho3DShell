@@ -42,7 +42,7 @@ using namespace Urho3D;
 
 template <typename T> void RegisterMembers_ShellState(asIScriptEngine* engine, const char* className)
 {
-	RegisterMembers_Object<ShellState>(engine, className);
+	RegisterMembers_Object<T>(engine, className);
 	engine->RegisterObjectMethod(className, "void Enter()", AS_METHOD(T, Enter), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "void Exit()", AS_METHOD(T, Exit), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className,
@@ -54,6 +54,8 @@ template <typename T> void RegisterMembers_ShellState(asIScriptEngine* engine, c
 								 asMETHOD(T, RemoveDialog),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "void RemoveAllDialogs()", asMETHOD(T, RemoveAllDialogs), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "uint32 get_closeables() const", asMETHOD(T, GetCloseables), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "uint32 get_interactives() const", asMETHOD(T, GetInteractives), AS_CALL_THISCALL);
 }
 
 #if defined(__GNUC__) || defined(__GNUG__)
@@ -64,16 +66,9 @@ template <typename T> void RegisterMembers_ShellState(asIScriptEngine* engine, c
 #pragma clang diagnostic pop
 #endif // defined(__clang__)
 
-static MainMenuState* Create_MainMenuState() { return new MainMenuState(GetScriptContext()); }
-
 static ClientState* Create_ClientState(const String& address, unsigned short port)
 {
 	return new ClientState(GetScriptContext(), address, port);
-}
-
-static ServerState* Create_ServerState(const String& sceneName, unsigned short port)
-{
-	return new ServerState(GetScriptContext(), sceneName, port);
 }
 
 static LocalServerState* Create_LocalServerState(const String& sceneName, unsigned short port)
@@ -81,10 +76,17 @@ static LocalServerState* Create_LocalServerState(const String& sceneName, unsign
 	return new LocalServerState(GetScriptContext(), sceneName, port);
 }
 
+static MainMenuState* Create_MainMenuState() { return new MainMenuState(GetScriptContext()); }
+
 static RemoteServerState*
 Create_RemoteServerState(const String& sceneName, const String& serverName, unsigned short port)
 {
 	return new RemoteServerState(GetScriptContext(), sceneName, serverName, port);
+}
+
+static ServerState* Create_ServerState(const String& sceneName, unsigned short port)
+{
+	return new ServerState(GetScriptContext(), sceneName, port);
 }
 
 void RegisterShellStateAPI(asIScriptEngine* engine)
@@ -156,11 +158,11 @@ void RegisterShellStateAPI(asIScriptEngine* engine)
 	RegisterSubclass<Object, RemoteServerState>(engine, "Object", "RemoteServerState");
 	RegisterSubclass<RefCounted, RemoteServerState>(engine, "RefCounted", "RemoteServerState");
 
-	RegisterMembers_Object<ClientState>(engine, "ClientState");
-	RegisterMembers_Object<GameState>(engine, "GameState");
-	RegisterMembers_Object<LocalServerState>(engine, "LocalServerState");
-	RegisterMembers_Object<MainMenuState>(engine, "MainMenuState");
-	RegisterMembers_Object<RemoteServerState>(engine, "RemoteServerState");
-	RegisterMembers_Object<ServerState>(engine, "ServerState");
-	RegisterMembers_Object<ShellState>(engine, "ShellState");
+	RegisterMembers_ShellState<ClientState>(engine, "ClientState");
+	RegisterMembers_ShellState<GameState>(engine, "GameState");
+	RegisterMembers_ShellState<LocalServerState>(engine, "LocalServerState");
+	RegisterMembers_ShellState<MainMenuState>(engine, "MainMenuState");
+	RegisterMembers_ShellState<RemoteServerState>(engine, "RemoteServerState");
+	RegisterMembers_ShellState<ServerState>(engine, "ServerState");
+	RegisterMembers_ShellState<ShellState>(engine, "ShellState");
 }
