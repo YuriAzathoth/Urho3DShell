@@ -20,11 +20,6 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/IO/Log.h>
-#include "ShellState/ClientState.h"
-#include "ShellState/LocalServerState.h"
-#include "ShellState/MainMenuState.h"
-#include "ShellState/RemoteServerState.h"
 #include "ShellStateMachine.h"
 
 using namespace Urho3D;
