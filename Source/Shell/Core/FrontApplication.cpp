@@ -27,13 +27,18 @@
 #include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/UI.h>
+#include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
 #include "FrontApplication.h"
 #include "Input/ControllersRegistry.h"
 #include "ScriptAPI/AngelScript/ScriptAPI.h"
-#include "ScriptAPI/Lua/LuaScriptAPI.h"
 #include "ShellEvents.h"
 #include "ShellState/ShellStateMachine.h"
+#include "Urho3DShellConfig.h"
+
+#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#include "ScriptAPI/Lua/LuaScriptAPI.h"
+#endif
 
 using namespace Urho3D;
 
@@ -48,7 +53,10 @@ void FrontApplication::Setup()
 	CoreApplication::Setup();
 	context_->RegisterSubsystem<ShellStateMachine>();
 	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
+
+#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 	RegisterClientLuaAPI(GetSubsystem<LuaScript>()->GetState());
+#endif
 }
 
 void FrontApplication::Start()

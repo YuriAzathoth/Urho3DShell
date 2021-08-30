@@ -22,15 +22,20 @@
 
 #include <Urho3D/AngelScript/Script.h>
 #include <Urho3D/LuaScript/LuaScript.h>
+#include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
 #include "CoreApplication.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ScriptAPI/AngelScript/ScriptAPI.h"
-#include "ScriptAPI/Lua/LuaScriptAPI.h"
 #include "ShellConfigurator.h"
 #include "ShellDefs.h"
+#include "Urho3DShellConfig.h"
+
+#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#include "ScriptAPI/Lua/LuaScriptAPI.h"
+#endif
 
 #define MAIN_PLUGIN_LIB "Game"
 
@@ -55,7 +60,10 @@ void CoreApplication::Setup()
 	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters_, shellParameters_);
 
 	RegisterServerAPI(GetSubsystem<Script>()->GetScriptEngine());
+
+#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 	RegisterServerLuaAPI(GetSubsystem<LuaScript>()->GetState());
+#endif
 }
 
 void CoreApplication::Start()

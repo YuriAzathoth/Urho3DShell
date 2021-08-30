@@ -25,13 +25,15 @@
 SET_AND_CHECK (URHO3DSHELL_CONFIG_DIR "@PACKAGE_CONFIG_INSTALL_DIR@")
 SET_AND_CHECK (URHO3DSHELL_RUNTIME_DIR "@PACKAGE_RUNTIME_INSTALL_DIR@")
 SET_AND_CHECK (URHO3DSHELL_TEMPLATE_DIR "@PACKAGE_TEMPLATE_INSTALL_DIR@")
+SET (URHO3DSHELL_EXPERIMENTAL @URHO3DSHELL_EXPERIMENTAL@)
 SET (URHO3DSHELL_LIBRARIES "@URHO3DSHELL_LIBRARIES@")
 SET (URHO3DSHELL_MAIN_LIBRARY "@URHO3DSHELL_MAIN_LIBRARY@")
 SET (URHO3DSHELL_PACKAGES "@URHO3DSHELL_PACKAGES@")
 SET (URHO3DSHELL_RESOURCES "@URHO3DSHELL_RESOURCES@")
 
-SET (URHO3D_BUILD_TYPE "@URHO3D_BUILD_TYPE@" CACHE PATH "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel ...")
+SET (URHO3D_BUILD_TYPE "@URHO3D_BUILD_TYPE@" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel ...")
 SET (URHO3D_HOME "@URHO3D_HOME@" CACHE PATH "Path to Urho3D build tree or SDK installation location (downstream project only)")
+SET (URHO3D_LUA "@URHO3D_LUA@" CACHE STRING "Enable additional Lua scripting support")
 SET (URHO3D_DEPLOYMENT_TARGET "@URHO3D_DEPLOYMENT_TARGET@" CACHE STRING "Specify the minimum CPU type on which the target binaries are to be deployed (non-ARM platform only), see GCC/Clang's -march option for possible values; Use 'generic' for targeting a wide range of generic processors")
 SET (URHO3D_PACKAGING "@URHO3D_PACKAGING@" CACHE BOOL "Enable resources packaging support")
 
