@@ -101,4 +101,17 @@ void RegisterShellConfiguratorAPI(asIScriptEngine* engine)
 								 "String get_savesPath() const",
 								 AS_METHOD(ShellConfigurator, GetSavesPath),
 								 AS_CALL_THISCALL);
+
+	engine->RegisterObjectMethod("ShellConfigurator",
+								 "const String& get_appName() const",
+								 AS_METHOD(ShellConfigurator, GetAppName),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("ShellConfigurator",
+								 "const String& get_gameName() const",
+								 AS_METHOD(ShellConfigurator, GetGameName),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("ShellConfigurator",
+								 "uint16 get_port() const",
+								 AS_METHOD(ShellConfigurator, GetPort),
+								 AS_CALL_THISCALL);
 }
