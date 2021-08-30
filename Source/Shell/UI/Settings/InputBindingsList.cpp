@@ -51,7 +51,7 @@ InputBindingsList::InputBindingsList(Urho3D::Context* context, Urho3D::ListView*
 		CreateActionBinding(actions->GetName(action));
 
 	if (!controllers.Empty())
-		LoadControllerSettings(GetSubsystem<ControllersRegistry>()->GetController(controllers[0]));
+		LoadControllerSettings(GetSubsystem<ControllersRegistry>()->Get(controllers[0]));
 
 	SubscribeToEvent(E_INPUTBINDINGEND, URHO3D_HANDLER(InputBindingsList, OnBindingEnd));
 }
@@ -66,7 +66,7 @@ void InputBindingsList::Apply()
 	for (const auto& ctrlPair : changedBindings_)
 	{
 		parameters = &ctrlPair.second_;
-		controller = controllers->GetController(ctrlPair.first_);
+		controller = controllers->Get(ctrlPair.first_);
 		for (const auto& actionPair : parameters->bindings_)
 			controller->SetBinding(actionPair.first_, actionPair.second_);
 		if (parameters->sensitivityChanged_)
@@ -85,7 +85,7 @@ Urho3D::StringVector InputBindingsList::CreateControllersList()
 	currentCtlr_->SetStyleAuto();
 	SubscribeToEvent(currentCtlr_, E_ITEMSELECTED, URHO3D_HANDLER(InputBindingsList, OnControllerSelected));
 
-	const StringVector controllers = GetSubsystem<ControllersRegistry>()->GetEnabledControllers();
+	const StringVector controllers = GetSubsystem<ControllersRegistry>()->GetEnabledNames();
 	for (const String& controller : controllers)
 	{
 		item = MakeShared<UIElement>(context_);
@@ -180,7 +180,7 @@ const Urho3D::String& InputBindingsList::GetCurrentControllerName() const
 
 InputController* InputBindingsList::GetCurrentController() const
 {
-	return GetSubsystem<ControllersRegistry>()->GetController(GetCurrentControllerName());
+	return GetSubsystem<ControllersRegistry>()->Get(GetCurrentControllerName());
 }
 
 void InputBindingsList::StopBinding()

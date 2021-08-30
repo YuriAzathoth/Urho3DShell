@@ -134,8 +134,8 @@ unsigned InputController::GetDefaultBinding(Urho3D::StringHash action) const
 	return it != defaultBindings_.End() ? it->second_ : 0;
 }
 
-void InputController::EnableSelf() { GetSubsystem<ControllersRegistry>()->EnableController(GetType()); }
-void InputController::DisableSelf() { GetSubsystem<ControllersRegistry>()->EnableController(GetType()); }
+void InputController::EnableSelf() { GetSubsystem<ControllersRegistry>()->Enable(GetType()); }
+void InputController::DisableSelf() { GetSubsystem<ControllersRegistry>()->Enable(GetType()); }
 
 void InputController::SendActionDown(unsigned keyCode)
 {

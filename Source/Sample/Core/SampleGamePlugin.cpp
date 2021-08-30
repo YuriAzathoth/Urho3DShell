@@ -75,7 +75,7 @@ const Urho3D::String& SampleGamePlugin::GetName() const { return PLUGIN_NAME; }
 void SampleGamePlugin::OnShellClientStarted(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	ControllersRegistry* controllers = GetSubsystem<ControllersRegistry>();
-	InputController* keyboard = controllers->GetController("KeyboardController");
+	InputController* keyboard = controllers->Get("KeyboardController");
 	if (keyboard)
 	{
 		keyboard->SetDefaultBinding(MOVE_FORWARD, KEY_W);

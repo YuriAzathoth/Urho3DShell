@@ -42,54 +42,54 @@ public:
 
 	void ReadControls(Urho3D::Controls& controls) const;
 
-	void RegisterController(Urho3D::SharedPtr<InputController> controller);
-	void RemoveController(Urho3D::StringHash controllerType);
-	void EnableController(Urho3D::StringHash controllerType);
-	void DisableController(Urho3D::StringHash controllerType);
-	InputController* GetController(Urho3D::StringHash controllerType) const;
-	Urho3D::StringVector GetEnabledControllers() const;
-	void RemoveAllControllers();
+	void Register(Urho3D::SharedPtr<InputController> controller);
+	void Remove(Urho3D::StringHash controllerType);
+	void Enable(Urho3D::StringHash controllerType);
+	void Disable(Urho3D::StringHash controllerType);
+	InputController* Get(Urho3D::StringHash controllerType) const;
+	Urho3D::StringVector GetEnabledNames() const;
+	void RemoveAll();
 
-	template <typename T> T* RegisterController();
-	template <typename T> void RemoveController();
-	template <typename T> void EnableController();
-	template <typename T> void DisableController();
-	template <typename T> T* GetController() const;
+	template <typename T> T* Register();
+	template <typename T> void Remove();
+	template <typename T> void Enable();
+	template <typename T> void Disable();
+	template <typename T> T* Get() const;
 
 	Urho3D::String GetDebugString() const;
 
 private:
-	void EnableController(InputController* inputController);
-	void DisableController(InputController* inputController);
+	void EnableImpl(InputController* inputController);
+	void DisableImpl(InputController* inputController);
 
 	using ControllersMap = Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<InputController>>;
 	ControllersMap enabledControllers_;
 	ControllersMap disabledControllers_;
 };
 
-template <typename T> T* ControllersRegistry::RegisterController()
+template <typename T> T* ControllersRegistry::Register()
 {
 	Urho3D::SharedPtr<InputController> controller(new T(context_));
-	RegisterController(controller);
+	Register(controller);
 	return static_cast<T*>(controller.Get());
 }
 
-template <typename T> void ControllersRegistry::RemoveController()
+template <typename T> void ControllersRegistry::Remove()
 {
-	RemoveController(T::GetTypeInfoStatic()->GetType());
+	Remove(T::GetTypeInfoStatic()->GetType());
 }
-template <typename T> void ControllersRegistry::EnableController()
+template <typename T> void ControllersRegistry::Enable()
 {
-	EnableController(T::GetTypeInfoStatic()->GetType());
+	Enable(T::GetTypeInfoStatic()->GetType());
 }
-template <typename T> void ControllersRegistry::DisableController()
+template <typename T> void ControllersRegistry::Disable()
 {
-	DisableController(T::GetTypeInfoStatic()->GetType());
+	Disable(T::GetTypeInfoStatic()->GetType());
 }
 
-template <typename T> T* ControllersRegistry::GetController() const
+template <typename T> T* ControllersRegistry::Get() const
 {
-	return static_cast<T*>(GetController(T::GetTypeInfoStatic()->GetType()));
+	return static_cast<T*>(Get(T::GetTypeInfoStatic()->GetType()));
 }
 
 #endif // CONTROLLERSREGISTRY_H

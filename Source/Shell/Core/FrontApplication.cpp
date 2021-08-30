@@ -81,7 +81,7 @@ void FrontApplication::Start()
 
 	SendEvent(E_SHELLCLIENTSTARTED);
 
-	controllers->EnableController("KeyboardController");
+	controllers->Enable("KeyboardController");
 
 	ShellStateMachine* ssm = GetSubsystem<ShellStateMachine>();
 	auto it = shellParameters_.Find(SP_SCENE);

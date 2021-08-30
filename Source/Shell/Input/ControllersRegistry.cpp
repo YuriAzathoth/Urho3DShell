@@ -34,13 +34,13 @@ ControllersRegistry::ControllersRegistry(Urho3D::Context* context)
 	: Object(context)
 {
 	context_->RegisterFactory<KeyboardController>();
-	RegisterController<KeyboardController>();
+	Register<KeyboardController>();
 }
 
 ControllersRegistry::~ControllersRegistry()
 {
 	for (const auto& p : enabledControllers_)
-		DisableController(p.second_);
+		DisableImpl(p.second_);
 }
 
 void ControllersRegistry::ReadControls(Urho3D::Controls& controls) const
@@ -49,7 +49,7 @@ void ControllersRegistry::ReadControls(Urho3D::Controls& controls) const
 		p.second_->ReadControls(controls);
 }
 
-void ControllersRegistry::RegisterController(Urho3D::SharedPtr<InputController> controller)
+void ControllersRegistry::Register(Urho3D::SharedPtr<InputController> controller)
 {
 	const StringHash type = controller->GetType();
 	if (!enabledControllers_.Contains(type) && !disabledControllers_.Contains(type))
@@ -58,18 +58,18 @@ void ControllersRegistry::RegisterController(Urho3D::SharedPtr<InputController> 
 		URHO3D_LOGERROR("Failed to register already registered input controller.");
 }
 
-void ControllersRegistry::RemoveController(Urho3D::StringHash controllerType)
+void ControllersRegistry::Remove(Urho3D::StringHash controllerType)
 {
 	if (!enabledControllers_.Erase(controllerType))
 		URHO3D_LOGERROR("Failed to remove non-registered input controller.");
 }
 
-void ControllersRegistry::EnableController(Urho3D::StringHash controllerType)
+void ControllersRegistry::Enable(Urho3D::StringHash controllerType)
 {
 	auto it = disabledControllers_.Find(controllerType);
 	if (it != disabledControllers_.End())
 	{
-		EnableController(it->second_);
+		EnableImpl(it->second_);
 		enabledControllers_.Insert(it);
 		disabledControllers_.Erase(it);
 	}
@@ -79,7 +79,7 @@ void ControllersRegistry::EnableController(Urho3D::StringHash controllerType)
 		URHO3D_LOGERRORF("Failed to enable not registered input controller.");
 }
 
-void ControllersRegistry::EnableController(InputController* inputController)
+void ControllersRegistry::EnableImpl(InputController* inputController)
 {
 	if (inputController->Enable())
 	{
@@ -91,12 +91,12 @@ void ControllersRegistry::EnableController(InputController* inputController)
 		URHO3D_LOGERROR("Failed to enable input controller.");
 }
 
-void ControllersRegistry::DisableController(Urho3D::StringHash controllerType)
+void ControllersRegistry::Disable(Urho3D::StringHash controllerType)
 {
 	auto it = enabledControllers_.Find(controllerType);
 	if (it != enabledControllers_.End())
 	{
-		DisableController(it->second_);
+		DisableImpl(it->second_);
 		disabledControllers_.Insert(it);
 		enabledControllers_.Erase(it);
 	}
@@ -106,7 +106,7 @@ void ControllersRegistry::DisableController(Urho3D::StringHash controllerType)
 		URHO3D_LOGERRORF("Failed to disable not registered input controller.");
 }
 
-void ControllersRegistry::DisableController(InputController* inputController)
+void ControllersRegistry::DisableImpl(InputController* inputController)
 {
 	if (inputController->Disable())
 	{
@@ -120,7 +120,7 @@ void ControllersRegistry::DisableController(InputController* inputController)
 		URHO3D_LOGERROR("Failed to disable input controller.");
 }
 
-InputController* ControllersRegistry::GetController(Urho3D::StringHash controllerType) const
+InputController* ControllersRegistry::Get(Urho3D::StringHash controllerType) const
 {
 	auto it = enabledControllers_.Find(controllerType);
 	if (it != enabledControllers_.End())
@@ -131,7 +131,7 @@ InputController* ControllersRegistry::GetController(Urho3D::StringHash controlle
 	return nullptr;
 }
 
-Urho3D::StringVector ControllersRegistry::GetEnabledControllers() const
+Urho3D::StringVector ControllersRegistry::GetEnabledNames() const
 {
 	StringVector ret;
 	ret.Reserve(enabledControllers_.Size());
@@ -140,7 +140,7 @@ Urho3D::StringVector ControllersRegistry::GetEnabledControllers() const
 	return ret;
 }
 
-void ControllersRegistry::RemoveAllControllers()
+void ControllersRegistry::RemoveAll()
 {
 	enabledControllers_.Clear();
 	disabledControllers_.Clear();
