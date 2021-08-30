@@ -51,8 +51,8 @@ void SampleActorController::FixedUpdate(float timeStep)
 	Vector3 translation;
 	translation.x_ = static_cast<float>(controls.IsDown(actions->GetFlag(MOVE_RIGHT)) -
 										controls.IsDown(actions->GetFlag(MOVE_LEFT)));
-	translation.y_ = static_cast<float>(controls.IsDown(actions->GetFlag(MOVE_UP)) -
-										controls.IsDown(actions->GetFlag(MOVE_DOWN)));
+	translation.y_ =
+		static_cast<float>(controls.IsDown(actions->GetFlag(MOVE_UP)) - controls.IsDown(actions->GetFlag(MOVE_DOWN)));
 	translation.z_ = static_cast<float>(controls.IsDown(actions->GetFlag(MOVE_FORWARD)) -
 										controls.IsDown(actions->GetFlag(MOVE_BACK)));
 	translation.Normalize();
