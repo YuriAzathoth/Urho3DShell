@@ -49,15 +49,15 @@ void SampleActorController::FixedUpdate(float timeStep)
 	const Controls& controls = GetComponent<InputReceiver>()->GetControls();
 
 	Vector3 translation;
-	translation.x_ = static_cast<float>(controls.IsDown(actions->GetActionFlag(MOVE_RIGHT)) -
-										controls.IsDown(actions->GetActionFlag(MOVE_LEFT)));
-	translation.y_ = static_cast<float>(controls.IsDown(actions->GetActionFlag(MOVE_UP)) -
-										controls.IsDown(actions->GetActionFlag(MOVE_DOWN)));
-	translation.z_ = static_cast<float>(controls.IsDown(actions->GetActionFlag(MOVE_FORWARD)) -
-										controls.IsDown(actions->GetActionFlag(MOVE_BACK)));
+	translation.x_ = static_cast<float>(controls.IsDown(actions->GetFlag(MOVE_RIGHT)) -
+										controls.IsDown(actions->GetFlag(MOVE_LEFT)));
+	translation.y_ = static_cast<float>(controls.IsDown(actions->GetFlag(MOVE_UP)) -
+										controls.IsDown(actions->GetFlag(MOVE_DOWN)));
+	translation.z_ = static_cast<float>(controls.IsDown(actions->GetFlag(MOVE_FORWARD)) -
+										controls.IsDown(actions->GetFlag(MOVE_BACK)));
 	translation.Normalize();
 
-	const bool walk = controls.IsDown(actions->GetActionFlag(WALK));
+	const bool walk = controls.IsDown(actions->GetFlag(WALK));
 	translation *= timeStep;
 	translation *= walk ? WALK_SPEED : MOVE_SPEED;
 

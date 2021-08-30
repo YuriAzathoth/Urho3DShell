@@ -62,8 +62,8 @@ bool InputController::LoadXML(const Urho3D::XMLElement& source)
 		keyCode = GetKeyCode(binding.GetAttribute("key"));
 		action = binding.GetAttribute("action");
 		bindings_[keyCode] = action;
-		if (actions->IsActionRemote(action))
-			remoteBindings_.Push(MakePair(keyCode, actions->GetActionFlag(action)));
+		if (actions->IsRemote(action))
+			remoteBindings_.Push(MakePair(keyCode, actions->GetFlag(action)));
 		unboundActions_.Erase(action);
 	}
 
@@ -90,7 +90,7 @@ void InputController::SaveXML(Urho3D::XMLElement& dst) const
 	XMLElement binding;
 	for (const auto& p : bindings_)
 	{
-		action = &inputRegistry->GetActionName(p.second_);
+		action = &inputRegistry->GetName(p.second_);
 		keyName = GetKeyName(p.first_);
 		binding = dst.CreateChild("binding");
 		binding.SetAttribute("key", keyName);
@@ -101,9 +101,9 @@ void InputController::SaveXML(Urho3D::XMLElement& dst) const
 void InputController::SetBinding(Urho3D::StringHash action, unsigned keyCode)
 {
 	const ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
-	if (actions->IsActionRemote(action))
+	if (actions->IsRemote(action))
 	{
-		const unsigned actionFlag = actions->GetActionFlag(action);
+		const unsigned actionFlag = actions->GetFlag(action);
 		for (auto it = remoteBindings_.Begin(); it != remoteBindings_.End();)
 			if (it->first_ == keyCode || it->second_ == actionFlag)
 				it = remoteBindings_.Erase(it);
@@ -170,13 +170,13 @@ Urho3D::String InputController::GetDebugString() const
 	ret.Append("\tDefault bindings:\n");
 	for (const auto& p : GetDefaultBindings())
 	{
-		ret.Append("\t\tAction: ").Append(actions->GetActionName(p.first_)).Append("\n");
+		ret.Append("\t\tAction: ").Append(actions->GetName(p.first_)).Append("\n");
 		ret.Append("\t\tKey:    ").Append(GetKeyName(p.second_)).Append("\n");
 	}
 	ret.Append("\tBindings:\n");
 	for (const auto& p : GetBindings())
 	{
-		ret.Append("\t\tAction: ").Append(actions->GetActionName(p.second_)).Append("\n");
+		ret.Append("\t\tAction: ").Append(actions->GetName(p.second_)).Append("\n");
 		ret.Append("\t\tKey:    ").Append(GetKeyName(p.first_)).Append("\n");
 	}
 	return ret;

@@ -61,13 +61,13 @@ SampleGamePlugin::SampleGamePlugin(Urho3D::Context* context)
 	REGISTER_OBJECT(SampleActorController);
 
 	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
-	actions->RegisterActionRemote(MOVE_FORWARD);
-	actions->RegisterActionRemote(MOVE_BACK);
-	actions->RegisterActionRemote(MOVE_LEFT);
-	actions->RegisterActionRemote(MOVE_RIGHT);
-	actions->RegisterActionRemote(MOVE_UP);
-	actions->RegisterActionRemote(MOVE_DOWN);
-	actions->RegisterActionRemote(WALK);
+	actions->RegisterRemote(MOVE_FORWARD);
+	actions->RegisterRemote(MOVE_BACK);
+	actions->RegisterRemote(MOVE_LEFT);
+	actions->RegisterRemote(MOVE_RIGHT);
+	actions->RegisterRemote(MOVE_UP);
+	actions->RegisterRemote(MOVE_DOWN);
+	actions->RegisterRemote(WALK);
 }
 
 const Urho3D::String& SampleGamePlugin::GetName() const { return PLUGIN_NAME; }

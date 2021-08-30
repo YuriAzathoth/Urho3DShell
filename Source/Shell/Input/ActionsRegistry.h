@@ -35,15 +35,15 @@ public:
 
 	explicit ActionsRegistry(Urho3D::Context* context);
 
-	void RegisterActionLocal(const Urho3D::String& actionName);
-	unsigned RegisterActionRemote(const Urho3D::String& actionName);
-	void RemoveAction(Urho3D::StringHash action);
-	void RemoveAllActions();
+	void RegisterLocal(const Urho3D::String& actionName);
+	unsigned RegisterRemote(const Urho3D::String& actionName);
+	void Remove(Urho3D::StringHash action);
+	void RemoveAll();
 
-	unsigned GetActionFlag(Urho3D::StringHash action) const;
-	const Urho3D::String& GetActionName(Urho3D::StringHash action) const;
-	bool IsActionRemote(Urho3D::StringHash action) const { return remoteFlags_.Contains(action); }
-	const ActionsVector& GetActions() const noexcept { return ordered_; }
+	unsigned GetFlag(Urho3D::StringHash action) const;
+	const Urho3D::String& GetName(Urho3D::StringHash action) const;
+	bool IsRemote(Urho3D::StringHash action) const { return remoteFlags_.Contains(action); }
+	const ActionsVector& GetAll() const noexcept { return ordered_; }
 
 	Urho3D::String GetDebugString() const;
 

@@ -33,13 +33,13 @@ ActionsRegistry::ActionsRegistry(Urho3D::Context* context)
 {
 }
 
-void ActionsRegistry::RegisterActionLocal(const Urho3D::String& actionName)
+void ActionsRegistry::RegisterLocal(const Urho3D::String& actionName)
 {
 	ordered_.Push(actionName);
 	names_[actionName] = actionName;
 }
 
-unsigned ActionsRegistry::RegisterActionRemote(const Urho3D::String& actionName)
+unsigned ActionsRegistry::RegisterRemote(const Urho3D::String& actionName)
 {
 	if (lastRemoteFlag_ < LAST_REMOTE_ACTION)
 	{
@@ -59,7 +59,7 @@ unsigned ActionsRegistry::RegisterActionRemote(const Urho3D::String& actionName)
 	}
 }
 
-void ActionsRegistry::RemoveAction(Urho3D::StringHash action)
+void ActionsRegistry::Remove(Urho3D::StringHash action)
 {
 	auto it = ordered_.Find(action);
 	if (it != ordered_.End())
@@ -68,20 +68,20 @@ void ActionsRegistry::RemoveAction(Urho3D::StringHash action)
 	remoteFlags_.Erase(action);
 }
 
-void ActionsRegistry::RemoveAllActions()
+void ActionsRegistry::RemoveAll()
 {
 	ordered_.Clear();
 	names_.Clear();
 	remoteFlags_.Clear();
 }
 
-unsigned ActionsRegistry::GetActionFlag(Urho3D::StringHash action) const
+unsigned ActionsRegistry::GetFlag(Urho3D::StringHash action) const
 {
 	const auto it = remoteFlags_.Find(action);
 	return it != remoteFlags_.End() ? it->second_ : 0;
 }
 
-const Urho3D::String& ActionsRegistry::GetActionName(Urho3D::StringHash action) const
+const Urho3D::String& ActionsRegistry::GetName(Urho3D::StringHash action) const
 {
 	const auto it = names_.Find(action);
 	return it != names_.End() ? it->second_ : String::EMPTY;
