@@ -38,7 +38,7 @@ public:
 	virtual void Enter() = 0;
 	virtual void Exit();
 
-	void CreateDialog(Urho3D::StringHash type);
+	Dialog* CreateDialog(Urho3D::StringHash type);
 	void RemoveDialog(Urho3D::StringHash type);
 	void RemoveAllDialogs();
 
@@ -54,8 +54,8 @@ private:
 	virtual void BackState() = 0;
 	virtual void SetSceneUpdate(bool) {}
 
-	void PostWidgetAdd(Dialog* widget);
-	void PreWidgetRemove(Dialog* widget);
+	void OnDialogAdd(Dialog* widget);
+	void OnDialogRemove(Dialog* widget);
 	void IncInteractives();
 	void DecInteractives();
 	void SetMouseVisible(bool visible) const;
@@ -66,15 +66,15 @@ private:
 
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
-	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Dialog>> widgets_;
+	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Dialog>> dialogs_;
 	unsigned char closeables_;
 	unsigned char interactives_;
 };
 
 template <typename T> inline T* ShellState::GetDialog(Urho3D::StringHash type)
 {
-	const auto it = widgets_.Find(type);
-	return it != widgets_.End() ? it->second_.Get()->Cast<T>() : nullptr;
+	const auto it = dialogs_.Find(type);
+	return it != dialogs_.End() ? it->second_.Get()->Cast<T>() : nullptr;
 }
 
 #endif // SHELLSTATE_H

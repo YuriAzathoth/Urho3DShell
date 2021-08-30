@@ -51,39 +51,40 @@ ShellState::ShellState(Urho3D::Context* context)
 
 void ShellState::Exit() { ReleaseSelf(); }
 
-void ShellState::CreateDialog(Urho3D::StringHash type)
+Dialog* ShellState::CreateDialog(Urho3D::StringHash type)
 {
 	SharedPtr<Object> object = context_->CreateObject(type);
 	if (object.Null())
 	{
-		URHO3D_LOGERROR("Failed to create unregistered UI widget.");
-		return;
+		URHO3D_LOGERROR("Failed to create unregistered UI dialog.");
+		return nullptr;
 	}
-	SharedPtr<Dialog> widget;
-	widget.DynamicCast(object);
-	if (widget.Null())
+	SharedPtr<Dialog> dialog;
+	dialog.DynamicCast(object);
+	if (dialog.Null())
 	{
-		URHO3D_LOGERROR("Failed to create UI widget: given type is not a widget.");
-		return;
+		URHO3D_LOGERROR("Failed to create UI dialog: given type is not a dialog.");
+		return nullptr;
 	}
-	widget->SetParent(this);
-	widgets_[type] = widget;
-	PostWidgetAdd(widget);
+	dialog->SetParent(this);
+	dialogs_[type] = dialog;
+	OnDialogAdd(dialog);
+	return dialog.Get();
 }
 
 void ShellState::RemoveDialog(Urho3D::StringHash type)
 {
-	auto it = widgets_.Find(type);
-	if (it != widgets_.End())
+	auto it = dialogs_.Find(type);
+	if (it != dialogs_.End())
 	{
-		PreWidgetRemove(it->second_);
-		widgets_.Erase(it);
+		OnDialogRemove(it->second_);
+		dialogs_.Erase(it);
 	}
 }
 
 void ShellState::RemoveAllDialogs()
 {
-	widgets_.Clear();
+	dialogs_.Clear();
 	interactives_ = 0;
 }
 
@@ -94,7 +95,7 @@ bool ShellState::ReleaseSelf()
 	return GetSubsystem<ShellStateMachine>()->ProcessStateChanging();
 }
 
-void ShellState::PostWidgetAdd(Dialog* widget)
+void ShellState::OnDialogAdd(Dialog* widget)
 {
 	if (widget->IsCloseable())
 		++closeables_;
@@ -102,7 +103,7 @@ void ShellState::PostWidgetAdd(Dialog* widget)
 		IncInteractives();
 }
 
-void ShellState::PreWidgetRemove(Dialog* widget)
+void ShellState::OnDialogRemove(Dialog* widget)
 {
 	if (widget->IsCloseable())
 		--closeables_;
@@ -137,11 +138,11 @@ void ShellState::SetMouseVisible(bool visible) const { GetSubsystem<Input>()->Se
 void ShellState::CloseFrontDialog()
 {
 	// TODO: Optimize for faster lookup
-	for (auto it = widgets_.Begin(); it != widgets_.End(); ++it)
+	for (auto it = dialogs_.Begin(); it != dialogs_.End(); ++it)
 		if (it->second_->IsFrontElement() && it->second_->IsCloseable())
 		{
-			PreWidgetRemove(it->second_);
-			widgets_.Erase(it);
+			OnDialogRemove(it->second_);
+			dialogs_.Erase(it);
 			return;
 		}
 }
@@ -169,7 +170,7 @@ void ShellState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 	using namespace KeyDown;
 	switch (eventData[P_KEY].GetInt())
 	{
-	case Key::KEY_ESCAPE:
+	case KEY_ESCAPE:
 		OnEscapePressed();
 		break;
 	case KEY_F1:
