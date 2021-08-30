@@ -50,5 +50,5 @@ void PauseDialog::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&) { GetParen
 
 void PauseDialog::OnExit(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	GetSubsystem<ShellStateMachine>()->NewShellState<MainMenuState>();
+	GetSubsystem<ShellStateMachine>()->Push<MainMenuState>();
 }

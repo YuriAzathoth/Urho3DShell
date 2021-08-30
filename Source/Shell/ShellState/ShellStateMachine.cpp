@@ -30,7 +30,7 @@ void ShellStateMachine::Initialize(ShellState* newState)
 	currState_->Enter();
 }
 
-void ShellStateMachine::NewShellState(ShellState* newState)
+void ShellStateMachine::Push(ShellState* newState)
 {
 	nextState_ = newState;
 	currState_->Exit();

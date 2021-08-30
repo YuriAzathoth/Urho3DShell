@@ -35,11 +35,11 @@ public:
 	using Urho3D::Object::Object;
 
 	void Initialize(ShellState* newState);
-	void NewShellState(ShellState* newState);
-	ShellState* GetShellState() const { return currState_.Get(); }
+	void Push(ShellState* newState);
+	ShellState* Get() const { return currState_.Get(); }
 
 	template <typename T, typename... TArgs> void Initialize(TArgs&&... args);
-	template <typename T, typename... TArgs> void NewShellState(TArgs&&... args);
+	template <typename T, typename... TArgs> void Push(TArgs&&... args);
 
 private:
 	Urho3D::SharedPtr<ShellState> currState_;
@@ -54,9 +54,9 @@ template <typename T, typename... TArgs> void ShellStateMachine::Initialize(TArg
 	Initialize(new T(context_, std::forward<TArgs>(args)...));
 }
 
-template <typename T, typename... TArgs> void ShellStateMachine::NewShellState(TArgs&&... args)
+template <typename T, typename... TArgs> void ShellStateMachine::Push(TArgs&&... args)
 {
-	NewShellState(new T(context_, std::forward<TArgs>(args)...));
+	Push(new T(context_, std::forward<TArgs>(args)...));
 }
 
 #endif // SHELLSTATEMACHINE_H

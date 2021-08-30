@@ -52,10 +52,10 @@ void RegisterShellStateMachineAPI(asIScriptEngine* engine)
 
 	engine->RegisterObjectMethod("ShellStateMachine",
 								 "void Push(ShellState@+)",
-								 AS_METHODPR(ShellStateMachine, NewShellState, (ShellState*), void),
+								 AS_METHODPR(ShellStateMachine, Push, (ShellState*), void),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("ShellStateMachine",
 								 "ShellState& Get() const",
-								 AS_METHOD(ShellStateMachine, GetShellState),
+								 AS_METHOD(ShellStateMachine, Get),
 								 AS_CALL_THISCALL);
 }

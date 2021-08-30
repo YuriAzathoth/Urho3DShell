@@ -30,7 +30,7 @@ using namespace Urho3D;
 
 void HostItemsListWindow::Start(const Urho3D::String& sceneName)
 {
-	GetSubsystem<ShellStateMachine>()->NewShellState<LocalServerState>(sceneName);
+	GetSubsystem<ShellStateMachine>()->Push<LocalServerState>(sceneName);
 }
 
 void HostItemsListWindow::Start(const Urho3D::String& sceneName,
@@ -38,5 +38,5 @@ void HostItemsListWindow::Start(const Urho3D::String& sceneName,
 								[[maybe_unused]] const Urho3D::String& serverPass)
 {
 	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
-	GetSubsystem<ShellStateMachine>()->NewShellState<RemoteServerState>(sceneName, serverName, port);
+	GetSubsystem<ShellStateMachine>()->Push<RemoteServerState>(sceneName, serverName, port);
 }
