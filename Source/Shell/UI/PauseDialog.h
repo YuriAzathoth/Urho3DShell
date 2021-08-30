@@ -20,8 +20,24 @@
 // THE SOFTWARE.
 //
 
-#include "GameState.h"
+#ifndef PAUSEDIALOG_H
+#define PAUSEDIALOG_H
 
-using namespace Urho3D;
+#include "Dialog.h"
 
-void GameState::BackState() { CreateDialog("PauseDialog"); }
+class PauseDialog : public Dialog
+{
+	URHO3D_OBJECT(PauseDialog, Dialog)
+
+public:
+	explicit PauseDialog(Urho3D::Context* context);
+
+private:
+	void OnResume(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnSaveGame(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnSettings(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnExit(Urho3D::StringHash, Urho3D::VariantMap&);
+};
+
+#endif // PAUSEDIALOG_H

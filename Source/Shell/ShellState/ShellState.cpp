@@ -31,6 +31,7 @@
 #include "UI/LoadGameDialog.h"
 #include "UI/MainMenuDialog.h"
 #include "UI/NewGameDialog.h"
+#include "UI/PauseDialog.h"
 #include "UI/ServersListDialog.h"
 #include "UI/SettingsDialog.h"
 
@@ -43,6 +44,7 @@ ShellState::ShellState(Urho3D::Context* context)
 	context->RegisterFactory<LoadGameDialog>();
 	context->RegisterFactory<MainMenuDialog>();
 	context->RegisterFactory<NewGameDialog>();
+	context->RegisterFactory<PauseDialog>();
 	context->RegisterFactory<ServersListDialog>();
 	context->RegisterFactory<SettingsDialog>();
 

@@ -96,8 +96,5 @@ bool LuaScriptPlugin::Load(const Urho3D::String&)
 	return false;
 }
 
-bool LuaScriptPlugin::Execute(const Urho3D::String&, const Urho3D::VariantVector&, Urho3D::Variant*)
-{
-	return false;
-}
+bool LuaScriptPlugin::Execute(const Urho3D::String&, const Urho3D::VariantVector&, Urho3D::Variant*) { return false; }
 #endif // URHO3DSHELL_EXPERIMENTAL
