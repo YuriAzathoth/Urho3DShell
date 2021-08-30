@@ -22,6 +22,7 @@
 
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
+#include "Core/ShellConfigurator.h"
 #include "Network/ServerDefs.h"
 #include "ServersListDialog.h"
 #include "ShellState/ClientState.h"
@@ -36,15 +37,16 @@ ServersListDialog::ServersListDialog(Urho3D::Context* context)
 	SetInteractive(true);
 	SetTitle("ConnectToServer");
 
-	SubscribeToEvent(E_NETWORKHOSTDISCOVERED, URHO3D_HANDLER(ServersListDialog, OnNetworkHostDiscovered));
+	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<ShellConfigurator>()->GetPort());
 
-	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<ShellStateMachine>()->GetPort());
+	SubscribeToEvent(E_NETWORKHOSTDISCOVERED, URHO3D_HANDLER(ServersListDialog, OnNetworkHostDiscovered));
 }
 
 void ServersListDialog::Start(const Urho3D::String& address)
 {
-	ShellStateMachine* ssm = GetSubsystem<ShellStateMachine>();
-	ssm->NewShellState<ClientState>(address, ssm->GetPort());
+	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
+	GetSubsystem<ShellStateMachine>()->NewShellState<ClientState>(address,
+																  port);
 }
 
 void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)

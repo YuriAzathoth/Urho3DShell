@@ -29,12 +29,6 @@
 
 using namespace Urho3D;
 
-ShellStateMachine::ShellStateMachine(Urho3D::Context* context)
-	: Object(context)
-	, port_(27500)
-{
-}
-
 void ShellStateMachine::Initialize(ShellState* newState)
 {
 	currState_ = newState;

@@ -25,6 +25,7 @@
 
 static Urho3D::String CL_NAME = "Name";
 
+static Urho3D::String SV_GAME = "Game";
 static Urho3D::String SV_NAME = "Name";
 
 #endif // SERVERDEFS_H

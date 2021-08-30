@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 //
 
+#include "Core/ShellConfigurator.h"
 #include "HostItemsListWindow.h"
 #include "ShellState/LocalServerState.h"
 #include "ShellState/RemoteServerState.h"
@@ -36,6 +37,8 @@ void HostItemsListWindow::Start(const Urho3D::String& sceneName,
 								const Urho3D::String& serverName,
 								[[maybe_unused]] const Urho3D::String& serverPass)
 {
-	ShellStateMachine* ssm = GetSubsystem<ShellStateMachine>();
-	ssm->NewShellState<RemoteServerState>(sceneName, serverName, ssm->GetPort());
+	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
+	GetSubsystem<ShellStateMachine>()->NewShellState<RemoteServerState>(sceneName,
+																		serverName,
+																		port);
 }

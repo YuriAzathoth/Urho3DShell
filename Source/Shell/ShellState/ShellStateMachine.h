@@ -32,14 +32,11 @@ class URHO3DSHELLAPI_EXPORT ShellStateMachine : public Urho3D::Object
 	URHO3D_OBJECT(ShellStateMachine, Urho3D::Object)
 
 public:
-	explicit ShellStateMachine(Urho3D::Context* context);
+	using Urho3D::Object::Object;
 
 	void Initialize(ShellState* newState);
 	void NewShellState(ShellState* newState);
 	ShellState* GetShellState() const { return currState_.Get(); }
-
-	unsigned short GetPort() const noexcept { return port_; }
-	void SetPort(unsigned short port) noexcept { port_ = port; }
 
 	template <typename T, typename... TArgs> void Initialize(TArgs&&... args);
 	template <typename T, typename... TArgs> void NewShellState(TArgs&&... args);
@@ -47,7 +44,6 @@ public:
 private:
 	Urho3D::SharedPtr<ShellState> currState_;
 	Urho3D::SharedPtr<ShellState> nextState_;
-	unsigned short port_; // TODO: Move to something else location
 
 	bool ProcessStateChanging(); // May be called only from Shell
 	friend class ShellState;	 // Allow to call ProcessStateChanging only from ShellState

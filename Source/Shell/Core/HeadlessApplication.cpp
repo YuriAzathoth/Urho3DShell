@@ -46,17 +46,20 @@ void HeadlessApplication::Start()
 		const String& serverName = it != shellParameters_.End()
 									   ? it->second_.GetString()
 									   : GetSubsystem<ShellConfigurator>()->GetGameName() + " Server";
-		const unsigned short port = 27500;
+		const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
 		server_.LoadScene(sceneName);
-		SubscribeToEvent(E_ASYNCLOADPROGRESS, [](StringHash, VariantMap& eventData)
-		{
-			using namespace AsyncLoadProgress;
-			URHO3D_LOGINFOF("Loading u%%%...", static_cast<unsigned char>(eventData[P_PROGRESS].GetFloat() * 100.0f));
-		});
-		SubscribeToEvent(E_ASYNCLOADFINISHED, [this, port, serverName = std::move(serverName)](StringHash, VariantMap&)
-		{
-			server_.Start(port);
-			server_.MakeVisible(serverName);
-		});
+		SubscribeToEvent(E_ASYNCLOADPROGRESS,
+						 [](StringHash, VariantMap& eventData)
+						 {
+							 using namespace AsyncLoadProgress;
+							 URHO3D_LOGINFOF("Loading u%%%...",
+											 static_cast<unsigned char>(eventData[P_PROGRESS].GetFloat() * 100.0f));
+						 });
+		SubscribeToEvent(E_ASYNCLOADFINISHED,
+						 [this, port, serverName = std::move(serverName)](StringHash, VariantMap&)
+						 {
+							 server_.Start(port);
+							 server_.MakeVisible(serverName);
+						 });
 	}
 }

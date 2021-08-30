@@ -96,7 +96,7 @@ void FrontApplication::Start()
 			const String& serverName = it->second_.IsZero()
 										   ? GetSubsystem<ShellConfigurator>()->GetGameName() + " Server"
 										   : it->second_.GetString();
-			const unsigned short port = 27500;
+			const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
 			ssm->Initialize<RemoteServerState>(sceneName, serverName, port);
 		}
 		return;
@@ -104,8 +104,9 @@ void FrontApplication::Start()
 	it = shellParameters_.Find(SP_CLIENT);
 	if (it != shellParameters_.End())
 	{
-		const unsigned short port = 27500;
-		ssm->Initialize<ClientState>(it->second_.GetString(), port);
+		const String& address = it->second_.GetString();
+		const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
+		ssm->Initialize<ClientState>(address, port);
 		return;
 	}
 	ssm->Initialize<MainMenuState>();
