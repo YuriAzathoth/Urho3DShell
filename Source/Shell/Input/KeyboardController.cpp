@@ -50,8 +50,6 @@ bool KeyboardController::Disable()
 	return true;
 }
 
-#include <cstdio>
-
 void KeyboardController::ReadControls(Urho3D::Controls& controls) const
 {
 	const Input* input = GetSubsystem<Input>();
