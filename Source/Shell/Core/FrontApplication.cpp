@@ -31,7 +31,6 @@
 #include "Config/Config.h"
 #include "FrontApplication.h"
 #include "Input/ControllersRegistry.h"
-#include "ScriptAPI/AngelScript/ScriptAPI.h"
 #include "ShellConfigurator.h"
 #include "ShellDefs.h"
 #include "ShellEvents.h"
@@ -42,8 +41,9 @@
 #include "ShellState/ShellStateMachine.h"
 #include "Urho3DShellConfig.h"
 
+extern void RegisterClientAPI(asIScriptEngine* engine);
 #if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
-#include "ScriptAPI/Lua/LuaScriptAPI.h"
+extern void RegisterClientLuaAPI(lua_State* state);
 #endif
 
 using namespace Urho3D;

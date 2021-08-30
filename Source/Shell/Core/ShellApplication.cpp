@@ -27,22 +27,22 @@
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
 #include "Plugin/PluginsRegistry.h"
-#include "ScriptAPI/AngelScript/ScriptAPI.h"
 #include "ShellApplication.h"
 #include "ShellConfigurator.h"
 #include "ShellDefs.h"
 #include "Urho3DShellConfig.h"
 
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
-#include "ScriptAPI/Lua/LuaScriptAPI.h"
-#endif
-
 #define MAIN_PLUGIN_LIB "Game"
+
+extern void RegisterServerAPI(asIScriptEngine* engine);
+#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+extern void RegisterServerLuaAPI(lua_State* state);
+#endif
 
 using namespace Urho3D;
 
 ShellApplication::ShellApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters)
-	: Urho3D::Application(context)
+	: Application(context)
 	, shellParameters_(std::move(shellParameters))
 {
 	context_->RegisterSubsystem<Config>()->RegisterServerParameters();

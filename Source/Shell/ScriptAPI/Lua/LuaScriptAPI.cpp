@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //
 
-#include "LuaScriptAPI.h"
+struct lua_State;
 
 extern int tolua_ConfigAPI_open(lua_State*);
 extern int tolua_PluginAPI_open(lua_State*);

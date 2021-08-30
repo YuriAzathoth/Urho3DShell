@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //
 
-#include "ScriptAPI.h"
+class asIScriptEngine;
 
 extern void RegisterConfigAPI(asIScriptEngine* engine);
 extern void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
