@@ -56,7 +56,7 @@ void ShellApplication::Setup()
 	context_->RegisterSubsystem<PluginsRegistry>();
 	context_->RegisterSubsystem<ShellConfigurator>();
 
-	GetSubsystem<PluginsRegistry>()->RegisterMainPlugin(MAIN_PLUGIN_LIB);
+	GetSubsystem<PluginsRegistry>()->Initialize(MAIN_PLUGIN_LIB);
 	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters_, shellParameters_);
 
 	RegisterServerAPI(GetSubsystem<Script>()->GetScriptEngine());
@@ -73,7 +73,7 @@ void ShellApplication::Start()
 	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
 	const auto itScript = shellParameters_.Find(SP_SCRIPT);
 	if (itScript != shellParameters_.End())
-		pluginsRegistry->RegisterPlugin(itScript->second_.GetString());
+		pluginsRegistry->Load(itScript->second_.GetString());
 
 	GetSubsystem<Config>()->Apply(shellParameters_);
 }

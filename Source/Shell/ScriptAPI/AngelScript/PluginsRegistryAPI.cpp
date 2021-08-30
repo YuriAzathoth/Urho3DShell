@@ -31,7 +31,7 @@ static PluginsRegistry* GetPluginsRegistry() { return GetScriptContext()->GetSub
 
 template <typename T> static CScriptArray* GetPluginsList(T* _ptr)
 {
-	const StringVector& result = _ptr->GetPlugins();
+	const StringVector& result = _ptr->GetAllNames();
 	return VectorToArray<String>(result, "Array<String>");
 }
 
@@ -53,19 +53,19 @@ void RegisterPluginsRegistryAPI(asIScriptEngine* engine)
 	RegisterMembers_Object<PluginsRegistry>(engine, "PluginsRegistry");
 
 	engine->RegisterObjectMethod("PluginsRegistry",
-								 "bool RegisterPlugin(const String&in)",
-								 AS_METHOD(PluginsRegistry, RegisterPlugin),
+								 "bool Load(const String&in)",
+								 AS_METHOD(PluginsRegistry, Load),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("PluginsRegistry",
-								 "void RemovePlugin(StringHash)",
-								 AS_METHOD(PluginsRegistry, RemovePlugin),
+								 "void Close(StringHash)",
+								 AS_METHOD(PluginsRegistry, Close),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("PluginsRegistry",
 								 "Array<String>@+ get_list() const",
 								 AS_FUNCTION_OBJFIRST(GetPluginsList<PluginsRegistry>),
 								 AS_CALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("PluginsRegistry",
-								 "void RemoveAllPlugins()",
-								 AS_METHOD(PluginsRegistry, RemoveAllPlugins),
+								 "void CloseAll()",
+								 AS_METHOD(PluginsRegistry, CloseAll),
 								 AS_CALL_THISCALL);
 }

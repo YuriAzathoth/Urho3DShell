@@ -34,13 +34,13 @@
 
 using namespace Urho3D;
 
-void PluginsRegistry::RegisterMainPlugin(Urho3D::String pluginName)
+void PluginsRegistry::Initialize(const Urho3D::String& coreLibraryName)
 {
 	mainPlugin_.StaticCast(MakeShared<BinaryPlugin>(context_));
-	mainPlugin_->Load(pluginName);
+	mainPlugin_->Load(coreLibraryName);
 }
 
-bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
+bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 {
 	SharedPtr<Plugin> plugin;
 	if (pluginName.EndsWith(".as", false))
@@ -63,9 +63,9 @@ bool PluginsRegistry::RegisterPlugin(Urho3D::String pluginName)
 	return false;
 }
 
-void PluginsRegistry::RemovePlugin(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
+void PluginsRegistry::Close(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
 
-Urho3D::StringVector PluginsRegistry::GetPlugins() const
+Urho3D::StringVector PluginsRegistry::GetAllNames() const
 {
 	StringVector ret;
 	ret.Reserve(plugins_.Size());
@@ -74,4 +74,4 @@ Urho3D::StringVector PluginsRegistry::GetPlugins() const
 	return ret;
 }
 
-void PluginsRegistry::RemoveAllPlugins() { plugins_.Clear(); }
+void PluginsRegistry::CloseAll() { plugins_.Clear(); }

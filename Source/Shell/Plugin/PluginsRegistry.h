@@ -33,13 +33,12 @@ class URHO3DSHELLAPI_EXPORT PluginsRegistry : public Urho3D::Object
 
 public:
 	using Urho3D::Object::Object;
+	void Initialize(const Urho3D::String& coreLibraryName);
 
-	void RegisterMainPlugin(Urho3D::String pluginName);
-
-	bool RegisterPlugin(Urho3D::String pluginName);
-	void RemovePlugin(Urho3D::StringHash plugin);
-	Urho3D::StringVector GetPlugins() const;
-	void RemoveAllPlugins();
+	bool Load(const Urho3D::String& pluginName);
+	void Close(Urho3D::StringHash plugin);
+	Urho3D::StringVector GetAllNames() const;
+	void CloseAll();
 
 private:
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Plugin>> plugins_;
