@@ -25,12 +25,16 @@
 
 using namespace Urho3D;
 
+extern void RegisterShellStateAPI(asIScriptEngine* engine);
+
 static ShellStateMachine* CreateShellStateMachine() { return new ShellStateMachine(GetScriptContext()); }
 
 static ShellStateMachine* GetShellStateMachine() { return GetScriptContext()->GetSubsystem<ShellStateMachine>(); }
 
-void RegisterShellAPI(asIScriptEngine* engine)
+void RegisterShellStateMachineAPI(asIScriptEngine* engine)
 {
+	RegisterShellStateAPI(engine);
+
 	engine->RegisterObjectType("ShellStateMachine", 0, asOBJ_REF);
 
 	engine->RegisterGlobalFunction("ShellStateMachine@+ get_ssm()", AS_FUNCTION(GetShellStateMachine), AS_CALL_CDECL);
@@ -45,4 +49,13 @@ void RegisterShellAPI(asIScriptEngine* engine)
 	RegisterSubclass<RefCounted, ShellStateMachine>(engine, "RefCounted", "ShellStateMachine");
 
 	RegisterMembers_Object<ShellStateMachine>(engine, "ShellStateMachine");
+
+	engine->RegisterObjectMethod("ShellStateMachine",
+								 "void Push(ShellState@+)",
+								 AS_METHODPR(ShellStateMachine, NewShellState, (ShellState*), void),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("ShellStateMachine",
+								 "ShellState& Get() const",
+								 AS_METHOD(ShellStateMachine, GetShellState),
+								 AS_CALL_THISCALL);
 }

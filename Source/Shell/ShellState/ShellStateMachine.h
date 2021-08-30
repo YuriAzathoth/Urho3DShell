@@ -44,8 +44,8 @@ public:
 	void SetPort(unsigned short port) noexcept { port_ = port; }
 
 private:
-	Urho3D::UniquePtr<ShellState> currState_;
-	Urho3D::UniquePtr<ShellState> nextState_;
+	Urho3D::SharedPtr<ShellState> currState_;
+	Urho3D::SharedPtr<ShellState> nextState_;
 	unsigned short port_; // TODO: Move to something else location
 
 	bool ProcessStateChanging(); // May be called only from Shell
