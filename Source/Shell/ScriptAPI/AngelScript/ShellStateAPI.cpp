@@ -42,20 +42,32 @@ using namespace Urho3D;
 
 template <typename T> void RegisterMembers_ShellState(asIScriptEngine* engine, const char* className)
 {
+	engine->RegisterObjectType("Dialog", 0, asOBJ_REF); // TODO: Dialog AS binding
+
 	RegisterMembers_Object<T>(engine, className);
 	engine->RegisterObjectMethod(className, "void Enter()", AS_METHOD(T, Enter), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "void Exit()", AS_METHOD(T, Exit), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className,
-								 "void CreateDialog(StringHash)",
-								 asMETHOD(T, CreateDialog),
+								 "Dialog@+ GetDialog(StringHash) const",
+								 AS_METHODPR(T, GetDialog, (StringHash) const, Dialog*),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "Dialog@+ CreateDialog(StringHash)",
+								 AS_METHODPR(T, CreateDialog, (StringHash), Dialog*),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className,
 								 "void RemoveDialog(StringHash)",
-								 asMETHOD(T, RemoveDialog),
+								 AS_METHODPR(T, RemoveDialog, (StringHash), void),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "void RemoveAllDialogs()", asMETHOD(T, RemoveAllDialogs), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod(className, "uint32 get_closeables() const", asMETHOD(T, GetCloseables), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod(className, "uint32 get_interactives() const", asMETHOD(T, GetInteractives), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "uint32 get_closeables() const",
+								 asMETHOD(T, GetCloseables),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "uint32 get_interactives() const",
+								 asMETHOD(T, GetInteractives),
+								 AS_CALL_THISCALL);
 }
 
 #if defined(__GNUC__) || defined(__GNUG__)

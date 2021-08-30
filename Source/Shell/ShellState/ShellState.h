@@ -38,6 +38,7 @@ public:
 	virtual void Enter() = 0;
 	virtual void Exit();
 
+	Dialog* GetDialog(Urho3D::StringHash type) const;
 	Dialog* CreateDialog(Urho3D::StringHash type);
 	void RemoveDialog(Urho3D::StringHash type);
 	void RemoveAllDialogs();
@@ -45,7 +46,9 @@ public:
 	unsigned GetCloseables() const noexcept { return closeables_; }
 	unsigned GetInteractives() const noexcept { return interactives_; }
 
-	template <typename T> T* GetDialog(Urho3D::StringHash type);
+	template <typename T> T* GetDialog() const { return static_cast<T*>(GetDialog(T::GetTypeInfoStatic()->GetType())); }
+	template <typename T> T* CreateDialog() { return static_cast<T*>(CreateDialog(T::GetTypeInfoStatic()->GetType())); }
+	template <typename T> void RemoveDialog() { RemoveDialog(T::GetTypeInfoStatic()->GetType()); }
 
 protected:
 	bool ReleaseSelf();
@@ -70,11 +73,5 @@ private:
 	unsigned char closeables_;
 	unsigned char interactives_;
 };
-
-template <typename T> inline T* ShellState::GetDialog(Urho3D::StringHash type)
-{
-	const auto it = dialogs_.Find(type);
-	return it != dialogs_.End() ? it->second_.Get()->Cast<T>() : nullptr;
-}
 
 #endif // SHELLSTATE_H
