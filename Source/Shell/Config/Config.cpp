@@ -35,8 +35,8 @@ using namespace Urho3D;
 class SimpleReader : public Config::Reader
 {
 public:
-	explicit SimpleReader(Config::SimpleReaderFunc reader)
-		: reader_(reader)
+	explicit SimpleReader(Config::SimpleReaderFunc&& reader)
+		: reader_(std::move(reader))
 	{
 	}
 	Urho3D::Variant Read() override { return reader_(); }
@@ -48,8 +48,8 @@ private:
 class SimpleWriter : public Config::Writer
 {
 public:
-	explicit SimpleWriter(Config::SimpleWriterFunc writer)
-		: writer_(writer)
+	explicit SimpleWriter(Config::SimpleWriterFunc&& writer)
+		: writer_(std::move(writer))
 	{
 	}
 	void Write(const Urho3D::Variant& value) override { writer_(value); }
@@ -332,7 +332,7 @@ void Config::RegisterReader(Urho3D::StringHash parameter, SimpleReaderFunc reade
 {
 	auto it = parameters_.Find(parameter);
 	if (it != parameters_.End())
-		it->second_.reader_ = new SimpleReader(reader);
+		it->second_.reader_ = new SimpleReader(std::move(reader));
 	else
 		URHO3D_LOGWARNING("Failed to assign reader to non-existent config parameter.");
 }
@@ -341,7 +341,7 @@ void Config::RegisterWriter(Urho3D::StringHash parameter, SimpleWriterFunc write
 {
 	auto it = parameters_.Find(parameter);
 	if (it != parameters_.End())
-		it->second_.writer_ = new SimpleWriter(writer);
+		it->second_.writer_ = new SimpleWriter(std::move(writer));
 	else
 		URHO3D_LOGWARNING("Failed to assign writer to non-existent config parameter.");
 }
