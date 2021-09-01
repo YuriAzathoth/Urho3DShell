@@ -32,47 +32,6 @@
 
 using namespace Urho3D;
 
-class SimpleReader : public Config::Reader
-{
-public:
-	explicit SimpleReader(Config::SimpleReaderFunc&& reader)
-		: reader_(std::move(reader))
-	{
-	}
-	Urho3D::Variant Read() override { return reader_(); }
-
-private:
-	const Config::SimpleReaderFunc reader_;
-};
-
-class SimpleWriter : public Config::Writer
-{
-public:
-	explicit SimpleWriter(Config::SimpleWriterFunc&& writer)
-		: writer_(std::move(writer))
-	{
-	}
-	void Write(const Urho3D::Variant& value) override { writer_(value); }
-
-private:
-	const Config::SimpleWriterFunc writer_;
-};
-
-class ComplexWriter : public Config::Writer
-{
-public:
-	ComplexWriter(Urho3D::SharedPtr<Config::ComplexStorage> storage, Urho3D::StringHash name)
-		: storage_(storage)
-		, name_(name)
-	{
-	}
-	void Write(const Urho3D::Variant& value) override { storage_->parameters_[name_] = value; }
-
-private:
-	Urho3D::SharedPtr<Config::ComplexStorage> storage_;
-	const Urho3D::StringHash name_;
-};
-
 void Config::Initialize(Urho3D::VariantMap& engineParameters,
 						Urho3D::VariantMap& shellParameters,
 						const Urho3D::XMLElement& source)
@@ -134,7 +93,7 @@ bool Config::Save(Urho3D::Serializer& dest) const
 	for (const auto& it : parameters_)
 	{
 		dest.WriteStringHash(it.first_);
-		dest.WriteVariant(it.second_.reader_->Read());
+		dest.WriteVariant(it.second_->Read());
 	}
 	return true;
 }
@@ -166,7 +125,7 @@ bool Config::SaveXML(Urho3D::XMLElement& dest) const
 	{
 		parameter = dest.CreateChild("parameter");
 		parameter.SetAttribute("name", names_.Find(p.first_)->second_);
-		parameter.SetVariant(p.second_.reader_->Read());
+		parameter.SetVariant(p.second_->Read());
 	}
 	return true;
 }
@@ -199,7 +158,7 @@ bool Config::SaveJSON(Urho3D::JSONValue& dest) const
 	for (const auto& p : parameters_)
 	{
 		parameter.Set("name", names_.Find(p.first_)->second_);
-		parameter.SetVariant(p.second_.reader_->Read());
+		parameter.SetVariant(p.second_->Read());
 		array.Push(parameter);
 	}
 	dest.Set("config", array);
@@ -217,7 +176,7 @@ void Config::Apply(Urho3D::StringHash name, const Urho3D::Variant& value)
 {
 	auto it = parameters_.Find(name);
 	if (it != parameters_.End())
-		it->second_.writer_->Write(value);
+		it->second_->Write(value);
 }
 
 void Config::ApplyComplex()
@@ -282,32 +241,85 @@ Urho3D::StringVector Config::GetSettings(Urho3D::StringHash settingsTab) const
 	}
 }
 
-bool Config::RegisterParameter(const Urho3D::String& parameterName,
-							   Urho3D::VariantType type,
-							   Urho3D::StringHash settingsTab,
-							   bool isEngine,
-							   bool localized)
+bool Config::RegisterParameter(DynamicParameter* parameter, const Urho3D::String& name, Urho3D::StringHash settingsTab)
 {
-	auto it = settings_.Find(settingsTab);
-	if (!parameters_.Contains(parameterName) && it != settings_.End())
+	auto itSettingsTab = settings_.Find(settingsTab);
+	if (itSettingsTab == settings_.End())
 	{
-		Parameter& parameter = parameters_[parameterName];
-		parameter.settingsTab_ = settingsTab;
-		parameter.type_ = type;
-		if (isEngine)
-			parameter.flags_ |= ParameterFlags::ENGINE;
-		if (localized)
-			parameter.flags_ |= ParameterFlags::LOCALIZED;
-		it->second_.Push(parameterName);
-		names_[parameterName] = parameterName;
-		return true;
-	}
-	else
-	{
-		URHO3D_LOGWARNINGF("Failed to register config parameter %s: parameter is already registered.",
-						   parameterName.CString());
+		URHO3D_LOGERRORF("Failed to register config parameter %s in unknown settings tab.", name.CString());
 		return false;
 	}
+	if (parameters_.Contains(name))
+	{
+		URHO3D_LOGERRORF("Failed to register already registered config parameter %s.", name.CString());
+		return false;
+	}
+	parameters_[name] = parameter;
+	names_[name] = name;
+	itSettingsTab->second_.Push(name);
+	return true;
+}
+
+bool Config::RegisterSimpleParameter(const Urho3D::String& name,
+									 Urho3D::VariantType type,
+									 Urho3D::StringHash settingsTab,
+									 bool isEngine,
+									 SimpleReaderFunc&& reader,
+									 SimpleWriterFunc&& writer)
+{
+	return RegisterParameter(
+		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine, false),
+		name,
+		settingsTab);
+}
+
+bool Config::RegisterSimpleEnumParameter(const Urho3D::String& name,
+										 Urho3D::VariantType type,
+										 Urho3D::StringHash settingsTab,
+										 bool isEngine,
+										 bool isLocalized,
+										 SimpleReaderFunc&& reader,
+										 SimpleWriterFunc&& writer,
+										 EnumConstructorFunc&& enumer)
+{
+	const bool success = RegisterParameter(
+		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine, isLocalized),
+		name,
+		settingsTab);
+	if (success)
+		RegisterEnum(name, std::move(enumer));
+	return success;
+}
+
+bool Config::RegisterComplexParameter(const Urho3D::String& name,
+									  Urho3D::VariantType type,
+									  Urho3D::StringHash settingsTab,
+									  bool isEngine,
+									  Urho3D::WeakPtr<ComplexParameterStorage> storage,
+									  SimpleReaderFunc&& reader)
+{
+	return RegisterParameter(
+		new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine, false),
+		name,
+		settingsTab);
+}
+
+bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
+										  Urho3D::VariantType type,
+										  Urho3D::StringHash settingsTab,
+										  bool isEngine,
+										  bool isLocalized,
+										  Urho3D::WeakPtr<ComplexParameterStorage> storage,
+										  SimpleReaderFunc&& reader,
+										  EnumConstructorFunc&& enumer)
+{
+	const bool success = RegisterParameter(
+		new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine, isLocalized),
+		name,
+		settingsTab);
+	if (success)
+		RegisterEnum(name, std::move(enumer));
+	return success;
 }
 
 void Config::RemoveParameter(Urho3D::StringHash parameter)
@@ -315,12 +327,12 @@ void Config::RemoveParameter(Urho3D::StringHash parameter)
 	auto itParameter = parameters_.Find(parameter);
 	if (itParameter != parameters_.End())
 	{
-		auto itSetting = settings_.Find(itParameter->second_.settingsTab_);
+		auto itSetting = settings_.Find(itParameter->second_->GetSettingsTab());
 		if (itSetting == settings_.End())
 			names_.Erase(parameter);
 		else
 			settings_.Erase(itSetting);
-		if (itParameter->second_.flags_ & ParameterFlags::ENUM)
+		if (itParameter->second_->IsEnum())
 			enumConstructors_.Erase(itParameter->first_);
 		parameters_.Erase(itParameter);
 	}
@@ -328,71 +340,61 @@ void Config::RemoveParameter(Urho3D::StringHash parameter)
 		URHO3D_LOGWARNING("Failed to remove non-existent config parameter.");
 }
 
-void Config::RegisterReader(Urho3D::StringHash parameter, SimpleReaderFunc reader)
-{
-	auto it = parameters_.Find(parameter);
-	if (it != parameters_.End())
-		it->second_.reader_ = new SimpleReader(std::move(reader));
-	else
-		URHO3D_LOGWARNING("Failed to assign reader to non-existent config parameter.");
-}
-
-void Config::RegisterWriter(Urho3D::StringHash parameter, SimpleWriterFunc writer)
-{
-	auto it = parameters_.Find(parameter);
-	if (it != parameters_.End())
-		it->second_.writer_ = new SimpleWriter(std::move(writer));
-	else
-		URHO3D_LOGWARNING("Failed to assign writer to non-existent config parameter.");
-}
-
 void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor)
 {
 	auto it = parameters_.Find(parameter);
 	if (it != parameters_.End())
 	{
-		it->second_.flags_ |= ParameterFlags::ENUM;
+		it->second_->SetEnum();
 		enumConstructors_[parameter] = enumConstructor;
 	}
 	else
 		URHO3D_LOGWARNING("Failed to assign enum constructor to non-existent config parameter.");
 }
 
-bool Config::RegisterComplexStorage(Urho3D::StringHash cathegory, ComplexWriterFunc writer)
+Urho3D::WeakPtr<ComplexParameterStorage> Config::RegisterComplexStorage(Urho3D::StringHash cathegory,
+																		ComplexWriterFunc writer)
 {
 	if (!storages_.Contains(cathegory))
 	{
-		SharedPtr<ComplexStorage>& storage = storages_[cathegory];
-		storage = MakeShared<ComplexStorage>();
+		SharedPtr<ComplexParameterStorage>& storage = storages_[cathegory];
+		storage = MakeShared<ComplexParameterStorage>();
 		storage->writer_ = writer;
-		return true;
+		return storage;
 	}
 	else
 	{
 		URHO3D_LOGWARNING("Failed to register already existent complex config storage.");
-		return false;
+		return nullptr;
 	}
 }
 
-bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory)
+Urho3D::WeakPtr<ComplexParameterStorage> Config::GetComplexStorage(Urho3D::StringHash cathegory)
 {
-	auto itParameter = parameters_.Find(parameter);
-	auto itStorage = storages_.Find(cathegory);
-	if (itParameter != parameters_.End() && itStorage != storages_.End())
-	{
-		itParameter->second_.writer_ = new ComplexWriter(itStorage->second_, parameter);
-		itStorage->second_->isEngine_ = itParameter->second_.flags_ & ParameterFlags::ENGINE;
-		return true;
-	}
-	else
-	{
-		if (itParameter == parameters_.End())
-			URHO3D_LOGWARNING("Failed to assign writer to non-existent config parameter.");
-		if (itStorage == storages_.End())
-			URHO3D_LOGWARNING("Failed to assign writer to non-existent complex config storage.");
-		return false;
-	}
+	const auto it = storages_.Find(cathegory);
+	return it != storages_.End() ? it->second_ : nullptr;
 }
+
+// bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory)
+//{
+//	auto itParameter = parameters_.Find(parameter);
+//	auto itStorage = storages_.Find(cathegory);
+//	if (itParameter != parameters_.End() && itStorage != storages_.End())
+//	{
+//		itStorage->second_->isEngine_ = itParameter->second_->IsEngine();
+//		return true;
+//	}
+//	else
+//	{
+//		if (itParameter == parameters_.End())
+//			URHO3D_LOGWARNING("Failed to assign writer to non-existent config parameter.");
+//		if (itStorage == storages_.End())
+//			URHO3D_LOGWARNING("Failed to assign writer to non-existent complex config storage.");
+//		return false;
+//	}
+//}
+
+void Config::RemoveComplexStorage(Urho3D::StringHash cathegory) { storages_.Erase(cathegory); }
 
 const Urho3D::String& Config::GetName(Urho3D::StringHash parameter) const
 {
@@ -403,38 +405,38 @@ const Urho3D::String& Config::GetName(Urho3D::StringHash parameter) const
 Urho3D::VariantType Config::GetType(Urho3D::StringHash parameter) const
 {
 	const auto it = parameters_.Find(parameter);
-	return it != parameters_.End() ? it->second_.type_ : Urho3D::VariantType::VAR_NONE;
+	return it != parameters_.End() ? it->second_->GetType() : Urho3D::VariantType::VAR_NONE;
 }
 
 bool Config::IsEngine(Urho3D::StringHash parameter) const
 {
 	const auto it = parameters_.Find(parameter);
-	return it != parameters_.End() ? it->second_.flags_ & ParameterFlags::ENGINE : false;
+	return it != parameters_.End() ? it->second_->IsEngine() : false;
 }
 
 bool Config::IsEnum(Urho3D::StringHash parameter) const
 {
 	const auto it = parameters_.Find(parameter);
-	return it != parameters_.End() ? it->second_.flags_ & ParameterFlags::ENUM : false;
+	return it != parameters_.End() ? it->second_->IsEnum() : false;
 }
 
 bool Config::IsLocalized(Urho3D::StringHash parameter) const
 {
 	const auto it = parameters_.Find(parameter);
-	return it != parameters_.End() ? it->second_.flags_ & ParameterFlags::LOCALIZED : false;
+	return it != parameters_.End() ? it->second_->IsLocalized() : false;
 }
 
 Urho3D::Variant Config::ReadValue(Urho3D::StringHash parameter) const
 {
 	const auto it = parameters_.Find(parameter);
-	return it != parameters_.End() ? it->second_.reader_->Read() : Urho3D::Variant::EMPTY;
+	return it != parameters_.End() ? it->second_->Read() : Urho3D::Variant::EMPTY;
 }
 
 void Config::WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& value)
 {
 	const auto it = parameters_.Find(parameter);
 	if (it != parameters_.End())
-		it->second_.writer_->Write(value);
+		it->second_->Write(value);
 }
 
 Config::EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
@@ -445,29 +447,29 @@ Config::EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
 
 Urho3D::String Config::GetDebugString() const
 {
-	// ATTENTION! Slow code! Use it ONLY for debugging purposes!
 	String ret;
 	StringVector tabs = GetSettingsTabs();
 	StringVector parameters;
 	Variant value;
 	EnumVector enumVector;
+	SharedPtr<DynamicParameter> parameter;
 	for (const String& tabName : tabs)
 	{
 		ret.Append(tabName).Append('\n');
 		parameters = GetSettings(tabName);
 		for (const String& parameterName : parameters)
 		{
-			const Parameter& parameter = *parameters_[parameterName];
-			value = parameter.reader_->Read();
+			parameter = *parameters_[parameterName];
+			value = parameter->Read();
 			ret.Append("\t").Append(parameterName).Append('\n');
 			ret.Append("\t\tType  = ").Append(value.GetTypeName()).Append('\n');
 			ret.Append("\t\tValue = ").Append(value.ToString()).Append('\n');
 			ret.Append("\t\tStore = ");
-			if (parameter.flags_ & ParameterFlags::ENGINE)
+			if (parameter->IsEngine())
 				ret.Append("ENGINE\n");
 			else
 				ret.Append("CUSTOM\n");
-			if (parameter.flags_ & ParameterFlags::ENUM)
+			if (parameter->IsEnum())
 			{
 				ret.Append("\t\tEnum Variants:\n");
 				enumVector = (*enumConstructors_[parameterName])();

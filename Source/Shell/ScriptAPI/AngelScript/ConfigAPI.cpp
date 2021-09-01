@@ -119,10 +119,6 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_CALL_CDECL_OBJFIRST);
 
 	engine->RegisterObjectMethod("Config",
-								 "bool RegisterParameter(const String&in, VariantType, StringHash, bool, bool)",
-								 AS_METHOD(Config, RegisterParameter),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
 								 "void RemoveParameter(StringHash)",
 								 AS_METHOD(Config, RemoveParameter),
 								 AS_CALL_THISCALL);

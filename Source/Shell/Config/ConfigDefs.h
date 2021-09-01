@@ -11,7 +11,6 @@ static const Urho3D::String ECP_WINDOW_MODE = "WindowMode";
 static const Urho3D::String ECP_VIDEO_MODE = "VideoMode";
 
 static const Urho3D::String CP_LANGUAGE = "Language";
-static const Urho3D::String CP_LOG_LEVEL = "LogLevel";
 static const Urho3D::String CP_SHADOW_QUALITY = "ShadowQuality";
 static const Urho3D::String CP_SHADOW_RESOLUTION = "ShadowResolution";
 static const Urho3D::String CP_SOUND_MASTER = "SoundMaster";
