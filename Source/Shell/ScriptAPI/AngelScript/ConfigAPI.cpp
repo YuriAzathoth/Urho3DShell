@@ -32,8 +32,8 @@ static Config* GetConfig() { return GetScriptContext()->GetSubsystem<Config>(); 
 
 template <typename T> static CScriptArray* ConstructEnum(T* _ptr, StringHash parameter)
 {
-	const Config::EnumVector result = _ptr->ConstructEnum(parameter);
-	return VectorToArray<Config::EnumVariant>(result, "Array<EnumVariant>");
+	const EnumVector result = _ptr->ConstructEnum(parameter);
+	return VectorToArray<EnumVariant>(result, "Array<EnumVariant>");
 }
 
 template <typename T> static CScriptArray* GetConfigTabs(T* _ptr)
@@ -161,8 +161,6 @@ void RegisterConfigAPI(asIScriptEngine* engine)
 								 AS_METHOD(Config, GetDebugString),
 								 AS_CALL_THISCALL);
 }
-
-using EnumVariant = Config::EnumVariant;
 
 static void NewEnumVariantV(EnumVariant* ptr) { new (ptr) EnumVariant; }
 static void NewEnumVariantSVar(EnumVariant* ptr, const String& caption, const Variant& value)

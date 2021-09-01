@@ -23,7 +23,7 @@
 #ifndef CONFIGSETTINGSLIST_H
 #define CONFIGSETTINGSLIST_H
 
-#include "Config/Config.h"
+#include "Config/EnumVariant.h"
 #include "SettingsList.h"
 
 class ConfigSettingsList : public SettingsList
@@ -41,7 +41,7 @@ protected:
 	void
 	CreateParameterString(const Urho3D::String& parameterName, const Urho3D::String& value, Urho3D::UIElement* parent);
 	void CreateParameterEnum(const Urho3D::String& parameterName,
-							 const Config::EnumVector& items,
+							 const EnumVector& items,
 							 const Urho3D::Variant& value,
 							 Urho3D::UIElement* parent,
 							 bool localized);

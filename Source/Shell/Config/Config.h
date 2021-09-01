@@ -23,14 +23,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <Urho3D/Container/FlagSet.h>
 #include <Urho3D/Core/Object.h>
-#include <functional>
+#include "ComplexParameterStorage.h"
+#include "ConfigTypes.h"
+#include "DynamicParameter.h"
+#include "EnumVariant.h"
 #include "Urho3DShellAPI.h"
-
-using SimpleReaderFunc = std::function<Urho3D::Variant()>;
-using SimpleWriterFunc = std::function<void(const Urho3D::Variant&)>;
-using ComplexWriterFunc = std::function<void(const Urho3D::VariantMap&)>;
 
 namespace Urho3D
 {
@@ -41,163 +39,11 @@ class UIElement;
 class XMLElement;
 } // namespace Urho3D
 
-class DynamicParameter : public Urho3D::RefCounted
-{
-public:
-	DynamicParameter(Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine, bool isLocalized)
-		: settingsTab_(settingsTab)
-		, type_(type)
-	{
-		if (isEngine)
-			flags_ |= Flags::ENGINE;
-		if (isLocalized)
-			flags_ |= Flags::LOCALIZED;
-	}
-	virtual ~DynamicParameter() {}
-
-	virtual Urho3D::Variant Read() = 0;
-	virtual void Write(const Urho3D::Variant& value) = 0;
-
-	void SetEnum() noexcept { flags_ |= Flags::ENUM; }
-
-	Urho3D::StringHash GetSettingsTab() const noexcept { return settingsTab_; }
-	Urho3D::VariantType GetType() const noexcept { return type_; }
-	bool IsEngine() const noexcept { return flags_ & Flags::ENGINE; }
-	bool IsEnum() const noexcept { return flags_ & Flags::ENUM; }
-	bool IsLocalized() const noexcept { return flags_ & Flags::LOCALIZED; }
-
-protected:
-	enum class Flags : unsigned char
-	{
-		ENGINE = 0x1,
-		ENUM = 0x2,
-		LOCALIZED = 0x4
-	};
-
-private:
-	Urho3D::StringHash settingsTab_;
-	Urho3D::VariantType type_;
-	Urho3D::FlagSet<Flags> flags_;
-};
-
-class BinaryParameter : public DynamicParameter
-{
-public:
-	BinaryParameter(SimpleReaderFunc&& reader,
-					Urho3D::VariantType type,
-					Urho3D::StringHash settingsTab,
-					bool isEngine,
-					bool isLocalized)
-		: DynamicParameter(type, settingsTab, isEngine, isLocalized)
-		, reader_(std::move(reader))
-	{
-	}
-	Urho3D::Variant Read() override { return reader_(); }
-
-private:
-	const SimpleReaderFunc reader_;
-};
-
-class SimpleBinaryParameter : public BinaryParameter
-{
-public:
-	SimpleBinaryParameter(SimpleReaderFunc&& reader,
-						  SimpleWriterFunc&& writer,
-						  Urho3D::VariantType type,
-						  Urho3D::StringHash settingsTab,
-						  bool isEngine,
-						  bool isLocalized)
-		: BinaryParameter(std::move(reader), type, settingsTab, isEngine, isLocalized)
-		, writer_(std::move(writer))
-	{
-	}
-	void Write(const Urho3D::Variant& value) override { writer_(value); }
-
-private:
-	const SimpleWriterFunc writer_;
-};
-
-struct ComplexParameterStorage : public Urho3D::RefCounted
-{
-	ComplexWriterFunc writer_;
-	Urho3D::VariantMap parameters_;
-	bool isEngine_;
-};
-
-class ComplexBinaryParameter : public BinaryParameter
-{
-public:
-	ComplexBinaryParameter(Urho3D::WeakPtr<ComplexParameterStorage> storage,
-						   SimpleReaderFunc&& reader,
-						   Urho3D::StringHash name,
-						   Urho3D::VariantType type,
-						   Urho3D::StringHash settingsTab,
-						   bool isEngine,
-						   bool isLocalized)
-		: BinaryParameter(std::move(reader), type, settingsTab, isEngine, isLocalized)
-		, storage_(storage)
-		, name_(name)
-	{
-	}
-	void Write(const Urho3D::Variant& value) override { storage_->parameters_[name_] = value; }
-
-private:
-	Urho3D::WeakPtr<ComplexParameterStorage> storage_;
-	const Urho3D::StringHash name_;
-};
-
 class URHO3DSHELLAPI_EXPORT Config : public Urho3D::Object
 {
 	URHO3D_OBJECT(Config, Urho3D::Object)
 
 public:
-	struct EnumVariant
-	{
-		Urho3D::String caption_;
-		Urho3D::Variant value_;
-		EnumVariant() = default;
-		EnumVariant(const char* caption, Urho3D::Variant value)
-			: caption_(caption)
-			, value_(value)
-		{
-		}
-		EnumVariant(const Urho3D::String& caption, Urho3D::Variant value)
-			: caption_(caption)
-			, value_(value)
-		{
-		}
-		EnumVariant(Urho3D::String&& caption, Urho3D::Variant value)
-			: caption_(std::move(caption))
-			, value_(value)
-		{
-		}
-		EnumVariant(const EnumVariant& src)
-			: caption_(src.caption_)
-			, value_(src.value_)
-		{
-		}
-		EnumVariant(EnumVariant&& src) noexcept
-			: caption_(std::move(src.caption_))
-			, value_(src.value_)
-		{
-		}
-		EnumVariant& operator=(const EnumVariant& src)
-		{
-			caption_ = src.caption_;
-			value_ = src.value_;
-			return *this;
-		}
-		EnumVariant& operator=(EnumVariant&& src)
-		{
-			caption_.Swap(src.caption_);
-			value_ = src.value_;
-			return *this;
-		}
-	};
-
-	using EnumVector = Urho3D::Vector<EnumVariant>;
-	using EnumConstructorFunc = std::function<EnumVector()>;
-
 	using Urho3D::Object::Object;
 
 	void Initialize(Urho3D::VariantMap& engineParameters,
@@ -261,7 +107,6 @@ public:
 	Urho3D::WeakPtr<ComplexParameterStorage> RegisterComplexStorage(Urho3D::StringHash cathegory,
 																	ComplexWriterFunc writer);
 	Urho3D::WeakPtr<ComplexParameterStorage> GetComplexStorage(Urho3D::StringHash cathegory);
-	//	bool RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory);
 	void RemoveComplexStorage(Urho3D::StringHash cathegory);
 
 	const Urho3D::String& GetName(Urho3D::StringHash parameter) const;

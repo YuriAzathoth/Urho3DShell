@@ -52,7 +52,7 @@ ConfigSettingsList::ConfigSettingsList(Urho3D::StringHash settingsTab,
 		if (config->IsEnum(parameter))
 		{
 			const bool localized = config->IsLocalized(parameter);
-			const Config::EnumVector items = config->ConstructEnum(parameter);
+			const EnumVector items = config->ConstructEnum(parameter);
 			CreateParameterEnum(parameter, items, value, item, localized);
 		}
 		else
@@ -116,7 +116,7 @@ void ConfigSettingsList::CreateParameterString(const Urho3D::String& parameterNa
 }
 
 void ConfigSettingsList::CreateParameterEnum(const Urho3D::String& parameterName,
-											 const Config::EnumVector& items,
+											 const EnumVector& items,
 											 const Urho3D::Variant& value,
 											 Urho3D::UIElement* parent,
 											 bool localized)
@@ -131,7 +131,7 @@ void ConfigSettingsList::CreateParameterEnum(const Urho3D::String& parameterName
 	SharedPtr<UIElement> item;
 	Text* text;
 	unsigned itemId = 0;
-	for (const Config::EnumVariant& p : items)
+	for (const EnumVariant& p : items)
 	{
 		item = MakeShared<UIElement>(context_);
 		dropDownList->AddItem(item);

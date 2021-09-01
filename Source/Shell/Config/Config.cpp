@@ -27,6 +27,7 @@
 #include <Urho3D/IO/Serializer.h>
 #include <Urho3D/Resource/JSONValue.h>
 #include <Urho3D/Resource/XMLElement.h>
+#include "BinaryParameter.h"
 #include "Config.h"
 #include "ConfigDefs.h"
 
@@ -439,7 +440,7 @@ void Config::WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& val
 		it->second_->Write(value);
 }
 
-Config::EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
+EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
 {
 	const auto it = enumConstructors_.Find(parameter);
 	return it != enumConstructors_.End() ? it->second_() : EnumVector{};
