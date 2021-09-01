@@ -48,11 +48,13 @@ public:
 
 	struct Reader : public Urho3D::RefCounted
 	{
+		virtual ~Reader() {}
 		virtual Urho3D::Variant Read() = 0;
 	};
 
 	struct Writer : public Urho3D::RefCounted
 	{
+		virtual ~Writer() {}
 		virtual void Write(const Urho3D::Variant& value) = 0;
 	};
 
