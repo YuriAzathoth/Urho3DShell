@@ -70,6 +70,7 @@ public:
 	Urho3D::StringVector GetSettingsTabs() const;
 	Urho3D::StringVector GetSettings(Urho3D::StringHash settingsTab) const;
 
+	DynamicParameter* GetParameter(Urho3D::StringHash parameter) const;
 	bool RegisterParameter(DynamicParameter* parameter, const Urho3D::String& name, Urho3D::StringHash settingsTab);
 
 	bool RegisterSimpleParameter(const Urho3D::String& name,
@@ -105,14 +106,14 @@ public:
 									  EnumConstructorFunc&& enumer);
 
 	void RemoveParameter(Urho3D::StringHash parameter);
-	DynamicParameter* GetParameter(Urho3D::StringHash parameter) const;
 
+	EnumConstructor* GetEnum(Urho3D::StringHash parameter) const;
 	void RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& enumConstructor, bool localized);
 	void RemoveEnum(Urho3D::StringHash parameter);
 
+	Urho3D::WeakPtr<ComplexParameter> GetComplexStorage(Urho3D::StringHash cathegory) const;
 	Urho3D::WeakPtr<ComplexParameter>
 	RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, ComplexWriterFunc&& writer);
-	Urho3D::WeakPtr<ComplexParameter> GetComplexStorage(Urho3D::StringHash cathegory);
 	void RemoveComplexStorage(Urho3D::StringHash cathegory);
 
 	const Urho3D::String& GetName(Urho3D::StringHash parameter) const;

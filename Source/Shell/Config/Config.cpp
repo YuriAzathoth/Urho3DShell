@@ -238,6 +238,12 @@ Urho3D::StringVector Config::GetSettings(Urho3D::StringHash settingsTab) const
 	}
 }
 
+DynamicParameter* Config::GetParameter(Urho3D::StringHash parameter) const
+{
+	const auto it = parameters_.Find(parameter);
+	return it != parameters_.End() ? it->second_ : nullptr;
+}
+
 bool Config::RegisterParameter(DynamicParameter* parameter, const Urho3D::String& name, Urho3D::StringHash settingsTab)
 {
 	auto itSettingsTab = settings_.Find(settingsTab);
@@ -335,10 +341,10 @@ void Config::RemoveParameter(Urho3D::StringHash parameter)
 		URHO3D_LOGWARNING("Failed to remove non-existent config parameter.");
 }
 
-DynamicParameter* Config::GetParameter(Urho3D::StringHash parameter) const
+EnumConstructor* Config::GetEnum(Urho3D::StringHash parameter) const
 {
-	const auto it = parameters_.Find(parameter);
-	return it != parameters_.End() ? it->second_ : nullptr;
+	const auto it = enumConstructors_.Find(parameter);
+	return it != enumConstructors_.End() ? it->second_ : nullptr;
 }
 
 void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& enumConstructor, bool localized)
@@ -350,6 +356,12 @@ void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& en
 }
 
 void Config::RemoveEnum(Urho3D::StringHash parameter) { enumConstructors_.Erase(parameter); }
+
+Urho3D::WeakPtr<ComplexParameter> Config::GetComplexStorage(Urho3D::StringHash cathegory) const
+{
+	const auto it = storages_.Find(cathegory);
+	return it != storages_.End() ? it->second_ : nullptr;
+}
 
 Urho3D::WeakPtr<ComplexParameter>
 Config::RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, ComplexWriterFunc&& writer)
@@ -365,12 +377,6 @@ Config::RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, Comp
 		URHO3D_LOGWARNING("Failed to register already existent complex config storage.");
 		return nullptr;
 	}
-}
-
-Urho3D::WeakPtr<ComplexParameter> Config::GetComplexStorage(Urho3D::StringHash cathegory)
-{
-	const auto it = storages_.Find(cathegory);
-	return it != storages_.End() ? it->second_ : nullptr;
 }
 
 void Config::RemoveComplexStorage(Urho3D::StringHash cathegory) { storages_.Erase(cathegory); }
