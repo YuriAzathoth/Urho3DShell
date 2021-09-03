@@ -70,10 +70,10 @@ void ShellApplication::Start()
 {
 	InputReceiver::RegisterObject(context_);
 
-	PluginsRegistry* pluginsRegistry = GetSubsystem<PluginsRegistry>();
+	PluginsRegistry* plugins = GetSubsystem<PluginsRegistry>();
 	const auto itScript = shellParameters_.Find(SP_SCRIPT);
 	if (itScript != shellParameters_.End())
-		pluginsRegistry->Load(itScript->second_.GetString());
+		plugins->Load(itScript->second_.GetString());
 
 	GetSubsystem<Config>()->Apply(shellParameters_);
 }
