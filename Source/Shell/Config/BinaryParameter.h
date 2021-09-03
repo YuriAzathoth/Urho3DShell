@@ -23,13 +23,15 @@
 #ifndef BINARYPARAMETER_H
 #define BINARYPARAMETER_H
 
+#include <functional>
 #include "ComplexParameterStorage.h"
-#include "ConfigTypes.h"
 #include "DynamicParameter.h"
 
 class BinaryParameter : public DynamicParameter
 {
 public:
+	using SimpleReaderFunc = std::function<Urho3D::Variant()>;
+
 	BinaryParameter(SimpleReaderFunc&& reader, Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine);
 
 	Urho3D::Variant Read() override;
@@ -41,6 +43,8 @@ private:
 class SimpleBinaryParameter : public BinaryParameter
 {
 public:
+	using SimpleWriterFunc = std::function<void(const Urho3D::Variant&)>;
+
 	SimpleBinaryParameter(SimpleReaderFunc&& reader,
 						  SimpleWriterFunc&& writer,
 						  Urho3D::VariantType type,
@@ -56,6 +60,8 @@ private:
 class ComplexBinaryParameter : public BinaryParameter
 {
 public:
+	using ComplexWriterFunc = std::function<void(const Urho3D::VariantMap&)>;
+
 	ComplexBinaryParameter(Urho3D::WeakPtr<ComplexParameterStorage> storage,
 						   SimpleReaderFunc&& reader,
 						   Urho3D::StringHash name,

@@ -24,11 +24,11 @@
 #define COMPLEXPARAMETERSTORAGE_H
 
 #include <Urho3D/Core/Variant.h>
-#include "ConfigTypes.h"
+#include <functional>
 
 struct ComplexParameterStorage : public Urho3D::RefCounted
 {
-	ComplexWriterFunc writer_;
+	std::function<void(const Urho3D::VariantMap&)> writer_;
 	Urho3D::VariantMap parameters_;
 	bool isEngine_;
 };

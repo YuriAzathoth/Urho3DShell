@@ -24,8 +24,8 @@
 #define CONFIG_H
 
 #include <Urho3D/Core/Object.h>
+#include <functional>
 #include "ComplexParameterStorage.h"
-#include "ConfigTypes.h"
 #include "DynamicParameter.h"
 #include "EnumVariant.h"
 #include "Urho3DShellAPI.h"
@@ -44,6 +44,10 @@ class URHO3DSHELLAPI_EXPORT Config : public Urho3D::Object
 	URHO3D_OBJECT(Config, Urho3D::Object)
 
 public:
+	using SimpleReaderFunc = std::function<Urho3D::Variant()>;
+	using SimpleWriterFunc = std::function<void(const Urho3D::Variant&)>;
+	using ComplexWriterFunc = std::function<void(const Urho3D::VariantMap&)>;
+
 	using Urho3D::Object::Object;
 
 	void Initialize(Urho3D::VariantMap& engineParameters,
