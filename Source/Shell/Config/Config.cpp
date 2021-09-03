@@ -283,10 +283,10 @@ bool Config::RegisterSimpleEnumParameter(const Urho3D::String& name,
 										 SimpleWriterFunc&& writer,
 										 EnumConstructorFunc&& enumer)
 {
-	const bool success = RegisterParameter(
-		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
-		name,
-		settingsTab);
+	const bool success =
+		RegisterParameter(new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
+						  name,
+						  settingsTab);
 	if (success)
 		RegisterEnum(name, std::move(enumer), isLocalized);
 	return success;
@@ -299,10 +299,9 @@ bool Config::RegisterComplexParameter(const Urho3D::String& name,
 									  Urho3D::WeakPtr<ComplexParameterStorage> storage,
 									  SimpleReaderFunc&& reader)
 {
-	return RegisterParameter(
-		new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
-		name,
-		settingsTab);
+	return RegisterParameter(new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
+							 name,
+							 settingsTab);
 }
 
 bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
@@ -314,10 +313,10 @@ bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
 										  SimpleReaderFunc&& reader,
 										  EnumConstructorFunc&& enumer)
 {
-	const bool success = RegisterParameter(
-		new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
-		name,
-		settingsTab);
+	const bool success =
+		RegisterParameter(new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
+						  name,
+						  settingsTab);
 	if (success)
 		RegisterEnum(name, std::move(enumer), isLocalized);
 	return success;
@@ -349,7 +348,7 @@ DynamicParameter* Config::GetParameter(Urho3D::StringHash parameter) const
 void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor, bool localized)
 {
 	if (parameters_.Contains(parameter))
-		enumConstructors_[parameter] = { enumConstructor, localized };
+		enumConstructors_[parameter] = {enumConstructor, localized};
 	else
 		URHO3D_LOGWARNING("Failed to assign enum constructor to non-existent config parameter.");
 }

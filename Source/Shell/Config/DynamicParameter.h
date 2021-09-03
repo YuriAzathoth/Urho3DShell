@@ -23,15 +23,17 @@
 #ifndef DYNAMICPARAMETER_H
 #define DYNAMICPARAMETER_H
 
-#include <Urho3D/Container/FlagSet.h>
-#include <Urho3D/Container/RefCounted.h>
 #include <Urho3D/Core/Variant.h>
-#include <Urho3D/Math/StringHash.h>
 
 class DynamicParameter : public Urho3D::RefCounted
 {
 public:
-	DynamicParameter(Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine);
+	DynamicParameter(Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine)
+		: settingsTab_(settingsTab)
+		, type_(type)
+		, isEngine_(isEngine)
+	{
+	}
 	virtual ~DynamicParameter() {}
 
 	virtual Urho3D::Variant Read() = 0;
