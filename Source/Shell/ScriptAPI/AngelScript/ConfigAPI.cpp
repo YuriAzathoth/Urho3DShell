@@ -22,6 +22,7 @@
 
 #include <Urho3D/AngelScript/Generated_Members.h>
 #include "Config/Config.h"
+#include "Config/ScriptParameter.h"
 
 using namespace Urho3D;
 
@@ -45,6 +46,8 @@ static void RegisterClasses(asIScriptEngine* engine)
 	engine->RegisterGlobalFunction("Config@+ get_config()", AS_FUNCTION(GetConfig), AS_CALL_CDECL);
 	RegisterSubclass<Object, Config>(engine, "Object", "Config");
 	RegisterSubclass<RefCounted, Config>(engine, "RefCounted", "Config");
+
+	RegisterSubclass<RefCounted, DynamicParameter>(engine, "RefCounted", "DynamicParameter");
 
 	engine->RegisterObjectBehaviour("EnumVariant",
 									asBEHAVE_CONSTRUCT,
@@ -79,6 +82,20 @@ template <typename T> static CScriptArray* GetConfigSettings(T* _ptr, StringHash
 {
 	const StringVector& result = _ptr->GetSettings(tab);
 	return VectorToArray<String>(result, "Array<String>");
+}
+
+static void RegisterParameter(Config* config,
+							  const String& name,
+							  VariantType type,
+							  StringHash settingsTab,
+							  bool isEngine,
+							  const String& readerFunc,
+							  const String& writerFunc)
+{
+	SharedPtr<ScriptParameter> parameter =
+		MakeShared<ScriptParameter>(type, settingsTab, isEngine, readerFunc, writerFunc);
+	if (parameter->Success())
+		config->RegisterParameter(parameter, name, settingsTab);
 }
 
 #if defined(__GNUC__) || defined(__GNUG__)
@@ -141,6 +158,11 @@ template <typename T> void RegisterMembers_Config(asIScriptEngine* engine, const
 								 AS_FUNCTION_OBJFIRST(GetConfigSettings<T>),
 								 AS_CALL_CDECL_OBJFIRST);
 
+	engine->RegisterObjectMethod(
+		className,
+		"void RegisterParameter(const String&in, VariantType, StringHash, bool, const String&in, const String&in)",
+		AS_FUNCTION_OBJFIRST(RegisterParameter),
+		AS_CALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod(className,
 								 "void RemoveParameter(StringHash)",
 								 AS_METHOD(T, RemoveParameter),
@@ -149,8 +171,6 @@ template <typename T> void RegisterMembers_Config(asIScriptEngine* engine, const
 								 "DynamicParameter& GetParameter(StringHash) const",
 								 AS_METHOD(T, GetParameter),
 								 AS_CALL_THISCALL);
-
-	// TODO: Script parameter Readers/Writers
 
 	engine->RegisterObjectMethod(className,
 								 "const String& GetName(StringHash) const",
