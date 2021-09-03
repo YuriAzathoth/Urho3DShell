@@ -223,12 +223,6 @@ template <typename T> void RegisterMembers_ComplexParameter(asIScriptEngine* eng
 	engine->RegisterObjectMethod(className, "bool get_engine() const", AS_METHOD(T, IsEngine), AS_CALL_THISCALL);
 }
 
-template <typename T> void RegisterMembers_EnumConstructor(asIScriptEngine* engine, const char* className)
-{
-	engine->RegisterObjectMethod(className, "Array<EnumVariant>@ Create()", AS_FUNCTION_OBJFIRST(EnumVector_Create<T>), AS_CALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod(className, "bool get_localized() const", AS_METHOD(T, IsLocalized), AS_CALL_THISCALL);
-}
-
 template <typename T> void RegisterMembers_DynamicParameter(asIScriptEngine* engine, const char* className)
 {
 	RegisterMembers_RefCounted<T>(engine, className);
@@ -240,6 +234,12 @@ template <typename T> void RegisterMembers_DynamicParameter(asIScriptEngine* eng
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "VariantType get_type() const", AS_METHOD(T, GetType), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "bool get_engine() const", AS_METHOD(T, IsEngine), AS_CALL_THISCALL);
+}
+
+template <typename T> void RegisterMembers_EnumConstructor(asIScriptEngine* engine, const char* className)
+{
+	engine->RegisterObjectMethod(className, "Array<EnumVariant>@ Create()", AS_FUNCTION_OBJFIRST(EnumVector_Create<T>), AS_CALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod(className, "bool get_localized() const", AS_METHOD(T, IsLocalized), AS_CALL_THISCALL);
 }
 
 template <typename T> void RegisterMembers_EnumVariant(asIScriptEngine* engine, const char* className)
