@@ -31,8 +31,8 @@ class BinaryParameter : public DynamicParameter
 public:
 	using SimpleReaderFunc = std::function<Urho3D::Variant()>;
 
-	BinaryParameter(SimpleReaderFunc&& reader, Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine)
-		: DynamicParameter(type, settingsTab, isEngine)
+	BinaryParameter(SimpleReaderFunc&& reader, Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool engine)
+		: DynamicParameter(type, settingsTab, engine)
 		, reader_(std::move(reader))
 	{
 	}
@@ -52,8 +52,8 @@ public:
 						  SimpleWriterFunc&& writer,
 						  Urho3D::VariantType type,
 						  Urho3D::StringHash settingsTab,
-						  bool isEngine)
-		: BinaryParameter(std::move(reader), type, settingsTab, isEngine)
+						  bool engine)
+		: BinaryParameter(std::move(reader), type, settingsTab, engine)
 		, writer_(std::move(writer))
 	{
 	}
@@ -74,8 +74,8 @@ public:
 						   Urho3D::StringHash name,
 						   Urho3D::VariantType type,
 						   Urho3D::StringHash settingsTab,
-						   bool isEngine)
-		: BinaryParameter(std::move(reader), type, settingsTab, isEngine)
+						   bool engine)
+		: BinaryParameter(std::move(reader), type, settingsTab, engine)
 		, storage_(storage)
 		, name_(name)
 	{
@@ -93,8 +93,8 @@ class BinaryComplexParameter : public ComplexParameter
 public:
 	using WriterFunc = std::function<void(const Urho3D::VariantMap&)>;
 
-	BinaryComplexParameter(bool isEngine, WriterFunc&& writer)
-		: ComplexParameter(isEngine)
+	BinaryComplexParameter(WriterFunc&& writer, bool engine)
+		: ComplexParameter(engine)
 		, writer_(std::move(writer))
 	{
 	}
@@ -102,7 +102,7 @@ public:
 private:
 	void ApplyImpl() override { writer_(parameters_); }
 
-	WriterFunc writer_;
+	const WriterFunc writer_;
 };
 
 #endif // BINARYPARAMETER_H

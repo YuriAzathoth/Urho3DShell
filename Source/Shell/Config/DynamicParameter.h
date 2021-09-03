@@ -28,10 +28,10 @@
 class DynamicParameter : public Urho3D::RefCounted
 {
 public:
-	DynamicParameter(Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine)
+	DynamicParameter(Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool engine)
 		: settingsTab_(settingsTab)
 		, type_(type)
-		, isEngine_(isEngine)
+		, engine_(engine)
 	{
 	}
 	virtual ~DynamicParameter() {}
@@ -41,20 +41,20 @@ public:
 
 	Urho3D::StringHash GetSettingsTab() const noexcept { return settingsTab_; }
 	Urho3D::VariantType GetType() const noexcept { return type_; }
-	bool IsEngine() const noexcept { return isEngine_; }
+	bool IsEngine() const noexcept { return engine_; }
 
 protected:
 	Urho3D::StringHash settingsTab_;
 	Urho3D::VariantType type_;
-	bool isEngine_;
+	bool engine_;
 };
 
 class ComplexParameter : public Urho3D::RefCounted
 {
 public:
-	ComplexParameter(bool isEngine)
+	ComplexParameter(bool engine)
 		: changed_(false)
-		, isEngine_(isEngine)
+		, engine_(engine)
 	{
 	}
 	virtual ~ComplexParameter() {}
@@ -74,7 +74,7 @@ public:
 		changed_ = true;
 	}
 
-	bool IsEngine() const noexcept { return isEngine_; }
+	bool IsEngine() const noexcept { return engine_; }
 
 protected:
 	Urho3D::VariantMap parameters_;
@@ -83,7 +83,7 @@ private:
 	virtual void ApplyImpl() = 0;
 
 	bool changed_;
-	bool isEngine_;
+	bool engine_;
 };
 
 #endif // DYNAMICPARAMETER_H

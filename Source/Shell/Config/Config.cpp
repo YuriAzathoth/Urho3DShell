@@ -354,7 +354,7 @@ Config::RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, Comp
 {
 	if (!storages_.Contains(cathegory))
 	{
-		SharedPtr<ComplexParameter> storage(new BinaryComplexParameter(isEngine, std::move(writer)));
+		SharedPtr<ComplexParameter> storage(new BinaryComplexParameter(std::move(writer), isEngine));
 		storages_[cathegory] = storage;
 		return storage;
 	}
