@@ -26,7 +26,7 @@
 #include <Urho3D/Core/Variant.h>
 #include <functional>
 
-struct ComplexParameterStorage : public Urho3D::RefCounted
+struct BinaryComplexParameter : public Urho3D::RefCounted
 {
 	std::function<void(const Urho3D::VariantMap&)> writer_;
 	Urho3D::VariantMap parameters_;

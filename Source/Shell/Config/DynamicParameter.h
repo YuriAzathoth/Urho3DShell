@@ -49,4 +49,41 @@ protected:
 	bool isEngine_;
 };
 
+class ComplexParameter : public Urho3D::RefCounted
+{
+public:
+	ComplexParameter(bool isEngine)
+		: changed_(false)
+		, isEngine_(isEngine)
+	{
+	}
+	virtual ~ComplexParameter() {}
+
+	void Apply()
+	{
+		if (changed_)
+		{
+			ApplyImpl();
+			parameters_.Clear();
+		}
+	}
+
+	void Set(Urho3D::StringHash name, const Urho3D::Variant& value)
+	{
+		parameters_[name] = value;
+		changed_ = true;
+	}
+
+	bool IsEngine() const noexcept { return isEngine_; }
+
+protected:
+	Urho3D::VariantMap parameters_;
+
+private:
+	virtual void ApplyImpl() = 0;
+
+	bool changed_;
+	bool isEngine_;
+};
+
 #endif // DYNAMICPARAMETER_H

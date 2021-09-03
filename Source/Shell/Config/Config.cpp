@@ -183,11 +183,7 @@ void Config::Apply(Urho3D::StringHash name, const Urho3D::Variant& value)
 void Config::ApplyComplex()
 {
 	for (auto& p : storages_)
-		if (!p.second_->parameters_.Empty())
-		{
-			p.second_->writer_(p.second_->parameters_);
-			p.second_->parameters_.Clear();
-		}
+		p.second_->Apply();
 }
 
 void Config::RegisterSettingsTab(const Urho3D::String& tabName)
@@ -296,7 +292,7 @@ bool Config::RegisterComplexParameter(const Urho3D::String& name,
 									  Urho3D::VariantType type,
 									  Urho3D::StringHash settingsTab,
 									  bool isEngine,
-									  Urho3D::WeakPtr<ComplexParameterStorage> storage,
+									  Urho3D::WeakPtr<ComplexParameter> storage,
 									  SimpleReaderFunc&& reader)
 {
 	return RegisterParameter(new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
@@ -309,7 +305,7 @@ bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
 										  Urho3D::StringHash settingsTab,
 										  bool isEngine,
 										  bool isLocalized,
-										  Urho3D::WeakPtr<ComplexParameterStorage> storage,
+										  Urho3D::WeakPtr<ComplexParameter> storage,
 										  SimpleReaderFunc&& reader,
 										  EnumConstructorFunc&& enumer)
 {
@@ -353,14 +349,13 @@ void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enum
 		URHO3D_LOGWARNING("Failed to assign enum constructor to non-existent config parameter.");
 }
 
-Urho3D::WeakPtr<ComplexParameterStorage> Config::RegisterComplexStorage(Urho3D::StringHash cathegory,
-																		ComplexWriterFunc writer)
+Urho3D::WeakPtr<ComplexParameter>
+Config::RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, ComplexWriterFunc&& writer)
 {
 	if (!storages_.Contains(cathegory))
 	{
-		SharedPtr<ComplexParameterStorage>& storage = storages_[cathegory];
-		storage = MakeShared<ComplexParameterStorage>();
-		storage->writer_ = writer;
+		SharedPtr<ComplexParameter> storage(new BinaryComplexParameter(isEngine, std::move(writer)));
+		storages_[cathegory] = storage;
 		return storage;
 	}
 	else
@@ -370,7 +365,7 @@ Urho3D::WeakPtr<ComplexParameterStorage> Config::RegisterComplexStorage(Urho3D::
 	}
 }
 
-Urho3D::WeakPtr<ComplexParameterStorage> Config::GetComplexStorage(Urho3D::StringHash cathegory)
+Urho3D::WeakPtr<ComplexParameter> Config::GetComplexStorage(Urho3D::StringHash cathegory)
 {
 	const auto it = storages_.Find(cathegory);
 	return it != storages_.End() ? it->second_ : nullptr;

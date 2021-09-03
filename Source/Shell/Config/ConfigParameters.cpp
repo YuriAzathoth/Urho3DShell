@@ -94,8 +94,9 @@ void Config::RegisterClientParameters()
 
 	config->RegisterSettingsTab(ST_VIDEO);
 	{
-		WeakPtr<ComplexParameterStorage> videoMode = config->RegisterComplexStorage(
+		WeakPtr<ComplexParameter> videoMode = config->RegisterComplexStorage(
 			ECP_VIDEO_MODE,
+			true,
 			[config](const VariantMap& values)
 			{
 				// TODO: Convenient complex storage values extractor

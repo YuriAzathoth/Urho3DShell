@@ -45,7 +45,7 @@ SimpleBinaryParameter::SimpleBinaryParameter(SimpleReaderFunc&& reader,
 
 void SimpleBinaryParameter::Write(const Urho3D::Variant& value) { writer_(value); }
 
-ComplexBinaryParameter::ComplexBinaryParameter(Urho3D::WeakPtr<ComplexParameterStorage> storage,
+ComplexBinaryParameter::ComplexBinaryParameter(Urho3D::WeakPtr<ComplexParameter> storage,
 											   SimpleReaderFunc&& reader,
 											   Urho3D::StringHash name,
 											   Urho3D::VariantType type,
@@ -57,4 +57,4 @@ ComplexBinaryParameter::ComplexBinaryParameter(Urho3D::WeakPtr<ComplexParameterS
 {
 }
 
-void ComplexBinaryParameter::Write(const Urho3D::Variant& value) { storage_->parameters_[name_] = value; }
+void ComplexBinaryParameter::Write(const Urho3D::Variant& value) { storage_->Set(name_, value); }
