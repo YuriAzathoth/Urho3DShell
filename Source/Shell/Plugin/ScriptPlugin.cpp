@@ -33,7 +33,11 @@ ScriptPlugin::ScriptPlugin(Urho3D::Context* context)
 {
 }
 
-ScriptPlugin::~ScriptPlugin() { Execute("void Stop()"); }
+ScriptPlugin::~ScriptPlugin()
+{
+	if (script_)
+		Execute("void Stop()");
+}
 
 bool ScriptPlugin::Load(const Urho3D::String& fileName)
 {
