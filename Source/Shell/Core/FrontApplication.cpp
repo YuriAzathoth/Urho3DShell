@@ -41,6 +41,7 @@
 #include "ShellState/ShellStateMachine.h"
 #include "Urho3DShellConfig.h"
 
+extern void RegisterClientParameters(Config* config);
 extern void RegisterClientAPI(asIScriptEngine* engine);
 #if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 extern void RegisterClientLuaAPI(lua_State* state);
@@ -51,7 +52,7 @@ using namespace Urho3D;
 FrontApplication::FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters)
 	: ShellApplication(context, std::move(shellParameters))
 {
-	GetSubsystem<Config>()->RegisterClientParameters();
+	RegisterClientParameters(GetSubsystem<Config>());
 }
 
 void FrontApplication::Setup()

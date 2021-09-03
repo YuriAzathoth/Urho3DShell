@@ -34,6 +34,7 @@
 
 #define MAIN_PLUGIN_LIB "Game"
 
+extern void RegisterServerParameters(Config* config);
 extern void RegisterServerAPI(asIScriptEngine* engine);
 #if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 extern void RegisterServerLuaAPI(lua_State* state);
@@ -45,7 +46,8 @@ ShellApplication::ShellApplication(Urho3D::Context* context, Urho3D::VariantMap&
 	: Application(context)
 	, shellParameters_(std::move(shellParameters))
 {
-	context_->RegisterSubsystem<Config>()->RegisterServerParameters();
+	context_->RegisterSubsystem<Config>();
+	RegisterServerParameters(GetSubsystem<Config>());
 }
 
 void ShellApplication::Setup()

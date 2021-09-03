@@ -93,19 +93,12 @@ public:
 
 	Urho3D::String GetDebugString() const;
 
-	void RegisterClientParameters();
-	void RegisterServerParameters();
-
 private:
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<DynamicParameter>> parameters_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<EnumConstructor>> enumConstructors_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<ComplexParameter>> storages_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::PODVector<Urho3D::StringHash>> settings_;
 	Urho3D::StringMap names_;
-
-private:
-	static Urho3D::IntVector3 StrToRes(const Urho3D::String& str);
-	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);
 
 public:
 	bool RegisterSimpleParameter(const Urho3D::String& name,
@@ -160,6 +153,9 @@ public:
 
 	ComplexParameter*
 	RegisterBinaryComplexStorage(Urho3D::StringHash cathegory, bool engine, ComplexWriterFunc&& writer);
+
+	static Urho3D::IntVector3 StrToRes(const Urho3D::String& str);
+	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);
 };
 
 #endif // CONFIG_H

@@ -513,3 +513,13 @@ Config::RegisterBinaryComplexStorage(Urho3D::StringHash cathegory, bool engine, 
 	RegisterComplexStorage(ret, cathegory);
 	return ret;
 }
+
+
+Urho3D::IntVector3 Config::StrToRes(const Urho3D::String& str)
+{
+	const StringVector firstSplit = str.Split('x', true);
+	const StringVector secondSplit = firstSplit[1].Split(':', true);
+	return {ToInt(firstSplit[0]), ToInt(secondSplit[0]), ToInt(secondSplit[1])};
+}
+
+Urho3D::String Config::ResToStr(const Urho3D::IntVector3& res) { return ToString("%dx%d:%d", res.x_, res.y_, res.z_); }

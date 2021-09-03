@@ -43,10 +43,8 @@
 
 using namespace Urho3D;
 
-void Config::RegisterClientParameters()
+void RegisterClientParameters(Config* config)
 {
-	Config* config = this;
-
 	config->RegisterSettingsTab(ST_GAME);
 	{
 		config->RegisterSimpleEnumParameter(
@@ -100,7 +98,7 @@ void Config::RegisterClientParameters()
 				VariantMap::ConstIterator it = values.Find(ECP_WINDOW_MODE);
 				bool borderless, fullscreen;
 				const int windowMode =
-					(it != values.End() ? it->second_ : config->parameters_[ECP_WINDOW_MODE]->Read()).GetInt();
+					(it != values.End() ? it->second_ : config->GetParameter(ECP_WINDOW_MODE)->Read()).GetInt();
 				switch (windowMode)
 				{
 				case 0:
@@ -118,23 +116,23 @@ void Config::RegisterClientParameters()
 				}
 
 				it = values.Find(ECP_RESOLUTION);
-				const IntVector3 res = StrToRes(
-					(it != values.End() ? it->second_ : config->parameters_[ECP_RESOLUTION]->Read()).GetString());
+				const IntVector3 res = Config::StrToRes(
+					(it != values.End() ? it->second_ : config->GetParameter(ECP_RESOLUTION)->Read()).GetString());
 				const int width = res.x_;
 				const int height = res.y_;
 				const int refreshRate = res.z_;
 
 				it = values.Find(EP_VSYNC);
-				const bool vsync = (it != values.End() ? it->second_ : config->parameters_[EP_VSYNC]->Read()).GetBool();
+				const bool vsync = (it != values.End() ? it->second_ : config->GetParameter(EP_VSYNC)->Read()).GetBool();
 				it = values.Find(EP_TRIPLE_BUFFER);
 				const bool trippleBuffer =
-					(it != values.End() ? it->second_ : config->parameters_[EP_TRIPLE_BUFFER]->Read()).GetBool();
+					(it != values.End() ? it->second_ : config->GetParameter(EP_TRIPLE_BUFFER)->Read()).GetBool();
 				it = values.Find(EP_MULTI_SAMPLE);
 				const int multiSample =
-					(it != values.End() ? it->second_ : config->parameters_[EP_MULTI_SAMPLE]->Read()).GetInt();
+					(it != values.End() ? it->second_ : config->GetParameter(EP_MULTI_SAMPLE)->Read()).GetInt();
 				it = values.Find(EP_MONITOR);
 				const int monitor =
-					(it != values.End() ? it->second_ : config->parameters_[EP_MONITOR]->Read()).GetInt();
+					(it != values.End() ? it->second_ : config->GetParameter(EP_MONITOR)->Read()).GetInt();
 
 				config->GetSubsystem<Graphics>()->SetMode(width,
 														  height,
@@ -177,7 +175,7 @@ void Config::RegisterClientParameters()
 			[config]()
 			{
 				const Graphics* graphics = config->GetSubsystem<Graphics>();
-				return ResToStr({graphics->GetWidth(), graphics->GetHeight(), graphics->GetRefreshRate()});
+				return Config::ResToStr({graphics->GetWidth(), graphics->GetHeight(), graphics->GetRefreshRate()});
 			},
 			[config]()
 			{
@@ -188,7 +186,7 @@ void Config::RegisterClientParameters()
 				String resStr;
 				for (const IntVector3& resolution : resolutions)
 				{
-					resStr = ResToStr(resolution);
+					resStr = Config::ResToStr(resolution);
 					ret.EmplaceBack(resStr, resStr);
 				}
 				return ret;
@@ -327,7 +325,7 @@ void Config::RegisterClientParameters()
 			{{"256x256", 256}, {"512x512", 512}, {"1024x1024", 1024}, {"2048x2048", 2048}, {"4096x4096", 4096}});
 	}
 
-	RegisterSettingsTab(ST_AUDIO);
+	config->RegisterSettingsTab(ST_AUDIO);
 	{
 		config->RegisterSimpleParameter(
 			CP_SOUND_MASTER,
@@ -375,10 +373,12 @@ void Config::RegisterClientParameters()
 			{ config->GetSubsystem<Audio>()->SetMasterGain(SOUND_MUSIC, value.GetFloat()); });
 	}
 
-	RegisterSettingsTab(ST_INPUT);
+	config->RegisterSettingsTab(ST_INPUT);
 	{
 	}
 }
+
+void RegisterServerParameters(Config*) {}
 
 #if defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic pop
@@ -387,14 +387,3 @@ void Config::RegisterClientParameters()
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif // defined(__clang__)
-
-void Config::RegisterServerParameters() {}
-
-Urho3D::IntVector3 Config::StrToRes(const Urho3D::String& str)
-{
-	const StringVector firstSplit = str.Split('x', true);
-	const StringVector secondSplit = firstSplit[1].Split(':', true);
-	return {ToInt(firstSplit[0]), ToInt(secondSplit[0]), ToInt(secondSplit[1])};
-}
-
-Urho3D::String Config::ResToStr(const Urho3D::IntVector3& res) { return ToString("%dx%d:%d", res.x_, res.y_, res.z_); }
