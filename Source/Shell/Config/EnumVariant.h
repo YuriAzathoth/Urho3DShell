@@ -91,6 +91,21 @@ private:
 	bool localized_;
 };
 
+class StaticEnumConstructor : public EnumConstructor
+{
+public:
+	StaticEnumConstructor(EnumVector&& enumVector, bool localized)
+		: EnumConstructor(localized)
+		, enumVector_(std::move(enumVector))
+	{
+	}
+
+	EnumVector Create() override { return enumVector_; }
+
+private:
+	const EnumVector enumVector_;
+};
+
 class BinaryEnumConstructor : public EnumConstructor
 {
 public:

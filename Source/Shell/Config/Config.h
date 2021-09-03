@@ -124,6 +124,15 @@ public:
 									 SimpleWriterFunc&& writer,
 									 EnumConstructorFunc&& enumer);
 
+	bool RegisterSimpleEnumParameter(const Urho3D::String& name,
+									 Urho3D::VariantType type,
+									 Urho3D::StringHash settingsTab,
+									 bool isEngine,
+									 bool isLocalized,
+									 SimpleReaderFunc&& reader,
+									 SimpleWriterFunc&& writer,
+									 EnumVector&& enumVector);
+
 	bool RegisterComplexParameter(const Urho3D::String& name,
 								  Urho3D::VariantType type,
 								  Urho3D::StringHash settingsTab,
@@ -139,6 +148,15 @@ public:
 									  ComplexParameter* storage,
 									  SimpleReaderFunc&& reader,
 									  EnumConstructorFunc&& enumer);
+
+	bool RegisterComplexEnumParameter(const Urho3D::String& name,
+									  Urho3D::VariantType type,
+									  Urho3D::StringHash settingsTab,
+									  bool isEngine,
+									  bool isLocalized,
+									  ComplexParameter* storage,
+									  SimpleReaderFunc&& reader,
+									  EnumVector&& enumVector);
 
 	ComplexParameter*
 	RegisterBinaryComplexStorage(Urho3D::StringHash cathegory, bool engine, ComplexWriterFunc&& writer);

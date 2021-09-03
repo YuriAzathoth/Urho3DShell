@@ -81,15 +81,12 @@ void Config::RegisterClientParameters()
 			true,
 			[config]() { return config->GetSubsystem<Log>()->GetLevel(); },
 			[config](const Urho3D::Variant& value) { config->GetSubsystem<Log>()->SetLevel(value.GetInt()); },
-			[]() -> EnumVector
-			{
-				return {{"None", LOG_NONE},
-						{"Error", LOG_ERROR},
-						{"Warning", LOG_WARNING},
-						{"Info", LOG_INFO},
-						{"Debug", LOG_DEBUG},
-						{"Trace", LOG_TRACE}};
-			});
+			{{"None", LOG_NONE},
+			 {"Error", LOG_ERROR},
+			 {"Warning", LOG_WARNING},
+			 {"Info", LOG_INFO},
+			 {"Debug", LOG_DEBUG},
+			 {"Trace", LOG_TRACE}});
 	}
 
 	config->RegisterSettingsTab(ST_VIDEO);
@@ -209,9 +206,7 @@ void Config::RegisterClientParameters()
 				const Graphics* graphics = config->GetSubsystem<Graphics>();
 				return graphics->GetBorderless() ? 2 : graphics->GetFullscreen() ? 1 : 0;
 			},
-			[]() -> EnumVector {
-				return {{"Windowed", 0}, {"FullScreen", 1}, {"Borderless", 2}};
-			});
+			{{"Windowed", 0}, {"FullScreen", 1}, {"Borderless", 2}});
 
 		config->RegisterComplexParameter(EP_VSYNC,
 										 VAR_BOOL,
@@ -241,7 +236,7 @@ void Config::RegisterClientParameters()
 				EnumVector ret;
 				ret.Reserve(msLevels.Size());
 				for (int level : msLevels)
-					ret.EmplaceBack(ToString("%d", level), level);
+					ret.EmplaceBack(ToString("%dx", level), level);
 				return ret;
 			});
 
@@ -254,12 +249,9 @@ void Config::RegisterClientParameters()
 			[config]() { return config->GetSubsystem<Renderer>()->GetMaterialQuality(); },
 			[config](const Variant& value)
 			{ config->GetSubsystem<Renderer>()->SetMaterialQuality(static_cast<MaterialQuality>(value.GetInt())); },
-			[]() -> EnumVector
-			{
-				return {{"Low", MaterialQuality::QUALITY_LOW},
-						{"Medium", MaterialQuality::QUALITY_MEDIUM},
-						{"High", MaterialQuality::QUALITY_HIGH}};
-			});
+			{{"Low", MaterialQuality::QUALITY_LOW},
+			 {"Medium", MaterialQuality::QUALITY_MEDIUM},
+			 {"High", MaterialQuality::QUALITY_HIGH}});
 
 		config->RegisterSimpleEnumParameter(
 			EP_TEXTURE_QUALITY,
@@ -270,12 +262,9 @@ void Config::RegisterClientParameters()
 			[config]() { return config->GetSubsystem<Renderer>()->GetTextureQuality(); },
 			[config](const Variant& value)
 			{ config->GetSubsystem<Renderer>()->SetTextureQuality(static_cast<MaterialQuality>(value.GetInt())); },
-			[]() -> EnumVector
-			{
-				return {{"Low", MaterialQuality::QUALITY_LOW},
-						{"Medium", MaterialQuality::QUALITY_MEDIUM},
-						{"High", MaterialQuality::QUALITY_HIGH}};
-			});
+			{{"Low", MaterialQuality::QUALITY_LOW},
+			 {"Medium", MaterialQuality::QUALITY_MEDIUM},
+			 {"High", MaterialQuality::QUALITY_HIGH}});
 
 		config->RegisterSimpleEnumParameter(
 			EP_TEXTURE_FILTER_MODE,
@@ -286,14 +275,11 @@ void Config::RegisterClientParameters()
 			[config]() { return config->GetSubsystem<Renderer>()->GetTextureFilterMode(); },
 			[config](const Variant& value)
 			{ config->GetSubsystem<Renderer>()->SetTextureFilterMode(static_cast<TextureFilterMode>(value.GetInt())); },
-			[]() -> EnumVector
-			{
-				return {{"Nearest", TextureFilterMode::FILTER_NEAREST},
-						{"Bilinear", TextureFilterMode::FILTER_BILINEAR},
-						{"Trilinear", TextureFilterMode::FILTER_TRILINEAR},
-						{"Anisotropic", TextureFilterMode::FILTER_ANISOTROPIC},
-						{"NearestAnisotropic", TextureFilterMode::FILTER_NEAREST_ANISOTROPIC}};
-			});
+			{{"Nearest", TextureFilterMode::FILTER_NEAREST},
+			 {"Bilinear", TextureFilterMode::FILTER_BILINEAR},
+			 {"Trilinear", TextureFilterMode::FILTER_TRILINEAR},
+			 {"Anisotropic", TextureFilterMode::FILTER_ANISOTROPIC},
+			 {"NearestAnisotropic", TextureFilterMode::FILTER_NEAREST_ANISOTROPIC}});
 
 		config->RegisterSimpleEnumParameter(
 			EP_TEXTURE_ANISOTROPY,
@@ -304,15 +290,7 @@ void Config::RegisterClientParameters()
 			[config]() { return config->GetSubsystem<Renderer>()->GetTextureAnisotropy(); },
 			[config](const Variant& value)
 			{ config->GetSubsystem<Renderer>()->SetTextureAnisotropy(static_cast<MaterialQuality>(value.GetInt())); },
-			[]()
-			{
-				constexpr int stages[] = {2, 4, 6, 8, 12, 16};
-				EnumVector ret;
-				ret.Reserve(6);
-				for (int stage : stages)
-					ret.EmplaceBack(ToString("%d", stage), stage);
-				return ret;
-			});
+			{{"2x", 2}, {"4x", 4}, {"6x", 6}, {"8x", 8}, {"12x", 12}, {"16x", 16}});
 
 		config->RegisterSimpleParameter(
 			EP_SHADOWS,
@@ -331,15 +309,12 @@ void Config::RegisterClientParameters()
 			[config]() { return config->GetSubsystem<Renderer>()->GetShadowQuality(); },
 			[config](const Variant& value)
 			{ config->GetSubsystem<Renderer>()->SetShadowQuality(static_cast<ShadowQuality>(value.GetInt())); },
-			[]() -> EnumVector
-			{
-				return {{"Simple16", ShadowQuality::SHADOWQUALITY_SIMPLE_16BIT},
-						{"Simple24", ShadowQuality::SHADOWQUALITY_SIMPLE_24BIT},
-						{"PCF16", ShadowQuality::SHADOWQUALITY_PCF_16BIT},
-						{"PCF24", ShadowQuality::SHADOWQUALITY_PCF_24BIT},
-						{"VSM", ShadowQuality::SHADOWQUALITY_VSM},
-						{"VSMBlur", ShadowQuality::SHADOWQUALITY_BLUR_VSM}};
-			});
+			{{"Simple16", ShadowQuality::SHADOWQUALITY_SIMPLE_16BIT},
+			 {"Simple24", ShadowQuality::SHADOWQUALITY_SIMPLE_24BIT},
+			 {"PCF16", ShadowQuality::SHADOWQUALITY_PCF_16BIT},
+			 {"PCF24", ShadowQuality::SHADOWQUALITY_PCF_24BIT},
+			 {"VSM", ShadowQuality::SHADOWQUALITY_VSM},
+			 {"VSMBlur", ShadowQuality::SHADOWQUALITY_BLUR_VSM}});
 
 		config->RegisterSimpleEnumParameter(
 			CP_SHADOW_RESOLUTION,
@@ -349,18 +324,7 @@ void Config::RegisterClientParameters()
 			false,
 			[config]() { return config->GetSubsystem<Renderer>()->GetShadowMapSize(); },
 			[config](const Variant& value) { config->GetSubsystem<Renderer>()->SetShadowMapSize(value.GetInt()); },
-			[]()
-			{
-				EnumVector ret;
-				ret.Reserve(5);
-				String num;
-				for (int i = 256; i <= 4096; i *= 2)
-				{
-					num = ToString("%d", i);
-					ret.EmplaceBack(num + "x" + num, i);
-				}
-				return ret;
-			});
+			{{"256x256", 256}, {"512x512", 512}, {"1024x1024", 1024}, {"2048x2048", 2048}, {"4096x4096", 4096}});
 	}
 
 	RegisterSettingsTab(ST_AUDIO);

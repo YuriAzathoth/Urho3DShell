@@ -440,6 +440,24 @@ bool Config::RegisterSimpleEnumParameter(const Urho3D::String& name,
 	return success;
 }
 
+bool Config::RegisterSimpleEnumParameter(const Urho3D::String& name,
+										 Urho3D::VariantType type,
+										 Urho3D::StringHash settingsTab,
+										 bool isEngine,
+										 bool isLocalized,
+										 SimpleReaderFunc&& reader,
+										 SimpleWriterFunc&& writer,
+										 EnumVector&& enumVector)
+{
+	const bool success =
+		RegisterParameter(new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
+						  name,
+						  settingsTab);
+	if (success)
+		RegisterEnum(new StaticEnumConstructor(std::move(enumVector), isLocalized), name);
+	return success;
+}
+
 bool Config::RegisterComplexParameter(const Urho3D::String& name,
 									  Urho3D::VariantType type,
 									  Urho3D::StringHash settingsTab,
@@ -467,6 +485,24 @@ bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
 						  settingsTab);
 	if (success)
 		RegisterEnum(new BinaryEnumConstructor(std::move(enumer), isLocalized), name);
+	return success;
+}
+
+bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
+										  Urho3D::VariantType type,
+										  Urho3D::StringHash settingsTab,
+										  bool isEngine,
+										  bool isLocalized,
+										  ComplexParameter* storage,
+										  SimpleReaderFunc&& reader,
+										  EnumVector&& enumVector)
+{
+	const bool success =
+		RegisterParameter(new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
+						  name,
+						  settingsTab);
+	if (success)
+		RegisterEnum(new StaticEnumConstructor(std::move(enumVector), isLocalized), name);
 	return success;
 }
 
