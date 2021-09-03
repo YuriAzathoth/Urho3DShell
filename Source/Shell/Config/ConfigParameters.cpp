@@ -94,7 +94,7 @@ void Config::RegisterClientParameters()
 
 	config->RegisterSettingsTab(ST_VIDEO);
 	{
-		WeakPtr<ComplexParameter> videoMode = config->RegisterComplexStorage(
+		ComplexParameter* videoMode = config->RegisterBinaryComplexStorage(
 			ECP_VIDEO_MODE,
 			true,
 			[config](const VariantMap& values)

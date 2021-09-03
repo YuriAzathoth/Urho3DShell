@@ -263,67 +263,6 @@ bool Config::RegisterParameter(DynamicParameter* parameter, const Urho3D::String
 	return true;
 }
 
-bool Config::RegisterSimpleParameter(const Urho3D::String& name,
-									 Urho3D::VariantType type,
-									 Urho3D::StringHash settingsTab,
-									 bool isEngine,
-									 SimpleReaderFunc&& reader,
-									 SimpleWriterFunc&& writer)
-{
-	return RegisterParameter(
-		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
-		name,
-		settingsTab);
-}
-
-bool Config::RegisterSimpleEnumParameter(const Urho3D::String& name,
-										 Urho3D::VariantType type,
-										 Urho3D::StringHash settingsTab,
-										 bool isEngine,
-										 bool isLocalized,
-										 SimpleReaderFunc&& reader,
-										 SimpleWriterFunc&& writer,
-										 EnumConstructorFunc&& enumer)
-{
-	const bool success =
-		RegisterParameter(new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
-						  name,
-						  settingsTab);
-	if (success)
-		RegisterEnum(name, std::move(enumer), isLocalized);
-	return success;
-}
-
-bool Config::RegisterComplexParameter(const Urho3D::String& name,
-									  Urho3D::VariantType type,
-									  Urho3D::StringHash settingsTab,
-									  bool isEngine,
-									  Urho3D::WeakPtr<ComplexParameter> storage,
-									  SimpleReaderFunc&& reader)
-{
-	return RegisterParameter(new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
-							 name,
-							 settingsTab);
-}
-
-bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
-										  Urho3D::VariantType type,
-										  Urho3D::StringHash settingsTab,
-										  bool isEngine,
-										  bool isLocalized,
-										  Urho3D::WeakPtr<ComplexParameter> storage,
-										  SimpleReaderFunc&& reader,
-										  EnumConstructorFunc&& enumer)
-{
-	const bool success =
-		RegisterParameter(new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
-						  name,
-						  settingsTab);
-	if (success)
-		RegisterEnum(name, std::move(enumer), isLocalized);
-	return success;
-}
-
 void Config::RemoveParameter(Urho3D::StringHash parameter)
 {
 	auto itParameter = parameters_.Find(parameter);
@@ -347,12 +286,18 @@ EnumConstructor* Config::GetEnum(Urho3D::StringHash parameter) const
 	return it != enumConstructors_.End() ? it->second_ : nullptr;
 }
 
-void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& enumConstructor, bool localized)
+bool Config::RegisterEnum(EnumConstructor* constructor, Urho3D::StringHash parameter)
 {
 	if (parameters_.Contains(parameter))
-		enumConstructors_[parameter] = new BinaryEnumConstructor(std::move(enumConstructor), localized);
+	{
+		enumConstructors_[parameter] = constructor;
+		return true;
+	}
 	else
+	{
 		URHO3D_LOGWARNING("Failed to assign enum constructor to non-existent config parameter.");
+		return false;
+	}
 }
 
 void Config::RemoveEnum(Urho3D::StringHash parameter) { enumConstructors_.Erase(parameter); }
@@ -363,19 +308,17 @@ Urho3D::WeakPtr<ComplexParameter> Config::GetComplexStorage(Urho3D::StringHash c
 	return it != storages_.End() ? it->second_ : nullptr;
 }
 
-Urho3D::WeakPtr<ComplexParameter>
-Config::RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, ComplexWriterFunc&& writer)
+bool Config::RegisterComplexStorage(ComplexParameter* storage, Urho3D::StringHash cathegory)
 {
 	if (!storages_.Contains(cathegory))
 	{
-		SharedPtr<ComplexParameter> storage(new BinaryComplexParameter(std::move(writer), isEngine));
 		storages_[cathegory] = storage;
-		return storage;
+		return true;
 	}
 	else
 	{
 		URHO3D_LOGWARNING("Failed to register already existent complex config storage.");
-		return nullptr;
+		return false;
 	}
 }
 
@@ -463,5 +406,74 @@ Urho3D::String Config::GetDebugString() const
 			}
 		}
 	}
+	return ret;
+}
+
+bool Config::RegisterSimpleParameter(const Urho3D::String& name,
+									 Urho3D::VariantType type,
+									 Urho3D::StringHash settingsTab,
+									 bool isEngine,
+									 SimpleReaderFunc&& reader,
+									 SimpleWriterFunc&& writer)
+{
+	return RegisterParameter(
+		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
+		name,
+		settingsTab);
+}
+
+bool Config::RegisterSimpleEnumParameter(const Urho3D::String& name,
+										 Urho3D::VariantType type,
+										 Urho3D::StringHash settingsTab,
+										 bool isEngine,
+										 bool isLocalized,
+										 SimpleReaderFunc&& reader,
+										 SimpleWriterFunc&& writer,
+										 EnumConstructorFunc&& enumer)
+{
+	const bool success =
+		RegisterParameter(new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
+						  name,
+						  settingsTab);
+	if (success)
+		RegisterEnum(new BinaryEnumConstructor(std::move(enumer), isLocalized), name);
+	return success;
+}
+
+bool Config::RegisterComplexParameter(const Urho3D::String& name,
+									  Urho3D::VariantType type,
+									  Urho3D::StringHash settingsTab,
+									  bool isEngine,
+									  ComplexParameter* storage,
+									  SimpleReaderFunc&& reader)
+{
+	return RegisterParameter(new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
+							 name,
+							 settingsTab);
+}
+
+bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
+										  Urho3D::VariantType type,
+										  Urho3D::StringHash settingsTab,
+										  bool isEngine,
+										  bool isLocalized,
+										  ComplexParameter* storage,
+										  SimpleReaderFunc&& reader,
+										  EnumConstructorFunc&& enumer)
+{
+	const bool success =
+		RegisterParameter(new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
+						  name,
+						  settingsTab);
+	if (success)
+		RegisterEnum(new BinaryEnumConstructor(std::move(enumer), isLocalized), name);
+	return success;
+}
+
+ComplexParameter*
+Config::RegisterBinaryComplexStorage(Urho3D::StringHash cathegory, bool engine, ComplexWriterFunc&& writer)
+{
+	ComplexParameter* ret = new BinaryComplexParameter(std::move(writer), engine);
+	RegisterComplexStorage(ret, cathegory);
 	return ret;
 }

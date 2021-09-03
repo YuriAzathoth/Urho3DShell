@@ -72,48 +72,14 @@ public:
 
 	DynamicParameter* GetParameter(Urho3D::StringHash parameter) const;
 	bool RegisterParameter(DynamicParameter* parameter, const Urho3D::String& name, Urho3D::StringHash settingsTab);
-
-	bool RegisterSimpleParameter(const Urho3D::String& name,
-								 Urho3D::VariantType type,
-								 Urho3D::StringHash settingsTab,
-								 bool isEngine,
-								 SimpleReaderFunc&& reader,
-								 SimpleWriterFunc&& writer);
-
-	bool RegisterSimpleEnumParameter(const Urho3D::String& name,
-									 Urho3D::VariantType type,
-									 Urho3D::StringHash settingsTab,
-									 bool isEngine,
-									 bool isLocalized,
-									 SimpleReaderFunc&& reader,
-									 SimpleWriterFunc&& writer,
-									 EnumConstructorFunc&& enumer);
-
-	bool RegisterComplexParameter(const Urho3D::String& name,
-								  Urho3D::VariantType type,
-								  Urho3D::StringHash settingsTab,
-								  bool isEngine,
-								  Urho3D::WeakPtr<ComplexParameter> storage,
-								  SimpleReaderFunc&& reader);
-
-	bool RegisterComplexEnumParameter(const Urho3D::String& name,
-									  Urho3D::VariantType type,
-									  Urho3D::StringHash settingsTab,
-									  bool isEngine,
-									  bool isLocalized,
-									  Urho3D::WeakPtr<ComplexParameter> storage,
-									  SimpleReaderFunc&& reader,
-									  EnumConstructorFunc&& enumer);
-
 	void RemoveParameter(Urho3D::StringHash parameter);
 
 	EnumConstructor* GetEnum(Urho3D::StringHash parameter) const;
-	void RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& enumConstructor, bool localized);
+	bool RegisterEnum(EnumConstructor* constructor, Urho3D::StringHash parameter);
 	void RemoveEnum(Urho3D::StringHash parameter);
 
 	Urho3D::WeakPtr<ComplexParameter> GetComplexStorage(Urho3D::StringHash cathegory) const;
-	Urho3D::WeakPtr<ComplexParameter>
-	RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, ComplexWriterFunc&& writer);
+	bool RegisterComplexStorage(ComplexParameter* storage, Urho3D::StringHash cathegory);
 	void RemoveComplexStorage(Urho3D::StringHash cathegory);
 
 	const Urho3D::String& GetName(Urho3D::StringHash parameter) const;
@@ -140,6 +106,42 @@ private:
 private:
 	static Urho3D::IntVector3 StrToRes(const Urho3D::String& str);
 	static Urho3D::String ResToStr(const Urho3D::IntVector3& res);
+
+public:
+	bool RegisterSimpleParameter(const Urho3D::String& name,
+								 Urho3D::VariantType type,
+								 Urho3D::StringHash settingsTab,
+								 bool isEngine,
+								 SimpleReaderFunc&& reader,
+								 SimpleWriterFunc&& writer);
+
+	bool RegisterSimpleEnumParameter(const Urho3D::String& name,
+									 Urho3D::VariantType type,
+									 Urho3D::StringHash settingsTab,
+									 bool isEngine,
+									 bool isLocalized,
+									 SimpleReaderFunc&& reader,
+									 SimpleWriterFunc&& writer,
+									 EnumConstructorFunc&& enumer);
+
+	bool RegisterComplexParameter(const Urho3D::String& name,
+								  Urho3D::VariantType type,
+								  Urho3D::StringHash settingsTab,
+								  bool isEngine,
+								  ComplexParameter* storage,
+								  SimpleReaderFunc&& reader);
+
+	bool RegisterComplexEnumParameter(const Urho3D::String& name,
+									  Urho3D::VariantType type,
+									  Urho3D::StringHash settingsTab,
+									  bool isEngine,
+									  bool isLocalized,
+									  ComplexParameter* storage,
+									  SimpleReaderFunc&& reader,
+									  EnumConstructorFunc&& enumer);
+
+	ComplexParameter*
+	RegisterBinaryComplexStorage(Urho3D::StringHash cathegory, bool engine, ComplexWriterFunc&& writer);
 };
 
 #endif // CONFIG_H

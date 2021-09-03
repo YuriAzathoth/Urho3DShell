@@ -69,7 +69,7 @@ class ComplexBinaryParameter : public BinaryParameter
 public:
 	using ComplexWriterFunc = std::function<void(const Urho3D::VariantMap&)>;
 
-	ComplexBinaryParameter(Urho3D::WeakPtr<ComplexParameter> storage,
+	ComplexBinaryParameter(ComplexParameter* storage,
 						   SimpleReaderFunc&& reader,
 						   Urho3D::StringHash name,
 						   Urho3D::VariantType type,
@@ -84,7 +84,7 @@ public:
 	void Write(const Urho3D::Variant& value) override { storage_->Set(name_, value); }
 
 private:
-	Urho3D::WeakPtr<ComplexParameter> storage_;
+	ComplexParameter* storage_;
 	const Urho3D::StringHash name_;
 };
 
