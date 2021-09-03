@@ -349,6 +349,8 @@ void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& en
 		URHO3D_LOGWARNING("Failed to assign enum constructor to non-existent config parameter.");
 }
 
+void Config::RemoveEnum(Urho3D::StringHash parameter) { enumConstructors_.Erase(parameter); }
+
 Urho3D::WeakPtr<ComplexParameter>
 Config::RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, ComplexWriterFunc&& writer)
 {

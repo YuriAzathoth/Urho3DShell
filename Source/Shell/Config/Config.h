@@ -108,6 +108,7 @@ public:
 	DynamicParameter* GetParameter(Urho3D::StringHash parameter) const;
 
 	void RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& enumConstructor, bool localized);
+	void RemoveEnum(Urho3D::StringHash parameter);
 
 	Urho3D::WeakPtr<ComplexParameter>
 	RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, ComplexWriterFunc&& writer);
