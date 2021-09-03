@@ -21,14 +21,47 @@
 //
 
 #include <Urho3D/AngelScript/Generated_Members.h>
-//#include <new>
 #include "Config/Config.h"
 
 using namespace Urho3D;
 
-static Config* CreateConfig() { return new Config(GetScriptContext()); }
+static void RegisterObjectTypes(asIScriptEngine* engine)
+{
+	engine->RegisterObjectType("Config", 0, asOBJ_REF);
+	engine->RegisterObjectType("DynamicParameter", 0, asOBJ_REF);
+	engine->RegisterObjectType("EnumVariant", sizeof(EnumVariant), asOBJ_VALUE | asGetTypeTraits<AllocatorNode>());
+}
 
 static Config* GetConfig() { return GetScriptContext()->GetSubsystem<Config>(); }
+
+static void CreateEnumVariantV(EnumVariant* ptr) { new (ptr) EnumVariant; }
+static void CreateEnumVariantSVar(EnumVariant* ptr, const String& caption, const Variant& value)
+{
+	new (ptr) EnumVariant(caption, value);
+}
+
+static void RegisterClasses(asIScriptEngine* engine)
+{
+	engine->RegisterGlobalFunction("Config@+ get_config()", AS_FUNCTION(GetConfig), AS_CALL_CDECL);
+	RegisterSubclass<Object, Config>(engine, "Object", "Config");
+	RegisterSubclass<RefCounted, Config>(engine, "RefCounted", "Config");
+
+	engine->RegisterObjectBehaviour("EnumVariant",
+									asBEHAVE_CONSTRUCT,
+									"void f()",
+									AS_FUNCTION_OBJFIRST(CreateEnumVariantV),
+									AS_CALL_CDECL_OBJFIRST);
+	engine->RegisterObjectBehaviour("EnumVariant",
+									asBEHAVE_CONSTRUCT,
+									"void f(const String& in, const Variant&in)",
+									AS_FUNCTION_OBJFIRST(CreateEnumVariantSVar),
+									AS_CALL_CDECL_OBJFIRST);
+	engine->RegisterObjectBehaviour("EnumVariant",
+									asBEHAVE_DESTRUCT,
+									"void f()",
+									AS_DESTRUCTOR(EnumVariant),
+									AS_CALL_CDECL_OBJFIRST);
+}
 
 template <typename T> static CScriptArray* ConstructEnum(T* _ptr, StringHash parameter)
 {
@@ -48,151 +81,152 @@ template <typename T> static CScriptArray* GetConfigSettings(T* _ptr, StringHash
 	return VectorToArray<String>(result, "Array<String>");
 }
 
-static void RegisterEnumVariantAPI(asIScriptEngine* engine);
+#if defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif // defined (__GNUC__) || defined(__GNUG__)
 
-void RegisterConfigAPI(asIScriptEngine* engine)
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconversion"
+#endif // defined(__clang__)
+
+template <typename T> void RegisterMembers_Config(asIScriptEngine* engine, const char* className)
 {
-	RegisterEnumVariantAPI(engine);
-
-	engine->RegisterObjectType("Config", 0, asOBJ_REF);
-
-	engine->RegisterObjectBehaviour("Config",
-									asBEHAVE_FACTORY,
-									"Config@+ f()",
-									AS_FUNCTION(CreateConfig),
-									AS_CALL_CDECL);
-
-	engine->RegisterGlobalFunction("Config@+ get_config()", AS_FUNCTION(GetConfig), AS_CALL_CDECL);
-
-	RegisterSubclass<Object, Config>(engine, "Object", "Config");
-	RegisterSubclass<RefCounted, Config>(engine, "RefCounted", "Config");
-
 	RegisterMembers_Object<Config>(engine, "Config");
 
-	engine->RegisterObjectMethod("Config", "bool Load(const Serializer&in)", AS_METHOD(Config, Load), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "bool Save(Deserializer&out) const",
-								 AS_METHOD(Config, Save),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className, "bool Load(const Serializer&in)", AS_METHOD(T, Load), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "bool Save(Deserializer&out) const", AS_METHOD(T, Save), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
 								 "bool LoadXML(const XMLElement&in)",
-								 AS_METHODPR(Config, LoadXML, (const XMLElement&), bool),
+								 AS_METHODPR(T, LoadXML, (const XMLElement&), bool),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "bool SaveXML(XMLElement&out) const",
-								 AS_METHOD(Config, SaveXML),
+								 AS_METHOD(T, SaveXML),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "bool LoadJSON(const JSONValue&in)",
-								 AS_METHOD(Config, LoadJSON),
+								 AS_METHOD(T, LoadJSON),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "bool SaveJSON(JSONValue&out) const",
-								 AS_METHOD(Config, SaveJSON),
+								 AS_METHOD(T, SaveJSON),
 								 AS_CALL_THISCALL);
 
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "void Apply(const VariantMap&in)",
-								 AS_METHODPR(Config, Apply, (const VariantMap&), void),
+								 AS_METHODPR(T, Apply, (const VariantMap&), void),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "void Apply(StringHash, const Variant&in)",
-								 AS_METHODPR(Config, Apply, (StringHash, const Variant&), void),
+								 AS_METHODPR(T, Apply, (StringHash, const Variant&), void),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config", "void ApplyComplex()", AS_METHOD(Config, ApplyComplex), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "void ApplyComplex()", AS_METHOD(T, ApplyComplex), AS_CALL_THISCALL);
 
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "void RegisterSettingsTab(const String&in)",
-								 AS_METHOD(Config, RegisterSettingsTab),
+								 AS_METHOD(T, RegisterSettingsTab),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "void RemoveSettingsTab(StringHash)",
-								 AS_METHOD(Config, RemoveSettingsTab),
+								 AS_METHOD(T, RemoveSettingsTab),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "Array<String>@ get_tabs() const",
-								 AS_FUNCTION_OBJFIRST(GetConfigTabs<Config>),
+								 AS_FUNCTION_OBJFIRST(GetConfigTabs<T>),
 								 AS_CALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "Array<String>@ GetSettings(StringHash)",
-								 AS_FUNCTION_OBJFIRST(GetConfigSettings<Config>),
+								 AS_FUNCTION_OBJFIRST(GetConfigSettings<T>),
 								 AS_CALL_CDECL_OBJFIRST);
 
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "void RemoveParameter(StringHash)",
-								 AS_METHOD(Config, RemoveParameter),
+								 AS_METHOD(T, RemoveParameter),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "DynamicParameter& GetParameter(StringHash) const",
+								 AS_METHOD(T, GetParameter),
 								 AS_CALL_THISCALL);
 
 	// TODO: Script parameter Readers/Writers
 
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "const String& GetName(StringHash) const",
-								 AS_METHODPR(Config, GetName, (StringHash) const, const String&),
+								 AS_METHODPR(T, GetName, (StringHash) const, const String&),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "VariantType GetType(StringHash) const",
-								 AS_METHODPR(Config, GetType, (StringHash) const, VariantType),
+								 AS_METHODPR(T, GetType, (StringHash) const, VariantType),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
-								 "bool IsEnum(StringHash) const",
-								 AS_METHOD(Config, IsEnum),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className, "bool IsEnum(StringHash) const", AS_METHOD(T, IsEnum), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
 								 "bool IsLocalized(StringHash) const",
-								 AS_METHOD(Config, IsLocalized),
+								 AS_METHOD(T, IsLocalized),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "Variant ReadValue(StringHash) const",
-								 AS_METHOD(Config, ReadValue),
+								 AS_METHOD(T, ReadValue),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "void WriteValue(StringHash, const Variant&in)",
-								 AS_METHOD(Config, ReadValue),
+								 AS_METHOD(T, ReadValue),
 								 AS_CALL_THISCALL);
 
 	// TODO: Fix creating Array<EnumVariant> contains empty data
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "Array<EnumVariant>@ ConstructEnum(StringHash)",
-								 AS_FUNCTION_OBJFIRST(ConstructEnum<Config>),
+								 AS_FUNCTION_OBJFIRST(ConstructEnum<T>),
 								 AS_CALL_CDECL_OBJFIRST);
 
-	engine->RegisterObjectMethod("Config",
+	engine->RegisterObjectMethod(className,
 								 "String get_debugString() const",
-								 AS_METHOD(Config, GetDebugString),
+								 AS_METHOD(T, GetDebugString),
 								 AS_CALL_THISCALL);
 }
 
-static void NewEnumVariantV(EnumVariant* ptr) { new (ptr) EnumVariant; }
-static void NewEnumVariantSVar(EnumVariant* ptr, const String& caption, const Variant& value)
+template <typename T> void RegisterMembers_EnumVariant(asIScriptEngine* engine, const char* className)
 {
-	new (ptr) EnumVariant(caption, value);
-}
-
-void RegisterEnumVariantAPI(asIScriptEngine* engine)
-{
-	engine->RegisterObjectType("EnumVariant", sizeof(EnumVariant), asOBJ_VALUE | asGetTypeTraits<AllocatorNode>());
-
-	engine->RegisterObjectBehaviour("EnumVariant",
-									asBEHAVE_CONSTRUCT,
-									"void f()",
-									AS_FUNCTION_OBJFIRST(NewEnumVariantV),
-									AS_CALL_CDECL_OBJFIRST);
-	engine->RegisterObjectBehaviour("EnumVariant",
-									asBEHAVE_CONSTRUCT,
-									"void f(const String& in, const Variant&in)",
-									AS_FUNCTION_OBJFIRST(NewEnumVariantSVar),
-									AS_CALL_CDECL_OBJFIRST);
-	engine->RegisterObjectBehaviour("EnumVariant",
-									asBEHAVE_DESTRUCT,
-									"void f()",
-									AS_DESTRUCTOR(EnumVariant),
-									AS_CALL_CDECL_OBJFIRST);
-
-	engine->RegisterObjectMethod("EnumVariant",
+	engine->RegisterObjectMethod(className,
 								 "EnumVariant& opAssign(const EnumVariant&in) const",
-								 AS_METHODPR(EnumVariant, operator=, (const EnumVariant&), EnumVariant&),
+								 AS_METHODPR(T, operator=, (const EnumVariant&), EnumVariant&),
 								 AS_CALL_THISCALL);
+	engine->RegisterObjectProperty(className, "String caption", offsetof(T, caption_));
+	engine->RegisterObjectProperty(className, "Variant value", offsetof(T, value_));
+}
 
-	engine->RegisterObjectProperty("EnumVariant", "String caption", offsetof(EnumVariant, caption_));
-	engine->RegisterObjectProperty("EnumVariant", "Variant value", offsetof(EnumVariant, value_));
+template <typename T> void RegisterMembers_DynamicParameter(asIScriptEngine* engine, const char* className)
+{
+	RegisterMembers_RefCounted<T>(engine, className);
+	engine->RegisterObjectMethod(className, "Variant Read()", AS_METHOD(T, Read), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "void Write(const Variant&in)", AS_METHOD(T, Write), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "StringHash get_settingsTab() const",
+								 AS_METHOD(T, GetSettingsTab),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "VariantType get_type() const", AS_METHOD(T, GetType), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "bool get_engine() const", AS_METHOD(T, IsEngine), AS_CALL_THISCALL);
+}
+
+#if defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#endif // defined (__GNUC__) || defined(__GNUG__)
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // defined(__clang__)
+
+static void RegisterMembers(asIScriptEngine* engine)
+{
+	RegisterMembers_DynamicParameter<DynamicParameter>(engine, "DynamicParameter");
+	RegisterMembers_EnumVariant<EnumVariant>(engine, "EnumVariant");
+	RegisterMembers_Config<Config>(engine, "Config");
+}
+
+void RegisterConfigAPI(asIScriptEngine* engine)
+{
+	RegisterObjectTypes(engine);
+	RegisterClasses(engine);
+	RegisterMembers(engine);
 }

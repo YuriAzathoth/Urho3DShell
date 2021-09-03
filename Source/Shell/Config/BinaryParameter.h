@@ -23,8 +23,8 @@
 #ifndef BINARYPARAMETER_H
 #define BINARYPARAMETER_H
 
-#include "ConfigTypes.h"
 #include "ComplexParameterStorage.h"
+#include "ConfigTypes.h"
 #include "DynamicParameter.h"
 
 class BinaryParameter : public DynamicParameter

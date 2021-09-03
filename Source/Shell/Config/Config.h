@@ -101,6 +101,7 @@ public:
 									  EnumConstructorFunc&& enumer);
 
 	void RemoveParameter(Urho3D::StringHash parameter);
+	DynamicParameter* GetParameter(Urho3D::StringHash parameter) const;
 
 	void RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor);
 

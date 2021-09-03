@@ -341,6 +341,12 @@ void Config::RemoveParameter(Urho3D::StringHash parameter)
 		URHO3D_LOGWARNING("Failed to remove non-existent config parameter.");
 }
 
+DynamicParameter* Config::GetParameter(Urho3D::StringHash parameter) const
+{
+	const auto it = parameters_.Find(parameter);
+	return it != parameters_.End() ? it->second_ : nullptr;
+}
+
 void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor)
 {
 	auto it = parameters_.Find(parameter);
@@ -375,25 +381,6 @@ Urho3D::WeakPtr<ComplexParameterStorage> Config::GetComplexStorage(Urho3D::Strin
 	const auto it = storages_.Find(cathegory);
 	return it != storages_.End() ? it->second_ : nullptr;
 }
-
-// bool Config::RegisterComplexWriter(Urho3D::StringHash parameter, Urho3D::StringHash cathegory)
-//{
-//	auto itParameter = parameters_.Find(parameter);
-//	auto itStorage = storages_.Find(cathegory);
-//	if (itParameter != parameters_.End() && itStorage != storages_.End())
-//	{
-//		itStorage->second_->isEngine_ = itParameter->second_->IsEngine();
-//		return true;
-//	}
-//	else
-//	{
-//		if (itParameter == parameters_.End())
-//			URHO3D_LOGWARNING("Failed to assign writer to non-existent config parameter.");
-//		if (itStorage == storages_.End())
-//			URHO3D_LOGWARNING("Failed to assign writer to non-existent complex config storage.");
-//		return false;
-//	}
-//}
 
 void Config::RemoveComplexStorage(Urho3D::StringHash cathegory) { storages_.Erase(cathegory); }
 
