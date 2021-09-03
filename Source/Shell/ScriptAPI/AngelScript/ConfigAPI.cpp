@@ -219,7 +219,10 @@ template <typename T> void RegisterMembers_Config(asIScriptEngine* engine, const
 template <typename T> void RegisterMembers_ComplexParameter(asIScriptEngine* engine, const char* className)
 {
 	engine->RegisterObjectMethod(className, "void Apply()", AS_METHOD(T, Apply), AS_CALL_THISCALL);
-	engine->RegisterObjectMethod(className, "void Set(StringHash, const VariantMap&in) const", AS_METHOD(T, Set), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className,
+								 "void Set(StringHash, const VariantMap&in) const",
+								 AS_METHOD(T, Set),
+								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "bool get_engine() const", AS_METHOD(T, IsEngine), AS_CALL_THISCALL);
 }
 
@@ -238,7 +241,10 @@ template <typename T> void RegisterMembers_DynamicParameter(asIScriptEngine* eng
 
 template <typename T> void RegisterMembers_EnumConstructor(asIScriptEngine* engine, const char* className)
 {
-	engine->RegisterObjectMethod(className, "Array<EnumVariant>@ Create()", AS_FUNCTION_OBJFIRST(EnumVector_Create<T>), AS_CALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod(className,
+								 "Array<EnumVariant>@ Create()",
+								 AS_FUNCTION_OBJFIRST(EnumVector_Create<T>),
+								 AS_CALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod(className, "bool get_localized() const", AS_METHOD(T, IsLocalized), AS_CALL_THISCALL);
 }
 
