@@ -341,10 +341,10 @@ DynamicParameter* Config::GetParameter(Urho3D::StringHash parameter) const
 	return it != parameters_.End() ? it->second_ : nullptr;
 }
 
-void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor, bool localized)
+void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& enumConstructor, bool localized)
 {
 	if (parameters_.Contains(parameter))
-		enumConstructors_[parameter] = {enumConstructor, localized};
+		enumConstructors_[parameter] = new BinaryEnumConstructor(std::move(enumConstructor), localized);
 	else
 		URHO3D_LOGWARNING("Failed to assign enum constructor to non-existent config parameter.");
 }
@@ -396,7 +396,7 @@ bool Config::IsEnum(Urho3D::StringHash parameter) const { return enumConstructor
 bool Config::IsLocalized(Urho3D::StringHash parameter) const
 {
 	const auto it = enumConstructors_.Find(parameter);
-	return it != parameters_.End() ? it->second_.localized_ : false;
+	return it != parameters_.End() ? it->second_->IsLocalized() : false;
 }
 
 Urho3D::Variant Config::ReadValue(Urho3D::StringHash parameter) const
@@ -415,7 +415,7 @@ void Config::WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& val
 EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
 {
 	const auto it = enumConstructors_.Find(parameter);
-	return it != enumConstructors_.End() ? it->second_.func_() : EnumVector{};
+	return it != enumConstructors_.End() ? it->second_->Create() : EnumVector{};
 }
 
 Urho3D::String Config::GetDebugString() const
@@ -445,7 +445,7 @@ Urho3D::String Config::GetDebugString() const
 			if (IsEnum(parameterName))
 			{
 				ret.Append("\t\tEnum Variants:\n");
-				enumVector = enumConstructors_[parameterName]->func_();
+				enumVector = (*enumConstructors_[parameterName])->Create();
 				for (const EnumVariant& enumVariant : enumVector)
 					ret.Append("\t\t\t")
 						.Append(enumVariant.caption_)

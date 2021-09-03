@@ -46,6 +46,7 @@ public:
 	using SimpleReaderFunc = std::function<Urho3D::Variant()>;
 	using SimpleWriterFunc = std::function<void(const Urho3D::Variant&)>;
 	using ComplexWriterFunc = std::function<void(const Urho3D::VariantMap&)>;
+	using EnumConstructorFunc = std::function<EnumVector()>;
 
 	using Urho3D::Object::Object;
 
@@ -106,7 +107,7 @@ public:
 	void RemoveParameter(Urho3D::StringHash parameter);
 	DynamicParameter* GetParameter(Urho3D::StringHash parameter) const;
 
-	void RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor, bool localized);
+	void RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc&& enumConstructor, bool localized);
 
 	Urho3D::WeakPtr<ComplexParameter>
 	RegisterComplexStorage(Urho3D::StringHash cathegory, bool isEngine, ComplexWriterFunc&& writer);
@@ -127,15 +128,9 @@ public:
 	void RegisterClientParameters();
 	void RegisterServerParameters();
 
-	struct EnumConstructor
-	{
-		EnumConstructorFunc func_;
-		bool localized_;
-	};
-
 private:
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<DynamicParameter>> parameters_;
-	Urho3D::HashMap<Urho3D::StringHash, EnumConstructor> enumConstructors_;
+	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<EnumConstructor>> enumConstructors_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<ComplexParameter>> storages_;
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::PODVector<Urho3D::StringHash>> settings_;
 	Urho3D::StringMap names_;

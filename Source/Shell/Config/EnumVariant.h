@@ -73,6 +73,39 @@ struct EnumVariant
 };
 
 using EnumVector = Urho3D::Vector<EnumVariant>;
-using EnumConstructorFunc = std::function<EnumVector()>;
+
+class EnumConstructor : public Urho3D::RefCounted
+{
+public:
+	EnumConstructor(bool localized)
+		: localized_(localized)
+	{
+	}
+
+	virtual ~EnumConstructor() {}
+	virtual EnumVector Create() = 0;
+
+	bool IsLocalized() const noexcept { return localized_; }
+
+private:
+	bool localized_;
+};
+
+class BinaryEnumConstructor : public EnumConstructor
+{
+public:
+	using ConstructorFunc = std::function<EnumVector()>;
+
+	BinaryEnumConstructor(ConstructorFunc&& constructor, bool localized)
+		: EnumConstructor(localized)
+		, constructor_(std::move(constructor))
+	{
+	}
+
+	EnumVector Create() override { return constructor_(); }
+
+private:
+	const ConstructorFunc constructor_;
+};
 
 #endif // ENUMVARIANT_H
