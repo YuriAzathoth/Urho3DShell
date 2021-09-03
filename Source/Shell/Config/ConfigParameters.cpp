@@ -130,10 +130,10 @@ void Config::RegisterClientParameters()
 				const bool trippleBuffer =
 					(it != values.End() ? it->second_ : config->parameters_[EP_TRIPLE_BUFFER]->Read()).GetBool();
 				it = values.Find(EP_MULTI_SAMPLE);
-				const bool multiSample =
+				const int multiSample =
 					(it != values.End() ? it->second_ : config->parameters_[EP_MULTI_SAMPLE]->Read()).GetInt();
 				it = values.Find(EP_MONITOR);
-				const bool monitor =
+				const int monitor =
 					(it != values.End() ? it->second_ : config->parameters_[EP_MONITOR]->Read()).GetInt();
 
 				config->GetSubsystem<Graphics>()->SetMode(width,
