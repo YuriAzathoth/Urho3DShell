@@ -25,6 +25,7 @@
 #include "ScriptParameter.h"
 
 using namespace Urho3D;
+
 ScriptParameter::ScriptParameter(Urho3D::VariantType type,
 								 Urho3D::StringHash settingsTab,
 								 bool isEngine,
@@ -35,19 +36,20 @@ ScriptParameter::ScriptParameter(Urho3D::VariantType type,
 	, reader_(nullptr)
 	, success_(false)
 {
-	if (file_)
+	if (!file_)
 	{
-		reader_ = file_->GetFunction("Variant " + reader + "(void)");
-		writer_ = file_->GetFunction("void " + writer + "(const Variant&in)");
-		if (!reader_)
-			URHO3D_LOGERRORF("Could not assign config parameter reader: function not found.");
-		else if (!writer_)
-			URHO3D_LOGERRORF("Could not assign config parameter writer: function not found.");
-		else
-			success_ = true;
-	}
-	else
 		URHO3D_LOGERROR("Failed to assign script parameter: file not loaded or called from console.");
+		return;
+	}
+
+	reader_ = file_->GetFunction(ToString("%s %s()", GetReaderType(type).CString(), reader.CString()));
+	writer_ = file_->GetFunction(ToString("void %s(%s)", writer.CString(), GetWriterType(type).CString()));
+	if (!reader_)
+		URHO3D_LOGERRORF("Could not assign config parameter reader: function not found.");
+	else if (!writer_)
+		URHO3D_LOGERRORF("Could not assign config parameter writer: function not found.");
+	else
+		success_ = true;
 }
 
 Urho3D::Variant ScriptParameter::Read()
@@ -58,3 +60,21 @@ Urho3D::Variant ScriptParameter::Read()
 }
 
 void ScriptParameter::Write(const Urho3D::Variant& value) { file_->Execute(writer_, {{value}}); }
+
+Urho3D::String ScriptParameter::GetReaderType(Urho3D::VariantType type)
+{
+	const String typeName = Variant::GetTypeName(type);
+	if (type != VAR_STRING)
+		return typeName.ToLower();
+	else
+		return typeName;
+}
+
+Urho3D::String ScriptParameter::GetWriterType(Urho3D::VariantType type)
+{
+	const String typeName = Variant::GetTypeName(type);
+	if (type != VAR_STRING)
+		return typeName.ToLower();
+	else
+		return ToString("const %s&in", typeName.CString());
+}

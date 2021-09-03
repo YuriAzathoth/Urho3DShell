@@ -50,6 +50,10 @@ private:
 	asIScriptFunction* reader_;
 	asIScriptFunction* writer_;
 	bool success_;
+
+private:
+	static Urho3D::String GetReaderType(Urho3D::VariantType type);
+	static Urho3D::String GetWriterType(Urho3D::VariantType type);
 };
 
 #endif // SCRIPTPARAMETER_H

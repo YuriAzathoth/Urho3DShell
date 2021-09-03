@@ -74,6 +74,7 @@ void ShellApplication::Start()
 	const auto itScript = shellParameters_.Find(SP_SCRIPT);
 	if (itScript != shellParameters_.End())
 		plugins->Load(itScript->second_.GetString());
+	plugins->Load("test.as");
 
 	GetSubsystem<Config>()->Apply(shellParameters_);
 }
