@@ -25,9 +25,8 @@
 BinaryParameter::BinaryParameter(SimpleReaderFunc&& reader,
 								 Urho3D::VariantType type,
 								 Urho3D::StringHash settingsTab,
-								 bool isEngine,
-								 bool isLocalized)
-	: DynamicParameter(type, settingsTab, isEngine, isLocalized)
+								 bool isEngine)
+	: DynamicParameter(type, settingsTab, isEngine)
 	, reader_(std::move(reader))
 {
 }
@@ -38,9 +37,8 @@ SimpleBinaryParameter::SimpleBinaryParameter(SimpleReaderFunc&& reader,
 											 SimpleWriterFunc&& writer,
 											 Urho3D::VariantType type,
 											 Urho3D::StringHash settingsTab,
-											 bool isEngine,
-											 bool isLocalized)
-	: BinaryParameter(std::move(reader), type, settingsTab, isEngine, isLocalized)
+											 bool isEngine)
+	: BinaryParameter(std::move(reader), type, settingsTab, isEngine)
 	, writer_(std::move(writer))
 {
 }
@@ -52,9 +50,8 @@ ComplexBinaryParameter::ComplexBinaryParameter(Urho3D::WeakPtr<ComplexParameterS
 											   Urho3D::StringHash name,
 											   Urho3D::VariantType type,
 											   Urho3D::StringHash settingsTab,
-											   bool isEngine,
-											   bool isLocalized)
-	: BinaryParameter(std::move(reader), type, settingsTab, isEngine, isLocalized)
+											   bool isEngine)
+	: BinaryParameter(std::move(reader), type, settingsTab, isEngine)
 	, storage_(storage)
 	, name_(name)
 {

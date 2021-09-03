@@ -31,31 +31,20 @@
 class DynamicParameter : public Urho3D::RefCounted
 {
 public:
-	DynamicParameter(Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine, bool isLocalized);
+	DynamicParameter(Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine);
 	virtual ~DynamicParameter() {}
 
 	virtual Urho3D::Variant Read() = 0;
 	virtual void Write(const Urho3D::Variant& value) = 0;
 
-	void SetEnum() noexcept { flags_ |= Flags::ENUM; }
-
 	Urho3D::StringHash GetSettingsTab() const noexcept { return settingsTab_; }
 	Urho3D::VariantType GetType() const noexcept { return type_; }
-	bool IsEngine() const noexcept { return flags_ & Flags::ENGINE; }
-	bool IsEnum() const noexcept { return flags_ & Flags::ENUM; }
-	bool IsLocalized() const noexcept { return flags_ & Flags::LOCALIZED; }
+	bool IsEngine() const noexcept { return isEngine_; }
 
 protected:
-	enum class Flags : unsigned char
-	{
-		ENGINE = 0x1,
-		ENUM = 0x2,
-		LOCALIZED = 0x4
-	};
-
 	Urho3D::StringHash settingsTab_;
 	Urho3D::VariantType type_;
-	Urho3D::FlagSet<Flags> flags_;
+	bool isEngine_;
 };
 
 #endif // DYNAMICPARAMETER_H

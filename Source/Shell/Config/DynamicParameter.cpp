@@ -22,15 +22,9 @@
 
 #include "DynamicParameter.h"
 
-DynamicParameter::DynamicParameter(Urho3D::VariantType type,
-								   Urho3D::StringHash settingsTab,
-								   bool isEngine,
-								   bool isLocalized)
+DynamicParameter::DynamicParameter(Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine)
 	: settingsTab_(settingsTab)
 	, type_(type)
+	, isEngine_(isEngine)
 {
-	if (isEngine)
-		flags_ |= Flags::ENGINE;
-	if (isLocalized)
-		flags_ |= Flags::LOCALIZED;
 }

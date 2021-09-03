@@ -269,7 +269,7 @@ bool Config::RegisterSimpleParameter(const Urho3D::String& name,
 									 SimpleWriterFunc&& writer)
 {
 	return RegisterParameter(
-		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine, false),
+		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
 		name,
 		settingsTab);
 }
@@ -284,11 +284,11 @@ bool Config::RegisterSimpleEnumParameter(const Urho3D::String& name,
 										 EnumConstructorFunc&& enumer)
 {
 	const bool success = RegisterParameter(
-		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine, isLocalized),
+		new SimpleBinaryParameter(std::move(reader), std::move(writer), type, settingsTab, isEngine),
 		name,
 		settingsTab);
 	if (success)
-		RegisterEnum(name, std::move(enumer));
+		RegisterEnum(name, std::move(enumer), isLocalized);
 	return success;
 }
 
@@ -300,7 +300,7 @@ bool Config::RegisterComplexParameter(const Urho3D::String& name,
 									  SimpleReaderFunc&& reader)
 {
 	return RegisterParameter(
-		new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine, false),
+		new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
 		name,
 		settingsTab);
 }
@@ -315,11 +315,11 @@ bool Config::RegisterComplexEnumParameter(const Urho3D::String& name,
 										  EnumConstructorFunc&& enumer)
 {
 	const bool success = RegisterParameter(
-		new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine, isLocalized),
+		new ComplexBinaryParameter(storage, std::move(reader), name, type, settingsTab, isEngine),
 		name,
 		settingsTab);
 	if (success)
-		RegisterEnum(name, std::move(enumer));
+		RegisterEnum(name, std::move(enumer), isLocalized);
 	return success;
 }
 
@@ -333,8 +333,7 @@ void Config::RemoveParameter(Urho3D::StringHash parameter)
 			names_.Erase(parameter);
 		else
 			settings_.Erase(itSetting);
-		if (itParameter->second_->IsEnum())
-			enumConstructors_.Erase(itParameter->first_);
+		enumConstructors_.Erase(itParameter->first_);
 		parameters_.Erase(itParameter);
 	}
 	else
@@ -347,14 +346,10 @@ DynamicParameter* Config::GetParameter(Urho3D::StringHash parameter) const
 	return it != parameters_.End() ? it->second_ : nullptr;
 }
 
-void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor)
+void Config::RegisterEnum(Urho3D::StringHash parameter, EnumConstructorFunc enumConstructor, bool localized)
 {
-	auto it = parameters_.Find(parameter);
-	if (it != parameters_.End())
-	{
-		it->second_->SetEnum();
-		enumConstructors_[parameter] = enumConstructor;
-	}
+	if (parameters_.Contains(parameter))
+		enumConstructors_[parameter] = { enumConstructor, localized };
 	else
 		URHO3D_LOGWARNING("Failed to assign enum constructor to non-existent config parameter.");
 }
@@ -402,16 +397,12 @@ bool Config::IsEngine(Urho3D::StringHash parameter) const
 	return it != parameters_.End() ? it->second_->IsEngine() : false;
 }
 
-bool Config::IsEnum(Urho3D::StringHash parameter) const
-{
-	const auto it = parameters_.Find(parameter);
-	return it != parameters_.End() ? it->second_->IsEnum() : false;
-}
+bool Config::IsEnum(Urho3D::StringHash parameter) const { return enumConstructors_.Contains(parameter); }
 
 bool Config::IsLocalized(Urho3D::StringHash parameter) const
 {
-	const auto it = parameters_.Find(parameter);
-	return it != parameters_.End() ? it->second_->IsLocalized() : false;
+	const auto it = enumConstructors_.Find(parameter);
+	return it != parameters_.End() ? it->second_.localized_ : false;
 }
 
 Urho3D::Variant Config::ReadValue(Urho3D::StringHash parameter) const
@@ -430,7 +421,7 @@ void Config::WriteValue(Urho3D::StringHash parameter, const Urho3D::Variant& val
 EnumVector Config::ConstructEnum(Urho3D::StringHash parameter) const
 {
 	const auto it = enumConstructors_.Find(parameter);
-	return it != enumConstructors_.End() ? it->second_() : EnumVector{};
+	return it != enumConstructors_.End() ? it->second_.func_() : EnumVector{};
 }
 
 Urho3D::String Config::GetDebugString() const
@@ -457,10 +448,10 @@ Urho3D::String Config::GetDebugString() const
 				ret.Append("ENGINE\n");
 			else
 				ret.Append("CUSTOM\n");
-			if (parameter->IsEnum())
+			if (IsEnum(parameterName))
 			{
 				ret.Append("\t\tEnum Variants:\n");
-				enumVector = (*enumConstructors_[parameterName])();
+				enumVector = enumConstructors_[parameterName]->func_();
 				for (const EnumVariant& enumVariant : enumVector)
 					ret.Append("\t\t\t")
 						.Append(enumVariant.caption_)

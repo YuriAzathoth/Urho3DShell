@@ -30,11 +30,7 @@
 class BinaryParameter : public DynamicParameter
 {
 public:
-	BinaryParameter(SimpleReaderFunc&& reader,
-					Urho3D::VariantType type,
-					Urho3D::StringHash settingsTab,
-					bool isEngine,
-					bool isLocalized);
+	BinaryParameter(SimpleReaderFunc&& reader, Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine);
 
 	Urho3D::Variant Read() override;
 
@@ -49,8 +45,7 @@ public:
 						  SimpleWriterFunc&& writer,
 						  Urho3D::VariantType type,
 						  Urho3D::StringHash settingsTab,
-						  bool isEngine,
-						  bool isLocalized);
+						  bool isEngine);
 
 	void Write(const Urho3D::Variant& value) override;
 
@@ -66,8 +61,7 @@ public:
 						   Urho3D::StringHash name,
 						   Urho3D::VariantType type,
 						   Urho3D::StringHash settingsTab,
-						   bool isEngine,
-						   bool isLocalized);
+						   bool isEngine);
 
 	void Write(const Urho3D::Variant& value) override;
 
