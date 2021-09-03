@@ -28,8 +28,10 @@ using namespace Urho3D;
 
 static void RegisterObjectTypes(asIScriptEngine* engine)
 {
+	engine->RegisterObjectType("ComplexParameter", 0, asOBJ_REF);
 	engine->RegisterObjectType("Config", 0, asOBJ_REF);
 	engine->RegisterObjectType("DynamicParameter", 0, asOBJ_REF);
+	engine->RegisterObjectType("EnumConstructor", 0, asOBJ_REF);
 	engine->RegisterObjectType("EnumVariant", sizeof(EnumVariant), asOBJ_VALUE | asGetTypeTraits<AllocatorNode>());
 }
 
@@ -47,7 +49,9 @@ static void RegisterClasses(asIScriptEngine* engine)
 	RegisterSubclass<Object, Config>(engine, "Object", "Config");
 	RegisterSubclass<RefCounted, Config>(engine, "RefCounted", "Config");
 
+	RegisterSubclass<RefCounted, ComplexParameter>(engine, "RefCounted", "ComplexParameter");
 	RegisterSubclass<RefCounted, DynamicParameter>(engine, "RefCounted", "DynamicParameter");
+	RegisterSubclass<RefCounted, EnumConstructor>(engine, "RefCounted", "EnumConstructor");
 
 	engine->RegisterObjectBehaviour("EnumVariant",
 									asBEHAVE_CONSTRUCT,
@@ -96,6 +100,12 @@ static void RegisterParameter(Config* config,
 		MakeShared<ScriptParameter>(type, settingsTab, isEngine, readerFunc, writerFunc);
 	if (parameter->Success())
 		config->RegisterParameter(parameter, name, settingsTab);
+}
+
+template <typename T> static CScriptArray* EnumVector_Create(T* _ptr)
+{
+	const EnumVector result = _ptr->Create();
+	return VectorToArray<EnumVariant>(result, "Array<EnumVariant>");
 }
 
 #if defined(__GNUC__) || defined(__GNUG__)
@@ -206,14 +216,17 @@ template <typename T> void RegisterMembers_Config(asIScriptEngine* engine, const
 								 AS_CALL_THISCALL);
 }
 
-template <typename T> void RegisterMembers_EnumVariant(asIScriptEngine* engine, const char* className)
+template <typename T> void RegisterMembers_ComplexParameter(asIScriptEngine* engine, const char* className)
 {
-	engine->RegisterObjectMethod(className,
-								 "EnumVariant& opAssign(const EnumVariant&in) const",
-								 AS_METHODPR(T, operator=, (const EnumVariant&), EnumVariant&),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectProperty(className, "String caption", offsetof(T, caption_));
-	engine->RegisterObjectProperty(className, "Variant value", offsetof(T, value_));
+	engine->RegisterObjectMethod(className, "void Apply()", AS_METHOD(T, Apply), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "void Set(StringHash, const VariantMap&in) const", AS_METHOD(T, Set), AS_CALL_THISCALL);
+	engine->RegisterObjectMethod(className, "bool get_engine() const", AS_METHOD(T, IsEngine), AS_CALL_THISCALL);
+}
+
+template <typename T> void RegisterMembers_EnumConstructor(asIScriptEngine* engine, const char* className)
+{
+	engine->RegisterObjectMethod(className, "Array<EnumVariant>@ Create()", AS_FUNCTION_OBJFIRST(EnumVector_Create<T>), AS_CALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod(className, "bool get_localized() const", AS_METHOD(T, IsLocalized), AS_CALL_THISCALL);
 }
 
 template <typename T> void RegisterMembers_DynamicParameter(asIScriptEngine* engine, const char* className)
@@ -229,6 +242,16 @@ template <typename T> void RegisterMembers_DynamicParameter(asIScriptEngine* eng
 	engine->RegisterObjectMethod(className, "bool get_engine() const", AS_METHOD(T, IsEngine), AS_CALL_THISCALL);
 }
 
+template <typename T> void RegisterMembers_EnumVariant(asIScriptEngine* engine, const char* className)
+{
+	engine->RegisterObjectMethod(className,
+								 "EnumVariant& opAssign(const EnumVariant&in) const",
+								 AS_METHODPR(T, operator=, (const EnumVariant&), EnumVariant&),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectProperty(className, "String caption", offsetof(T, caption_));
+	engine->RegisterObjectProperty(className, "Variant value", offsetof(T, value_));
+}
+
 #if defined(__GNUC__) || defined(__GNUG__)
 #pragma GCC diagnostic pop
 #endif // defined (__GNUC__) || defined(__GNUG__)
@@ -239,8 +262,10 @@ template <typename T> void RegisterMembers_DynamicParameter(asIScriptEngine* eng
 
 static void RegisterMembers(asIScriptEngine* engine)
 {
+	RegisterMembers_ComplexParameter<ComplexParameter>(engine, "ComplexParameter");
 	RegisterMembers_DynamicParameter<DynamicParameter>(engine, "DynamicParameter");
 	RegisterMembers_EnumVariant<EnumVariant>(engine, "EnumVariant");
+	RegisterMembers_EnumConstructor<EnumConstructor>(engine, "EnumConstructor");
 	RegisterMembers_Config<Config>(engine, "Config");
 }
 
