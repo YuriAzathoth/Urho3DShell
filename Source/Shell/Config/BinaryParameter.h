@@ -31,9 +31,13 @@ class BinaryParameter : public DynamicParameter
 public:
 	using SimpleReaderFunc = std::function<Urho3D::Variant()>;
 
-	BinaryParameter(SimpleReaderFunc&& reader, Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine);
+	BinaryParameter(SimpleReaderFunc&& reader, Urho3D::VariantType type, Urho3D::StringHash settingsTab, bool isEngine)
+		: DynamicParameter(type, settingsTab, isEngine)
+		, reader_(std::move(reader))
+	{
+	}
 
-	Urho3D::Variant Read() override;
+	Urho3D::Variant Read() override { return reader_(); }
 
 private:
 	const SimpleReaderFunc reader_;
@@ -48,9 +52,13 @@ public:
 						  SimpleWriterFunc&& writer,
 						  Urho3D::VariantType type,
 						  Urho3D::StringHash settingsTab,
-						  bool isEngine);
+						  bool isEngine)
+		: BinaryParameter(std::move(reader), type, settingsTab, isEngine)
+		, writer_(std::move(writer))
+	{
+	}
 
-	void Write(const Urho3D::Variant& value) override;
+	void Write(const Urho3D::Variant& value) override { writer_(value); }
 
 private:
 	const SimpleWriterFunc writer_;
@@ -66,9 +74,14 @@ public:
 						   Urho3D::StringHash name,
 						   Urho3D::VariantType type,
 						   Urho3D::StringHash settingsTab,
-						   bool isEngine);
+						   bool isEngine)
+		: BinaryParameter(std::move(reader), type, settingsTab, isEngine)
+		, storage_(storage)
+		, name_(name)
+	{
+	}
 
-	void Write(const Urho3D::Variant& value) override;
+	void Write(const Urho3D::Variant& value) override { storage_->Set(name_, value); }
 
 private:
 	Urho3D::WeakPtr<ComplexParameter> storage_;
