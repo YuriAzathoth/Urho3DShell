@@ -22,15 +22,10 @@
 
 #include "BinaryPlugin.h"
 #include "Core/ShellConfigurator.h"
+#include "LuaScriptPlugin.h"
 #include "PluginsRegistry.h"
 #include "ScriptPlugin.h"
 #include "Urho3DShellConfig.h"
-
-#ifdef URHO3DSHELL_EXPERIMENTAL
-#include "LuaScriptPlugin.h"
-#else
-#include <Urho3D/IO/Log.h>
-#endif // URHO3DSHELL_EXPERIMENTAL
 
 using namespace Urho3D;
 
@@ -46,11 +41,7 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 	if (pluginName.EndsWith(".as", false))
 		plugin.StaticCast(MakeShared<ScriptPlugin>(context_));
 	else if (pluginName.EndsWith(".lua", false))
-#ifdef URHO3DSHELL_EXPERIMENTAL
 		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));
-#else
-		URHO3D_LOGERROR("Loading Lua scripts is only supported in experimental mode.");
-#endif // URHO3DSHELL_EXPERIMENTAL
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
 

@@ -39,13 +39,10 @@
 #include "ShellState/MainMenuState.h"
 #include "ShellState/RemoteServerState.h"
 #include "ShellState/ShellStateMachine.h"
-#include "Urho3DShellConfig.h"
 
 extern void RegisterClientParameters(Config* config);
 extern void RegisterClientAPI(asIScriptEngine* engine);
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 extern void RegisterClientLuaAPI(lua_State* state);
-#endif
 
 using namespace Urho3D;
 

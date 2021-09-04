@@ -27,6 +27,9 @@ set (TARGET_NAME toluapp)
 # Define source files
 define_source_files (GLOB_CPP_PATTERNS *.c)
 
+# Define dependency libs
+set (LIBS Lua${JIT})
+
 # Setup target
 setup_library ()
 
