@@ -218,6 +218,7 @@ template <typename T> void RegisterMembers_Config(asIScriptEngine* engine, const
 
 template <typename T> void RegisterMembers_ComplexParameter(asIScriptEngine* engine, const char* className)
 {
+	RegisterMembers_RefCounted<T>(engine, className);
 	engine->RegisterObjectMethod(className, "void Apply()", AS_METHOD(T, Apply), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className,
 								 "void Set(StringHash, const VariantMap&in) const",
@@ -241,6 +242,7 @@ template <typename T> void RegisterMembers_DynamicParameter(asIScriptEngine* eng
 
 template <typename T> void RegisterMembers_EnumConstructor(asIScriptEngine* engine, const char* className)
 {
+	RegisterMembers_RefCounted<T>(engine, className);
 	engine->RegisterObjectMethod(className,
 								 "Array<EnumVariant>@ Create()",
 								 AS_FUNCTION_OBJFIRST(EnumVector_Create<T>),
