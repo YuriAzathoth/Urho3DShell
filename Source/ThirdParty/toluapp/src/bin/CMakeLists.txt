@@ -40,7 +40,7 @@ add_custom_command (OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/toluabind.c
 define_source_files (EXTRA_CPP_FILES tolua.c ${CMAKE_CURRENT_BINARY_DIR}/generated/toluabind.c)
 
 # Define dependency libs
-set (LIBS toluapp)
+set (LIBS toluapp Lua${JIT})
 if (NOT MSVC)
     list (APPEND LIBS m)
 endif ()

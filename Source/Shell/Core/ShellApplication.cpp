@@ -30,12 +30,15 @@
 #include "ShellApplication.h"
 #include "ShellConfigurator.h"
 #include "ShellDefs.h"
+#include "Urho3DShellConfig.h"
 
 #define MAIN_PLUGIN_LIB "Game"
 
 extern void RegisterServerParameters(Config* config);
 extern void RegisterServerAPI(asIScriptEngine* engine);
+#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 extern void RegisterServerLuaAPI(lua_State* state);
+#endif
 
 using namespace Urho3D;
 
