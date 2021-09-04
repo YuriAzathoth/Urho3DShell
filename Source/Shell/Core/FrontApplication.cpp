@@ -57,10 +57,7 @@ void FrontApplication::Setup()
 	ShellApplication::Setup();
 	context_->RegisterSubsystem<ShellStateMachine>();
 	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
-
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 	RegisterClientLuaAPI(GetSubsystem<LuaScript>()->GetState());
-#endif
 }
 
 void FrontApplication::Start()

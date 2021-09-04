@@ -59,10 +59,7 @@ void ShellApplication::Setup()
 	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters_, shellParameters_);
 
 	RegisterServerAPI(GetSubsystem<Script>()->GetScriptEngine());
-
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 	RegisterServerLuaAPI(GetSubsystem<LuaScript>()->GetState());
-#endif
 }
 
 void ShellApplication::Start()
