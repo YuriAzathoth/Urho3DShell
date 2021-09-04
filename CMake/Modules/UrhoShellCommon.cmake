@@ -167,7 +167,7 @@ MACRO (SETUP_GAME_LIBRARY)
 			DEPENDS tolua++ ${API_PKG_FILE} ${PKG_FILES}
 			${LUA_PACKAGES_PATH}/ToCppHook.lua
 			WORKING_DIRECTORY ${LUA_PACKAGES_PATH}
-			COMMENT "Generating tolua++ API binding on the fly for ${DIR}"
+			COMMENT "Generating tolua++ API binding for ${DIR}"
 		)
 	ENDFOREACH ()
 	LIST (APPEND LIBS Lua${JIT} toluapp)
