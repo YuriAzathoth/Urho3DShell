@@ -26,6 +26,7 @@
 #include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include "LuaScriptPlugin.h"
+#include "Urho3DShellConfig.h"
 
 using namespace Urho3D;
 
@@ -35,6 +36,9 @@ LuaScriptPlugin::LuaScriptPlugin(Urho3D::Context* context)
 {
 }
 
+const Urho3D::String& LuaScriptPlugin::GetName() const { return script_ ? script_->GetName() : String::EMPTY; }
+
+#ifdef URHO3DSHELL_EXPERIMENTAL
 LuaScriptPlugin::~LuaScriptPlugin()
 {
 	if (script_)
@@ -53,8 +57,6 @@ bool LuaScriptPlugin::Load(const Urho3D::String& fileName)
 
 	return true;
 }
-
-const Urho3D::String& LuaScriptPlugin::GetName() const { return script_ ? script_->GetName() : String::EMPTY; }
 
 bool LuaScriptPlugin::Execute(const Urho3D::String& functionName,
 							  const Urho3D::VariantVector& parameters,
@@ -85,3 +87,14 @@ bool LuaScriptPlugin::Execute(const Urho3D::String& functionName,
 
 	return true;
 }
+#else
+LuaScriptPlugin::~LuaScriptPlugin() {}
+
+bool LuaScriptPlugin::Load(const Urho3D::String&)
+{
+	URHO3D_LOGERROR("Loading Lua script is only supported in experimental mode.");
+	return false;
+}
+
+bool LuaScriptPlugin::Execute(const Urho3D::String&, const Urho3D::VariantVector&, Urho3D::Variant*) { return false; }
+#endif // URHO3DSHELL_EXPERIMENTAL
