@@ -2,10 +2,10 @@ $#include "Plugin/PluginsRegistry.h"
 
 class PluginsRegistry : public Object
 {
-	bool Load(const String& pluginName);
-	void Close(StringHash plugin);
-	StringVector GetAllNames() const;
-	void CloseAll();
+	bool RegisterPlugin(String pluginName);
+	void RemovePlugin(StringHash plugin);
+	StringVector GetPlugins() const;
+	void RemoveAllPlugins();
 }
 
 PluginsRegistry* GetPluginsRegistry();
