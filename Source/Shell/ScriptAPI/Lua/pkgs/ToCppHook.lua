@@ -1,6 +1,5 @@
 --
 -- Copyright (c) 2008-2021 the Urho3D project.
--- Copyright (c) 2021 Yuriy Zinchenko.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +67,6 @@ function post_output_hook(package)
 
 #include "tolua++.h"]], [[//
 // Copyright (c) 2008-2021 the Urho3D project.
-// Copyright (c) 2021 Yuriy Zinchenko.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -90,7 +88,7 @@ function post_output_hook(package)
 //
 
 #include <toluapp/tolua++.h>
-#include "ScriptAPI/Lua/ToluaUtils.h"
+#include <Urho3D/LuaScript/ToluaUtils.h>
 
 #if __clang__
 #pragma clang diagnostic push
