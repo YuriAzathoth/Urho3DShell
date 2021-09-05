@@ -2,15 +2,6 @@ $#include "Config/Config.h"
 
 class Config : public Object
 {
-	struct EnumVariant
-	{
-		String caption_;
-		Variant value_;
-		EnumVariant(const char* caption, Urho3D::Variant value);
-		EnumVariant(const Urho3D::String& caption, Urho3D::Variant value);
-		EnumVariant(const EnumVariant& src);
-	}
-
 	bool Load(Deserializer& source);
 	bool Save(Serializer& dest) const;
 	bool LoadXML(const XMLElement& source);
@@ -27,21 +18,7 @@ class Config : public Object
 	StringVector GetSettingsTabs() const;
 	StringVector GetSettings(StringHash settingsTab) const;
 
-	bool RegisterParameter(const String& parameterName,
-						   VariantType type,
-						   StringHash settingsTab,
-						   bool isEngine,
-						   bool localized);
-
 	void RemoveParameter(StringHash parameter);
-
-	const String& GetName(StringHash parameter) const;
-	VariantType GetType(StringHash parameter) const;
-	bool IsEnum(StringHash parameter) const;
-	bool IsLocalized(StringHash parameter) const;
-	Variant ReadValue(StringHash parameter) const;
-	void WriteValue(StringHash parameter, const Variant& value);
-	Vector<EnumVariant> ConstructEnum(StringHash parameter) const;
 
 	String GetDebugString() const;
 }
