@@ -35,8 +35,6 @@ LuaScriptPlugin::LuaScriptPlugin(Urho3D::Context* context)
 {
 }
 
-const Urho3D::String& LuaScriptPlugin::GetName() const { return script_ ? script_->GetName() : String::EMPTY; }
-
 LuaScriptPlugin::~LuaScriptPlugin()
 {
 	if (script_)
@@ -55,6 +53,8 @@ bool LuaScriptPlugin::Load(const Urho3D::String& fileName)
 
 	return true;
 }
+
+const Urho3D::String& LuaScriptPlugin::GetName() const { return script_ ? script_->GetName() : String::EMPTY; }
 
 bool LuaScriptPlugin::Execute(const Urho3D::String& functionName,
 							  const Urho3D::VariantVector& parameters,
