@@ -55,9 +55,11 @@ private:
 	void OnClientDisconnected(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnClientIdentity(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnServerSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnServerSideRespawned(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	Urho3D::Scene scene_;
+	Urho3D::HashMap<Urho3D::StringHash, unsigned> nodes_;
 	bool pausable_;
 	bool remote_;
 };

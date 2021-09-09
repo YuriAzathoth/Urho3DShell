@@ -30,6 +30,12 @@ URHO3D_EVENT(E_REMOTECLIENTSTOPPED, RemoteClientStopped) {}
 URHO3D_EVENT(E_REMOTESERVERSTARTED, RemoteServerStarted) {}
 URHO3D_EVENT(E_REMOTESERVERSTOPPED, RemoteServerStopped) {}
 
+URHO3D_EVENT(E_SERVERSIDERESPAWNED, ServerSideRespawned)
+{
+	URHO3D_PARAM(P_CONNECTION, Connection); // Connection ptr
+	URHO3D_PARAM(P_NODE, Node);				// int
+}
+
 URHO3D_EVENT(E_SERVERSIDESPAWNED, ServerSideSpawned)
 {
 	URHO3D_PARAM(P_CONNECTION, Connection); // Connection ptr

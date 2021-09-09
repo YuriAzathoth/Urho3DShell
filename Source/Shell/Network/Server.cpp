@@ -43,7 +43,8 @@ Server::Server(Urho3D::Context* context)
 	SubscribeToEvent(E_CLIENTDISCONNECTED, URHO3D_HANDLER(Server, OnClientDisconnected));
 	SubscribeToEvent(E_CLIENTIDENTITY, URHO3D_HANDLER(Server, OnClientIdentity));
 	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(Server, OnClientSceneLoaded));
-	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(Server, OnServerSceneLoaded));
+	SubscribeToEvent(E_SERVERSIDERESPAWNED, URHO3D_HANDLER(Server, OnServerSideRespawned));
+	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(Server, OnServerSideSpawned));
 }
 
 Server::~Server()
@@ -91,6 +92,8 @@ void Server::Stop()
 	}
 	if (remote_)
 		network->SetDiscoveryBeacon(Variant::emptyVariantMap);
+	nodes_.Clear();
+	scene_.Clear();
 	remote_ = false;
 }
 
@@ -121,7 +124,16 @@ void Server::OnClientDisconnected(Urho3D::StringHash, Urho3D::VariantMap& eventD
 {
 	using namespace ClientConnected;
 	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-	URHO3D_LOGTRACEF("Server::OnClientDisconnected %s", connection->ToString().CString());
+	const String address = connection->ToString();
+	auto it = nodes_.Find(address);
+	if (it != nodes_.End())
+	{
+		Node* node = scene_.GetNode(it->second_);
+		if (node)
+			node->Remove();
+		nodes_.Erase(it);
+	}
+	URHO3D_LOGTRACEF("Server::OnClientDisconnected %s", address);
 }
 
 void Server::OnClientIdentity(Urho3D::StringHash, Urho3D::VariantMap& eventData)
@@ -129,8 +141,8 @@ void Server::OnClientIdentity(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 	using namespace ClientIdentity;
 	Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
 	connection->SetScene(&scene_);
-	//	const String& ServerName = eventData[CL_NAME].GetString();
-	URHO3D_LOGTRACEF("Server::OnServerIdentity %s", connection->ToString().CString());
+	const String& clientName = eventData[CL_NAME].GetString();
+	URHO3D_LOGTRACEF("Server::OnServerIdentity %s name %s", connection->ToString().CString(), clientName.CString());
 }
 
 void Server::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData)
@@ -140,7 +152,29 @@ void Server::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventDa
 	URHO3D_LOGTRACEF("Server::OnClientSceneLoaded %s", connection->ToString().CString());
 }
 
-void Server::OnServerSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&)
+void Server::OnServerSideRespawned(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
-	URHO3D_LOGTRACE("Server::OnServerSceneLoaded");
+	using namespace ServerSideRespawned;
+	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
+	const String address = connection->ToString();
+	const unsigned nodeId = eventData[P_NODE].GetInt();
+	auto it = nodes_.Find(address);
+	if (it != nodes_.End())
+	{
+		Node* node = scene_.GetNode(it->second_);
+		if (node)
+			node->Remove();
+		it->second_ = nodeId;
+	}
+	URHO3D_LOGTRACEF("Server::OnServerSideDespawned %s", address.CString());
+}
+
+void Server::OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace ServerSideSpawned;
+	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
+	const String address = connection->ToString();
+	const unsigned nodeId = eventData[P_NODE].GetInt();
+	nodes_[address] = nodeId;
+	URHO3D_LOGTRACEF("Server::OnClientSceneLoaded %s node %u", address.CString(), nodeId);
 }
