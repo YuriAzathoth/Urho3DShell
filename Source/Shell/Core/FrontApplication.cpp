@@ -42,10 +42,14 @@
 #include "Urho3DShellConfig.h"
 
 extern void RegisterClientParameters(Config* config);
+#ifdef URHO3DSHELL_EXPERIMENTAL
+#ifdef URHO3D_ANGELSCRIPT
 extern void RegisterClientAPI(asIScriptEngine* engine);
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#endif // URHO3D_ANGELSCRIPT
+#ifdef URHO3D_LUA
 extern void RegisterClientLuaAPI(lua_State* state);
-#endif
+#endif // URHO3D_LUA
+#endif // URHO3DSHELL_EXPERIMENTAL
 
 using namespace Urho3D;
 
@@ -59,11 +63,15 @@ void FrontApplication::Setup()
 {
 	ShellApplication::Setup();
 	context_->RegisterSubsystem<ShellStateMachine>();
-	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
 
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#ifdef URHO3DSHELL_EXPERIMENTAL
+#ifdef URHO3D_ANGELSCRIPT
+	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
+#endif // URHO3D_ANGELSCRIPT
+#ifdef URHO3D_LUA
 	RegisterClientLuaAPI(GetSubsystem<LuaScript>()->GetState());
-#endif
+#endif // URHO3D_LUA
+#endif // URHO3DSHELL_EXPERIMENTAL
 }
 
 void FrontApplication::Start()

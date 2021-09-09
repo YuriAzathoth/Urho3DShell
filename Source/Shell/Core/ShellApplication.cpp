@@ -35,10 +35,14 @@
 #define MAIN_PLUGIN_LIB "Game"
 
 extern void RegisterServerParameters(Config* config);
+#ifdef URHO3DSHELL_EXPERIMENTAL
+#ifdef URHO3D_ANGELSCRIPT
 extern void RegisterServerAPI(asIScriptEngine* engine);
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#endif // URHO3D_ANGELSCRIPT
+#ifdef URHO3D_LUA
 extern void RegisterServerLuaAPI(lua_State* state);
-#endif
+#endif // URHO3D_LUA
+#endif // URHO3DSHELL_EXPERIMENTAL
 
 using namespace Urho3D;
 
@@ -52,8 +56,6 @@ ShellApplication::ShellApplication(Urho3D::Context* context, Urho3D::VariantMap&
 
 void ShellApplication::Setup()
 {
-	context_->RegisterSubsystem<LuaScript>();
-	context_->RegisterSubsystem<Script>();
 	context_->RegisterSubsystem<ActionsRegistry>();
 	context_->RegisterSubsystem<PluginsRegistry>();
 	context_->RegisterSubsystem<ShellConfigurator>();
@@ -61,11 +63,16 @@ void ShellApplication::Setup()
 	GetSubsystem<PluginsRegistry>()->Initialize(MAIN_PLUGIN_LIB);
 	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters_, shellParameters_);
 
+#ifdef URHO3DSHELL_EXPERIMENTAL
+#ifdef URHO3D_ANGELSCRIPT
+	context_->RegisterSubsystem<Script>();
 	RegisterServerAPI(GetSubsystem<Script>()->GetScriptEngine());
-
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#endif // URHO3D_ANGELSCRIPT
+#ifdef URHO3D_LUA
+	context_->RegisterSubsystem<LuaScript>();
 	RegisterServerLuaAPI(GetSubsystem<LuaScript>()->GetState());
-#endif
+#endif // URHO3D_LUA
+#endif // URHO3DSHELL_EXPERIMENTAL
 }
 
 void ShellApplication::Start()
