@@ -34,8 +34,8 @@ ServersListDialog::ServersListDialog(Urho3D::Context* context)
 	: ItemsListWindow(context)
 {
 	SetServerSettingsVisible(false);
-	SetInteractive(true);
 	SetTitle("ConnectToServer");
+	SetCaptions({"Name", "Map", "Players", "MaxPlayers"});
 
 	GetSubsystem<Network>()->DiscoverHosts(GetSubsystem<ShellConfigurator>()->GetPort());
 
@@ -52,10 +52,14 @@ void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::Vari
 {
 	using namespace NetworkHostDiscovered;
 	const VariantMap& hostBeacon = eventData[P_BEACON].GetVariantMap();
+	StringVector row(4);
 	if (!hostBeacon.Empty())
 	{
 		const String& address = eventData[P_ADDRESS].GetString();
-		const String& serverName = hostBeacon[SV_NAME]->GetString();
-		AddItem(serverName, address);
+		row[0] = hostBeacon[SV_NAME]->GetString();
+		row[1] = hostBeacon[SV_SCENE]->GetString();
+		row[2] = hostBeacon[SV_PLAYERS]->ToString();
+		row[3] = hostBeacon[SV_PLAYERS_MAX]->ToString();
+		AddItem(address, row);
 	}
 }

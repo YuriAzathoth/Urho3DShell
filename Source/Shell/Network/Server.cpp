@@ -102,6 +102,9 @@ void Server::MakeVisible(const Urho3D::String& serverName)
 	URHO3D_LOGTRACEF("Server::MakeVisible(%s)", serverName.CString());
 	VariantMap hostBeacon;
 	hostBeacon[SV_NAME] = serverName;
+	hostBeacon[SV_SCENE] = scene_.GetFileName();
+	hostBeacon[SV_PLAYERS] = 0;
+	hostBeacon[SV_PLAYERS_MAX] = 128;
 	GetSubsystem<Network>()->SetDiscoveryBeacon(hostBeacon);
 	remote_ = true;
 	SendEvent(E_REMOTESERVERSTARTED);

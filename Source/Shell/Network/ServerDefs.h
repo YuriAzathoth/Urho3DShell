@@ -27,5 +27,8 @@ static Urho3D::String CL_NAME = "Name";
 
 static Urho3D::String SV_GAME = "Game";
 static Urho3D::String SV_NAME = "Name";
+static Urho3D::String SV_PLAYERS = "Players";
+static Urho3D::String SV_PLAYERS_MAX = "PlayersMax";
+static Urho3D::String SV_SCENE = "Scene";
 
 #endif // SERVERDEFS_H

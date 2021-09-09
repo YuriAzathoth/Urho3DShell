@@ -39,10 +39,11 @@ class URHO3DSHELLAPI_EXPORT ItemsListWindow : public Dialog
 public:
 	explicit ItemsListWindow(Urho3D::Context* context);
 
-	void AddItem(const Urho3D::String& caption, const Urho3D::String& itemName);
+	void AddItem(const Urho3D::String& itemName, const Urho3D::StringVector& itemRow);
 	void RemoveAllItems();
 
 	void SetTitle(const Urho3D::String& title);
+	void SetCaptions(const Urho3D::StringVector& captions);
 	void SetServerSettingsVisible(bool visible);
 
 private:

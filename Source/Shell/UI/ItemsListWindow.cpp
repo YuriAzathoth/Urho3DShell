@@ -52,7 +52,7 @@ ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
 	SubscribeToEvent(root_->GetChild("Server", true), E_TOGGLED, URHO3D_HANDLER(ItemsListWindow, OnServerToggled));
 }
 
-void ItemsListWindow::AddItem(const Urho3D::String& caption, const Urho3D::String& itemName)
+void ItemsListWindow::AddItem(const Urho3D::String& itemName, const Urho3D::StringVector& itemRow)
 {
 	SharedPtr<UIElement> item = MakeShared<UIElement>(context_);
 	itemList_->AddItem(item);
@@ -60,9 +60,13 @@ void ItemsListWindow::AddItem(const Urho3D::String& caption, const Urho3D::Strin
 	item->SetLayout(LM_HORIZONTAL, 0, {4, 4, 4, 4});
 	item->SetStyleAuto();
 
-	Text* text = item->CreateChild<Text>();
-	text->SetText(caption);
-	text->SetStyleAuto();
+	Text* text;
+	for (const String& ceil : itemRow)
+	{
+		text = item->CreateChild<Text>();
+		text->SetText(ceil);
+		text->SetStyleAuto();
+	}
 }
 
 void ItemsListWindow::RemoveAllItems()
@@ -74,6 +78,19 @@ void ItemsListWindow::RemoveAllItems()
 void ItemsListWindow::SetTitle(const Urho3D::String& title)
 {
 	GetRoot()->GetChildStaticCast<Text>("Title", true)->SetText(title);
+}
+
+void ItemsListWindow::SetCaptions(const Urho3D::StringVector& captions)
+{
+	UIElement* captionsPanel = GetRoot()->GetChild("CaptionsPanel", true);
+	Text* text;
+	for (const String& caption : captions)
+	{
+		text = captionsPanel->CreateChild<Text>();
+		text->SetText(caption);
+		text->SetAutoLocalizable(true);
+		text->SetStyleAuto();
+	}
 }
 
 void ItemsListWindow::SetServerSettingsVisible(bool visible)

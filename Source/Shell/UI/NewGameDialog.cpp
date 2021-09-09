@@ -34,6 +34,10 @@ NewGameDialog::NewGameDialog(Urho3D::Context* context)
 {
 	SetTitle("NewGame");
 
+	StringVector row(1);
+	row[0] = "Map";
+	SetCaptions(row);
+
 	StringVector resources;
 	for (const SharedPtr<PackageFile>& package : GetSubsystem<ResourceCache>()->GetPackageFiles())
 	{
@@ -41,11 +45,17 @@ NewGameDialog::NewGameDialog(Urho3D::Context* context)
 		for (const String& filename : resources)
 			if (filename.StartsWith(SCENES_PATH) &&
 				(filename.EndsWith(".xml") || filename.EndsWith(".bin") || filename.EndsWith(".json")))
-				AddItem(filename.Replaced(SCENES_PATH, ""), filename);
+			{
+				row[0] = filename.Replaced(SCENES_PATH, "");
+				AddItem(filename, row);
+			}
 	}
 
 	StringVector files;
 	GetSubsystem<FileSystem>()->ScanDir(files, "Scenes/", "*.xml|*.bin|*.json", SCAN_FILES, true);
 	for (const String& filename : files)
-		AddItem(filename.Replaced(SCENES_PATH, ""), filename);
+	{
+		row[0] = filename.Replaced(SCENES_PATH, "");
+		AddItem(filename, row);
+	}
 }

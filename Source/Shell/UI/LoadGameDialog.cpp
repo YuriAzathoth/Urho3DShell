@@ -28,4 +28,5 @@ LoadGameDialog::LoadGameDialog(Urho3D::Context* context)
 	: HostItemsListWindow(context)
 {
 	SetTitle("LoadGame");
+	SetCaptions({"Name", "Date"});
 }
