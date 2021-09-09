@@ -24,7 +24,6 @@
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
-//#include "ShellState/ShellStateMachine.h"
 #include "Dialog.h"
 #include "ShellState/ShellState.h"
 
