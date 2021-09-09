@@ -163,10 +163,6 @@ MACRO (SETUP_GAME_LIBRARY)
 			"(Config/ScriptParameter.)[cph]+" ""
 			SOURCE_FILES "${SOURCE_FILES}"
 		)
-		STRING (REGEX REPLACE
-			"(Plugin/ScriptPlugin.)[cph]+" ""
-			SOURCE_FILES "${SOURCE_FILES}"
-		)
 	ENDIF ()
 
 	# Lua script bindings
