@@ -96,11 +96,6 @@ Create_RemoteServerState(const String& sceneName, const String& serverName, unsi
 	return new RemoteServerState(GetScriptContext(), sceneName, serverName, port);
 }
 
-static ServerState* Create_ServerState(const String& sceneName, unsigned short port)
-{
-	return new ServerState(GetScriptContext(), sceneName, port);
-}
-
 void RegisterShellStateAPI(asIScriptEngine* engine)
 {
 	RegisterDialogAPI(engine);
@@ -132,11 +127,6 @@ void RegisterShellStateAPI(asIScriptEngine* engine)
 									asBEHAVE_FACTORY,
 									"RemoteServerState@+ f(const String&in, const String&in, uint16)",
 									AS_FUNCTION(Create_RemoteServerState),
-									AS_CALL_CDECL);
-	engine->RegisterObjectBehaviour("ServerState",
-									asBEHAVE_FACTORY,
-									"ServerState@+ f(const String&in, uint16)",
-									AS_FUNCTION(Create_ServerState),
 									AS_CALL_CDECL);
 
 	RegisterSubclass<Object, ShellState>(engine, "Object", "ShellState");
