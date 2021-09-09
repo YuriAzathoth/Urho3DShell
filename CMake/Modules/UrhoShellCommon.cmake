@@ -161,6 +161,10 @@ MACRO (SETUP_GAME_LIBRARY)
 			SOURCE_FILES "${SOURCE_FILES}"
 		)
 		STRING (REGEX REPLACE
+			"(Config/ScriptParameter.)[cph]+" ""
+			SOURCE_FILES "${SOURCE_FILES}"
+		)
+		STRING (REGEX REPLACE
 			"(Plugin/ScriptPlugin.)[cph]+" ""
 			SOURCE_FILES "${SOURCE_FILES}"
 		)
