@@ -59,8 +59,6 @@ Dialog* ShellState::GetDialog(Urho3D::StringHash type) const
 	return it != dialogs_.End() ? it->second_.Get() : nullptr;
 }
 
-class MainMenuDialog;
-
 Dialog* ShellState::CreateDialog(Urho3D::StringHash type)
 {
 	SharedPtr<Object> object = context_->CreateObject(type);
