@@ -43,7 +43,9 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 {
 	SharedPtr<Plugin> plugin;
 	if (pluginName.EndsWith(".as", false))
+#ifdef URHO3D_ANGELSCRIPT
 		plugin.StaticCast(MakeShared<ScriptPlugin>(context_));
+#endif // URHO3D_ANGELSCRIPT
 	else if (pluginName.EndsWith(".lua", false))
 #if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));

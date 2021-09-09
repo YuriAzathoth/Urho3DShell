@@ -63,9 +63,12 @@ void CoreApplication::Setup()
 	GetSubsystem<PluginsRegistry>()->Initialize(MAIN_PLUGIN_LIB);
 	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters_, shellParameters_);
 
-#ifdef URHO3DSHELL_EXPERIMENTAL
 #ifdef URHO3D_ANGELSCRIPT
 	context_->RegisterSubsystem<Script>();
+#endif // URHO3DSHELL_EXPERIMENTAL
+
+#ifdef URHO3DSHELL_EXPERIMENTAL
+#ifdef URHO3D_ANGELSCRIPT
 	RegisterServerAPI(GetSubsystem<Script>()->GetScriptEngine());
 #endif // URHO3D_ANGELSCRIPT
 #ifdef URHO3D_LUA
