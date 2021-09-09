@@ -25,11 +25,10 @@
 
 using namespace Urho3D;
 
-ServerState::ServerState(Urho3D::Context* context, const Urho3D::String& sceneName, unsigned short port)
+ServerState::ServerState(Urho3D::Context* context, const Urho3D::String& sceneName)
 	: GameState(context)
 	, server_(context)
 	, sceneName_(sceneName)
-	, port_(port)
 {
 }
 

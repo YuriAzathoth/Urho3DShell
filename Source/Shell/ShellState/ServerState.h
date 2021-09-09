@@ -31,7 +31,7 @@ class URHO3DSHELLAPI_EXPORT ServerState : public GameState
 	URHO3D_OBJECT(ServerState, GameState)
 
 public:
-	ServerState(Urho3D::Context* context, const Urho3D::String& sceneName, unsigned short port);
+	ServerState(Urho3D::Context* context, const Urho3D::String& sceneName);
 
 	void Enter() override;
 
@@ -42,7 +42,6 @@ protected:
 
 	Server server_;
 	Urho3D::String sceneName_;
-	unsigned short port_;
 
 private:
 	// On Start

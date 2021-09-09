@@ -21,14 +21,14 @@
 //
 
 #include <Urho3D/Network/NetworkEvents.h>
-#include <Urho3D/Scene/SceneEvents.h>
 #include "LocalServerState.h"
 
 using namespace Urho3D;
 
 LocalServerState::LocalServerState(Urho3D::Context* context, const Urho3D::String& sceneName, unsigned short port)
-	: ServerState(context, sceneName, port)
+	: ServerState(context, sceneName)
 	, client_(context)
+	, port_(port)
 {
 }
 

@@ -43,6 +43,7 @@ protected:
 	void OnSceneLoaded() override;
 
 	Client client_;
+	unsigned short port_;
 
 private:
 	// On Shutdown
