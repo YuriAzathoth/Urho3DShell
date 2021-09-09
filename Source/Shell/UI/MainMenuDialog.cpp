@@ -20,9 +20,11 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/Engine/Engine.h>
 #include <Urho3D/UI/UIEvents.h>
 #include "MainMenuDialog.h"
 #include "ShellState/ShellState.h"
+#include "UI/Notices.h"
 
 using namespace Urho3D;
 
@@ -41,18 +43,34 @@ MainMenuDialog::MainMenuDialog(Urho3D::Context* context)
 }
 
 void MainMenuDialog::OnNewGame(Urho3D::StringHash, Urho3D::VariantMap&) { GetParent()->CreateDialog("NewGameDialog"); }
+
 void MainMenuDialog::OnLoadGame(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	GetParent()->CreateDialog("LoadGameDialog");
 }
+
 void MainMenuDialog::OnConnect(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	GetParent()->CreateDialog("ServersListDialog");
 }
+
 void MainMenuDialog::OnMods(Urho3D::StringHash, Urho3D::VariantMap&) {}
+
 void MainMenuDialog::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	GetParent()->CreateDialog("SettingsDialog");
 }
 
-void MainMenuDialog::OnExit(Urho3D::StringHash, Urho3D::VariantMap&) {}
+void MainMenuDialog::OnExit(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	GetSubsystem<Notices>()->Question("ExitConfirmTitle", "ExitConfirmText");
+	SubscribeToEvent(E_MESSAGEACK, URHO3D_HANDLER(MainMenuDialog, OnExitACK));
+}
+
+void MainMenuDialog::OnExitACK(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace MessageACK;
+	const bool ok = eventData[P_OK].GetBool();
+	if (ok)
+		GetSubsystem<Engine>()->Exit();
+}

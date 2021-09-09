@@ -39,6 +39,7 @@ private:
 	void OnMods(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnSettings(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnExit(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnExitACK(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
 #endif // MAINMENUDIALOG_H

@@ -58,7 +58,7 @@ protected:
 	bool ReleaseSelf();
 
 private:
-	virtual void BackState() = 0;
+	virtual void BackState() {}
 	virtual void SetSceneUpdate(bool) {}
 
 	void OnDialogAdd(Dialog* widget);

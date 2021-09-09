@@ -20,23 +20,36 @@
 // THE SOFTWARE.
 //
 
-#ifndef MAINMENUSTATE_H
-#define MAINMENUSTATE_H
+#ifndef NOTICES_H
+#define NOTICES_H
 
-#include <Urho3D/Scene/Scene.h>
-#include "ShellState.h"
+#include <Urho3D/Core/Object.h>
+#include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT MainMenuState : public ShellState
+namespace Urho3D
 {
-	URHO3D_OBJECT(MainMenuState, ShellState)
+class MessageBox;
+}
+
+class URHO3DSHELLAPI_EXPORT Notices : public Urho3D::Object
+{
+	URHO3D_OBJECT(Notices, Urho3D::Object)
 
 public:
-	explicit MainMenuState(Urho3D::Context* context);
+	explicit Notices(Urho3D::Context* context);
 
-	void Enter() override;
+	void Error(const Urho3D::String& text, const Urho3D::String& title);
+	void Question(const Urho3D::String& text, const Urho3D::String& title);
 
 private:
-	Urho3D::Scene scene_;
+	void ShowDialog(const Urho3D::String& text, const Urho3D::String& title);
+	void ShowToConsole(const Urho3D::String& text, const Urho3D::String& title);
+	void EnableCancelButton();
+
+	void OnMessageACK(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+
+	Urho3D::MessageBox* message_;
+	bool exist_;
 };
 
-#endif // MAINMENUSTATE_H
+#endif // NOTICES_H

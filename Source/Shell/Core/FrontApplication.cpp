@@ -42,6 +42,7 @@
 #include "UI/LoadGameDialog.h"
 #include "UI/MainMenuDialog.h"
 #include "UI/NewGameDialog.h"
+#include "UI/Notices.h"
 #include "UI/PauseDialog.h"
 #include "UI/ServersListDialog.h"
 #include "UI/SettingsDialog.h"
@@ -75,6 +76,8 @@ void FrontApplication::Setup()
 	context_->RegisterFactory<PauseDialog>();
 	context_->RegisterFactory<ServersListDialog>();
 	context_->RegisterFactory<SettingsDialog>();
+
+	context_->RegisterSubsystem<Notices>();
 	context_->RegisterSubsystem<ShellStateMachine>();
 
 #ifdef URHO3DSHELL_EXPERIMENTAL

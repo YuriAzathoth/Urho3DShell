@@ -35,5 +35,3 @@ void MainMenuState::Enter()
 	RemoveAllDialogs();
 	CreateDialog("MainMenuDialog");
 }
-
-void MainMenuState::BackState() {}
