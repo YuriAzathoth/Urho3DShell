@@ -26,6 +26,10 @@
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Input/InputEvents.h>
+#include <Urho3D/Resource/Localization.h>
+#include <Urho3D/UI/MessageBox.h>
+#include <Urho3D/UI/Text.h>
+#include <Urho3D/UI/UIEvents.h>
 #include "ShellState.h"
 #include "ShellStateMachine.h"
 
@@ -33,6 +37,7 @@ using namespace Urho3D;
 
 ShellState::ShellState(Urho3D::Context* context)
 	: Object(context)
+	, message_(nullptr)
 	, interactives_(0)
 {
 	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ShellState, OnKeyDown));
@@ -81,6 +86,54 @@ void ShellState::RemoveAllDialogs()
 {
 	dialogs_.Clear();
 	interactives_ = 0;
+}
+
+void ShellState::ShowErrorMessage(const Urho3D::String& text, const Urho3D::String& title)
+{
+	if (message_)
+		return;
+
+	ShowMessageBox(text, title);
+
+	Localization* l10n = GetSubsystem<Localization>();
+	URHO3D_LOGERRORF("%s: %s", l10n->Get(title).CString(), l10n->Get(text).CString());
+
+	Text* okText = message_->GetWindow()->GetChild("OkButton", true)->GetChildStaticCast<Text>(0);
+	okText->SetText("OK");
+	okText->SetAutoLocalizable(true);
+}
+
+void ShellState::ShowQuestionMessage(const Urho3D::String& text, const Urho3D::String& title)
+{
+	if (message_)
+		return;
+
+	ShowMessageBox(text, title);
+	EnableCancelButton();
+
+	UIElement* window = message_->GetWindow();
+
+	Text* okText = window->GetChild("OkButton", true)->GetChildStaticCast<Text>(0);
+	okText->SetText("Yes");
+	okText->SetAutoLocalizable(true);
+
+	Text* cancelText = window->GetChild("CancelButton", true)->GetChildStaticCast<Text>(0);
+	cancelText->SetText("No");
+	cancelText->SetAutoLocalizable(true);
+}
+
+void ShellState::ShowMessageBox(const Urho3D::String& text, const Urho3D::String& title)
+{
+	Localization* l10n = GetSubsystem<Localization>();
+	message_ = new MessageBox(context_, l10n->Get(text), l10n->Get(title));
+	SubscribeToEvent(E_MESSAGEACK, URHO3D_HANDLER(ShellState, OnMessageACK));
+}
+
+void ShellState::EnableCancelButton()
+{
+	UIElement* cancel = message_->GetWindow()->GetChild("CancelButton", true);
+	cancel->SetFocus(true);
+	cancel->SetVisible(true);
 }
 
 bool ShellState::ReleaseSelf()
@@ -172,4 +225,10 @@ void ShellState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 		ToggleConsole();
 		break;
 	}
+}
+
+void ShellState::OnMessageACK(Urho3D::StringHash, Urho3D::VariantMap&)
+{
+	message_ = nullptr;
+	UnsubscribeFromEvent(E_MESSAGEACK);
 }

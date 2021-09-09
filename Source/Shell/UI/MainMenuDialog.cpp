@@ -24,7 +24,6 @@
 #include <Urho3D/UI/UIEvents.h>
 #include "MainMenuDialog.h"
 #include "ShellState/ShellState.h"
-#include "UI/Notices.h"
 
 using namespace Urho3D;
 
@@ -63,7 +62,7 @@ void MainMenuDialog::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&)
 
 void MainMenuDialog::OnExit(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	GetSubsystem<Notices>()->Question("ExitConfirmTitle", "ExitConfirmText");
+	GetParent()->ShowQuestionMessage("ExitConfirmTitle", "ExitConfirmText");
 	SubscribeToEvent(E_MESSAGEACK, URHO3D_HANDLER(MainMenuDialog, OnExitACK));
 }
 

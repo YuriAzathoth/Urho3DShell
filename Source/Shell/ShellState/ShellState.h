@@ -29,7 +29,13 @@
 
 #ifdef _WIN32
 #undef CreateDialog
+#undef MessageBox
 #endif // _WIN32
+
+namespace Urho3D
+{
+class MessageBox;
+}
 
 class URHO3DSHELLAPI_EXPORT ShellState : public Urho3D::Object
 {
@@ -46,6 +52,9 @@ public:
 	Dialog* CreateDialog(Urho3D::StringHash type);
 	void RemoveDialog(Urho3D::StringHash type);
 	void RemoveAllDialogs();
+
+	void ShowErrorMessage(const Urho3D::String& text, const Urho3D::String& title);
+	void ShowQuestionMessage(const Urho3D::String& text, const Urho3D::String& title);
 
 	unsigned GetCloseables() const noexcept { return closeables_; }
 	unsigned GetInteractives() const noexcept { return interactives_; }
@@ -71,9 +80,14 @@ private:
 	void OnEscapePressed();
 	void ToggleConsole();
 
+	void ShowMessageBox(const Urho3D::String& text, const Urho3D::String& title);
+	void EnableCancelButton();
+
 	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnMessageACK(Urho3D::StringHash, Urho3D::VariantMap&);
 
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Dialog>> dialogs_;
+	Urho3D::MessageBox* message_;
 	unsigned char closeables_;
 	unsigned char interactives_;
 };
