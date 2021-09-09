@@ -160,6 +160,10 @@ MACRO (SETUP_GAME_LIBRARY)
 			"(ScriptAPI/AngelScript/)[A-Za-z/.]+" ""
 			SOURCE_FILES "${SOURCE_FILES}"
 		)
+		STRING (REGEX REPLACE
+			"(Plugin/ScriptPlugin.)[cph]+" ""
+			SOURCE_FILES "${SOURCE_FILES}"
+		)
 	ENDIF ()
 
 	# Lua script bindings
@@ -192,6 +196,10 @@ MACRO (SETUP_GAME_LIBRARY)
 	ELSE ()
 		STRING (REGEX REPLACE
 			"(ScriptAPI/Lua/)[A-Za-z/.]+" ""
+			SOURCE_FILES "${SOURCE_FILES}"
+		)
+		STRING (REGEX REPLACE
+			"(Plugin/LuaScriptPlugin.)[cph]+" ""
 			SOURCE_FILES "${SOURCE_FILES}"
 		)
 	ENDIF ()

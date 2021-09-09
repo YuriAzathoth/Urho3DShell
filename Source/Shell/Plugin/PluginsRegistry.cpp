@@ -20,16 +20,19 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/IO/Log.h>
 #include "BinaryPlugin.h"
 #include "Core/ShellConfigurator.h"
 #include "PluginsRegistry.h"
-#include "ScriptPlugin.h"
 #include "Urho3DShellConfig.h"
 
 #ifdef URHO3DSHELL_EXPERIMENTAL
+#ifdef URHO3D_ANGELSCRIPT
+#include "ScriptPlugin.h"
+#endif // URHO3D_ANGELSCRIPT
+#ifdef URHO3D_LUA
 #include "LuaScriptPlugin.h"
-#else
-#include <Urho3D/IO/Log.h>
+#endif // URHO3D_LUA
 #endif // URHO3DSHELL_EXPERIMENTAL
 
 using namespace Urho3D;
@@ -44,13 +47,17 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 {
 	SharedPtr<Plugin> plugin;
 	if (pluginName.EndsWith(".as", false))
+#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_ANGELSCRIPT)
 		plugin.StaticCast(MakeShared<ScriptPlugin>(context_));
+#else
+		URHO3D_LOGERROR("Loading AngelScript scripts is only supported in experimental mode.");
+#endif // defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_ANGELSCRIPT)
 	else if (pluginName.EndsWith(".lua", false))
-#ifdef URHO3DSHELL_EXPERIMENTAL
+#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));
 #else
 		URHO3D_LOGERROR("Loading Lua scripts is only supported in experimental mode.");
-#endif // URHO3DSHELL_EXPERIMENTAL
+#endif // defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
 
