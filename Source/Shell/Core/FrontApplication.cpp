@@ -60,14 +60,14 @@ extern void RegisterClientLuaAPI(lua_State* state);
 using namespace Urho3D;
 
 FrontApplication::FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters)
-	: ShellApplication(context, std::move(shellParameters))
+	: CoreApplication(context, std::move(shellParameters))
 {
 	RegisterClientParameters(GetSubsystem<Config>());
 }
 
 void FrontApplication::Setup()
 {
-	ShellApplication::Setup();
+	CoreApplication::Setup();
 
 	context_->RegisterFactory<LoadGameDialog>();
 	context_->RegisterFactory<MainMenuDialog>();
@@ -89,7 +89,7 @@ void FrontApplication::Setup()
 
 void FrontApplication::Start()
 {
-	ShellApplication::Start();
+	CoreApplication::Start();
 
 	ResourceCache* cache = GetSubsystem<ResourceCache>();
 	XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
@@ -138,5 +138,5 @@ void FrontApplication::Stop()
 {
 	context_->RemoveSubsystem<ShellStateMachine>();
 	context_->RemoveSubsystem<ControllersRegistry>();
-	ShellApplication::Stop();
+	CoreApplication::Stop();
 }

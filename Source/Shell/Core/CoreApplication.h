@@ -20,15 +20,15 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELLAPPLICATION_H
-#define SHELLAPPLICATION_H
+#ifndef COREAPPLICATION_H
+#define COREAPPLICATION_H
 
 #include <Urho3D/Engine/Application.h>
 
-class ShellApplication : public Urho3D::Application
+class CoreApplication : public Urho3D::Application
 {
 public:
-	ShellApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters);
+	CoreApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters);
 	void Setup() override;
 	void Start() override;
 	void Stop() override;
@@ -39,4 +39,4 @@ protected:
 	Urho3D::VariantMap shellParameters_;
 };
 
-#endif // SHELLAPPLICATION_H
+#endif // COREAPPLICATION_H

@@ -23,9 +23,9 @@
 #ifndef FRONTAPPLICATION_H
 #define FRONTAPPLICATION_H
 
-#include "ShellApplication.h"
+#include "CoreApplication.h"
 
-class FrontApplication : public ShellApplication
+class FrontApplication : public CoreApplication
 {
 public:
 	FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters);

@@ -24,7 +24,7 @@
 #include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
-#include "ShellApplication.h"
+#include "CoreApplication.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
 #include "Plugin/PluginsRegistry.h"
@@ -46,7 +46,7 @@ extern void RegisterServerLuaAPI(lua_State* state);
 
 using namespace Urho3D;
 
-ShellApplication::ShellApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters)
+CoreApplication::CoreApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters)
 	: Application(context)
 	, shellParameters_(std::move(shellParameters))
 {
@@ -54,7 +54,7 @@ ShellApplication::ShellApplication(Urho3D::Context* context, Urho3D::VariantMap&
 	RegisterServerParameters(GetSubsystem<Config>());
 }
 
-void ShellApplication::Setup()
+void CoreApplication::Setup()
 {
 	context_->RegisterSubsystem<ActionsRegistry>();
 	context_->RegisterSubsystem<PluginsRegistry>();
@@ -75,7 +75,7 @@ void ShellApplication::Setup()
 #endif // URHO3DSHELL_EXPERIMENTAL
 }
 
-void ShellApplication::Start()
+void CoreApplication::Start()
 {
 	InputReceiver::RegisterObject(context_);
 
@@ -87,13 +87,13 @@ void ShellApplication::Start()
 	GetSubsystem<Config>()->Apply(shellParameters_);
 }
 
-void ShellApplication::Stop()
+void CoreApplication::Stop()
 {
 	context_->RemoveSubsystem<ShellConfigurator>();
 	context_->RemoveSubsystem<PluginsRegistry>();
 }
 
-Urho3D::Variant ShellApplication::GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue) const
+Urho3D::Variant CoreApplication::GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue) const
 {
 	const auto it = shellParameters_.Find(parameter);
 	return it != shellParameters_.End() ? it->second_ : defaultValue;
