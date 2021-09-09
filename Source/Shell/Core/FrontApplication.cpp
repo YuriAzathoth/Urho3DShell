@@ -39,6 +39,12 @@
 #include "ShellState/MainMenuState.h"
 #include "ShellState/RemoteServerState.h"
 #include "ShellState/ShellStateMachine.h"
+#include "UI/LoadGameDialog.h"
+#include "UI/MainMenuDialog.h"
+#include "UI/NewGameDialog.h"
+#include "UI/PauseDialog.h"
+#include "UI/ServersListDialog.h"
+#include "UI/SettingsDialog.h"
 #include "Urho3DShellConfig.h"
 
 extern void RegisterClientParameters(Config* config);
@@ -62,6 +68,13 @@ FrontApplication::FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&
 void FrontApplication::Setup()
 {
 	ShellApplication::Setup();
+
+	context_->RegisterFactory<LoadGameDialog>();
+	context_->RegisterFactory<MainMenuDialog>();
+	context_->RegisterFactory<NewGameDialog>();
+	context_->RegisterFactory<PauseDialog>();
+	context_->RegisterFactory<ServersListDialog>();
+	context_->RegisterFactory<SettingsDialog>();
 	context_->RegisterSubsystem<ShellStateMachine>();
 
 #ifdef URHO3DSHELL_EXPERIMENTAL
