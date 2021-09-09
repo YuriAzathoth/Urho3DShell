@@ -21,9 +21,9 @@
 //
 
 #include <Urho3D/UI/UIEvents.h>
+#include "FrontState/FrontStateMachine.h"
+#include "FrontState/MainMenuState.h"
 #include "PauseDialog.h"
-#include "ShellState/MainMenuState.h"
-#include "ShellState/ShellStateMachine.h"
 
 using namespace Urho3D;
 
@@ -50,5 +50,5 @@ void PauseDialog::OnSettings(Urho3D::StringHash, Urho3D::VariantMap&) { GetParen
 
 void PauseDialog::OnExit(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	GetSubsystem<ShellStateMachine>()->Push<MainMenuState>();
+	GetSubsystem<FrontStateMachine>()->Push<MainMenuState>();
 }

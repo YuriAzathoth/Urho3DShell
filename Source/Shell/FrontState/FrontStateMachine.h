@@ -20,43 +20,43 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELLSTATEMACHINE_H
-#define SHELLSTATEMACHINE_H
+#ifndef FRONTSTATEMACHINE_H
+#define FRONTSTATEMACHINE_H
 
 #include <Urho3D/Core/Object.h>
-#include "ShellState/ShellState.h"
+#include "FrontState/FrontState.h"
 #include "Urho3DShellAPI.h"
 
-class URHO3DSHELLAPI_EXPORT ShellStateMachine : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT FrontStateMachine : public Urho3D::Object
 {
-	URHO3D_OBJECT(ShellStateMachine, Urho3D::Object)
+	URHO3D_OBJECT(FrontStateMachine, Urho3D::Object)
 
 public:
 	using Urho3D::Object::Object;
 
-	void Initialize(ShellState* newState);
-	void Push(ShellState* newState);
-	ShellState* Get() const { return currState_.Get(); }
+	void Initialize(FrontState* newState);
+	void Push(FrontState* newState);
+	FrontState* Get() const { return currState_.Get(); }
 
 	template <typename T, typename... TArgs> void Initialize(TArgs&&... args);
 	template <typename T, typename... TArgs> void Push(TArgs&&... args);
 
 private:
-	Urho3D::SharedPtr<ShellState> currState_;
-	Urho3D::SharedPtr<ShellState> nextState_;
+	Urho3D::SharedPtr<FrontState> currState_;
+	Urho3D::SharedPtr<FrontState> nextState_;
 
 	bool ProcessStateChanging(); // May be called only from Shell
-	friend class ShellState;	 // Allow to call ProcessStateChanging only from ShellState
+	friend class FrontState;	 // Allow to call ProcessStateChanging only from ShellState
 };
 
-template <typename T, typename... TArgs> void ShellStateMachine::Initialize(TArgs&&... args)
+template <typename T, typename... TArgs> void FrontStateMachine::Initialize(TArgs&&... args)
 {
 	Initialize(new T(context_, std::forward<TArgs>(args)...));
 }
 
-template <typename T, typename... TArgs> void ShellStateMachine::Push(TArgs&&... args)
+template <typename T, typename... TArgs> void FrontStateMachine::Push(TArgs&&... args)
 {
 	Push(new T(context_, std::forward<TArgs>(args)...));
 }
 
-#endif // SHELLSTATEMACHINE_H
+#endif // FRONTSTATEMACHINE_H

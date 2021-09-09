@@ -30,15 +30,15 @@
 #include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
 #include "FrontApplication.h"
+#include "FrontState/ClientState.h"
+#include "FrontState/FrontStateMachine.h"
+#include "FrontState/LocalServerState.h"
+#include "FrontState/MainMenuState.h"
+#include "FrontState/RemoteServerState.h"
 #include "Input/ControllersRegistry.h"
 #include "ShellConfigurator.h"
 #include "ShellDefs.h"
 #include "ShellEvents.h"
-#include "ShellState/ClientState.h"
-#include "ShellState/LocalServerState.h"
-#include "ShellState/MainMenuState.h"
-#include "ShellState/RemoteServerState.h"
-#include "ShellState/ShellStateMachine.h"
 #include "UI/LoadGameDialog.h"
 #include "UI/MainMenuDialog.h"
 #include "UI/NewGameDialog.h"
@@ -75,7 +75,7 @@ void FrontApplication::Setup()
 	context_->RegisterFactory<PauseDialog>();
 	context_->RegisterFactory<ServersListDialog>();
 	context_->RegisterFactory<SettingsDialog>();
-	context_->RegisterSubsystem<ShellStateMachine>();
+	context_->RegisterSubsystem<FrontStateMachine>();
 
 #ifdef URHO3DSHELL_EXPERIMENTAL
 #ifdef URHO3D_ANGELSCRIPT
@@ -105,7 +105,7 @@ void FrontApplication::Start()
 
 	controllers->Enable("KeyboardController");
 
-	ShellStateMachine* ssm = GetSubsystem<ShellStateMachine>();
+	FrontStateMachine* ssm = GetSubsystem<FrontStateMachine>();
 	auto it = shellParameters_.Find(SP_SCENE);
 	if (it != shellParameters_.End())
 	{
@@ -136,7 +136,7 @@ void FrontApplication::Start()
 
 void FrontApplication::Stop()
 {
-	context_->RemoveSubsystem<ShellStateMachine>();
+	context_->RemoveSubsystem<FrontStateMachine>();
 	context_->RemoveSubsystem<ControllersRegistry>();
 	CoreApplication::Stop();
 }

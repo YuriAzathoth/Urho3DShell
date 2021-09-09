@@ -23,10 +23,10 @@
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
 #include "Core/ShellConfigurator.h"
+#include "FrontState/ClientState.h"
+#include "FrontState/FrontStateMachine.h"
 #include "Network/ServerDefs.h"
 #include "ServersListDialog.h"
-#include "ShellState/ClientState.h"
-#include "ShellState/ShellStateMachine.h"
 
 using namespace Urho3D;
 
@@ -45,7 +45,7 @@ ServersListDialog::ServersListDialog(Urho3D::Context* context)
 void ServersListDialog::Start(const Urho3D::String& address)
 {
 	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
-	GetSubsystem<ShellStateMachine>()->Push<ClientState>(address, port);
+	GetSubsystem<FrontStateMachine>()->Push<ClientState>(address, port);
 }
 
 void ServersListDialog::OnNetworkHostDiscovered(Urho3D::StringHash, Urho3D::VariantMap& eventData)

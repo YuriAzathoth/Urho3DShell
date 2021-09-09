@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELLSTATE_H
-#define SHELLSTATE_H
+#ifndef FRONTSTATE_H
+#define FRONTSTATE_H
 
 #include <Urho3D/Core/Object.h>
 #include "UI/Dialog.h"
@@ -37,13 +37,13 @@ namespace Urho3D
 class MessageBox;
 }
 
-class URHO3DSHELLAPI_EXPORT ShellState : public Urho3D::Object
+class URHO3DSHELLAPI_EXPORT FrontState : public Urho3D::Object
 {
-	URHO3D_OBJECT(ShellState, Urho3D::Object)
+	URHO3D_OBJECT(FrontState, Urho3D::Object)
 
 public:
-	explicit ShellState(Urho3D::Context* context);
-	virtual ~ShellState() {}
+	explicit FrontState(Urho3D::Context* context);
+	virtual ~FrontState() {}
 
 	virtual void Enter() = 0;
 	virtual void Exit();
@@ -92,4 +92,4 @@ private:
 	unsigned char interactives_;
 };
 
-#endif // SHELLSTATE_H
+#endif // FRONTSTATE_H

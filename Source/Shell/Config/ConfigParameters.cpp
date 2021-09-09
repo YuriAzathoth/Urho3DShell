@@ -123,7 +123,8 @@ void RegisterClientParameters(Config* config)
 				const int refreshRate = res.z_;
 
 				it = values.Find(EP_VSYNC);
-				const bool vsync = (it != values.End() ? it->second_ : config->GetParameter(EP_VSYNC)->Read()).GetBool();
+				const bool vsync =
+					(it != values.End() ? it->second_ : config->GetParameter(EP_VSYNC)->Read()).GetBool();
 				it = values.Find(EP_TRIPLE_BUFFER);
 				const bool trippleBuffer =
 					(it != values.End() ? it->second_ : config->GetParameter(EP_TRIPLE_BUFFER)->Read()).GetBool();

@@ -28,7 +28,7 @@
 #include <boost/noncopyable.hpp>
 #include "Urho3DShellAPI.h"
 
-class ShellState;
+class FrontState;
 
 class URHO3DSHELLAPI_EXPORT Dialog : public Urho3D::Object, private boost::noncopyable
 {
@@ -43,9 +43,9 @@ public:
 
 	void SetCloseable(bool closeable) noexcept { closeable_ = closeable; }
 	void SetInteractive(bool interactive) noexcept { interactive_ = interactive; }
-	void SetParent(ShellState* parent) { parent_ = parent; }
+	void SetParent(FrontState* parent) { parent_ = parent; }
 
-	ShellState* GetParent() const { return parent_; }
+	FrontState* GetParent() const { return parent_; }
 	Urho3D::UIElement* GetRoot() const { return root_.Get(); }
 	bool IsCloseable() const noexcept { return closeable_; }
 	bool IsFrontElement() const;
@@ -56,7 +56,7 @@ protected:
 	void BindButtonToClose(Urho3D::UIElement* button);
 
 	Urho3D::SharedPtr<Urho3D::UIElement> root_;
-	ShellState* parent_;
+	FrontState* parent_;
 	bool closeable_;
 	bool interactive_;
 };

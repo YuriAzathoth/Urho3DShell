@@ -22,8 +22,8 @@
 
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/UI/UIEvents.h>
+#include "FrontState/FrontState.h"
 #include "MainMenuDialog.h"
-#include "ShellState/ShellState.h"
 
 using namespace Urho3D;
 

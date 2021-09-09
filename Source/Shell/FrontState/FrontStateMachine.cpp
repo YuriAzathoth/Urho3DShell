@@ -20,17 +20,25 @@
 // THE SOFTWARE.
 //
 
-#ifndef GAMESTATE_H
-#define GAMESTATE_H
+#include "FrontStateMachine.h"
 
-#include "ShellState.h"
+using namespace Urho3D;
 
-class URHO3DSHELLAPI_EXPORT GameState : public ShellState
+void FrontStateMachine::Initialize(FrontState* newState)
 {
-	URHO3D_OBJECT(GameState, ShellState)
-public:
-	using ShellState::ShellState;
-	void BackState() override;
-};
+	currState_ = newState;
+	currState_->Enter();
+}
 
-#endif // GAMESTATE_H
+void FrontStateMachine::Push(FrontState* newState)
+{
+	nextState_ = newState;
+	currState_->Exit();
+}
+
+bool FrontStateMachine::ProcessStateChanging()
+{
+	currState_ = std::move(nextState_);
+	currState_->Enter();
+	return true;
+}

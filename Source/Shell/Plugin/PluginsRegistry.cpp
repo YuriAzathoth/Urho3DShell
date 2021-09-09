@@ -50,7 +50,7 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 #if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));
 #else
-		URHO3D_LOGERROR("Loading Lua scripts is only supported in experimental mode.");
+			URHO3D_LOGERROR("Loading Lua scripts is only supported in experimental mode.");
 #endif // defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));

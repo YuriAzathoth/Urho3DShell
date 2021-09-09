@@ -20,25 +20,18 @@
 // THE SOFTWARE.
 //
 
-#include "ShellStateMachine.h"
+#include "MainMenuState.h"
 
 using namespace Urho3D;
 
-void ShellStateMachine::Initialize(ShellState* newState)
+MainMenuState::MainMenuState(Urho3D::Context* context)
+	: FrontState(context)
+	, scene_(context)
 {
-	currState_ = newState;
-	currState_->Enter();
 }
 
-void ShellStateMachine::Push(ShellState* newState)
+void MainMenuState::Enter()
 {
-	nextState_ = newState;
-	currState_->Exit();
-}
-
-bool ShellStateMachine::ProcessStateChanging()
-{
-	currState_ = std::move(nextState_);
-	currState_->Enter();
-	return true;
+	RemoveAllDialogs();
+	CreateDialog("MainMenuDialog");
 }

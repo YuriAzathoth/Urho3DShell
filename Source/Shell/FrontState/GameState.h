@@ -20,23 +20,17 @@
 // THE SOFTWARE.
 //
 
-#ifndef MAINMENUSTATE_H
-#define MAINMENUSTATE_H
+#ifndef GAMESTATE_H
+#define GAMESTATE_H
 
-#include <Urho3D/Scene/Scene.h>
-#include "ShellState.h"
+#include "FrontState.h"
 
-class URHO3DSHELLAPI_EXPORT MainMenuState : public ShellState
+class URHO3DSHELLAPI_EXPORT GameState : public FrontState
 {
-	URHO3D_OBJECT(MainMenuState, ShellState)
-
+	URHO3D_OBJECT(GameState, FrontState)
 public:
-	explicit MainMenuState(Urho3D::Context* context);
-
-	void Enter() override;
-
-private:
-	Urho3D::Scene scene_;
+	using FrontState::FrontState;
+	void BackState() override;
 };
 
-#endif // MAINMENUSTATE_H
+#endif // GAMESTATE_H

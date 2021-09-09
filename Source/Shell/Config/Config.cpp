@@ -514,7 +514,6 @@ Config::RegisterBinaryComplexStorage(Urho3D::StringHash cathegory, bool engine, 
 	return ret;
 }
 
-
 Urho3D::IntVector3 Config::StrToRes(const Urho3D::String& str)
 {
 	const StringVector firstSplit = str.Split('x', true);

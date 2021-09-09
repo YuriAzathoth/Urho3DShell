@@ -21,16 +21,16 @@
 //
 
 #include "Core/ShellConfigurator.h"
+#include "FrontState/FrontStateMachine.h"
+#include "FrontState/LocalServerState.h"
+#include "FrontState/RemoteServerState.h"
 #include "HostItemsListWindow.h"
-#include "ShellState/LocalServerState.h"
-#include "ShellState/RemoteServerState.h"
-#include "ShellState/ShellStateMachine.h"
 
 using namespace Urho3D;
 
 void HostItemsListWindow::Start(const Urho3D::String& sceneName)
 {
-	GetSubsystem<ShellStateMachine>()->Push<LocalServerState>(sceneName);
+	GetSubsystem<FrontStateMachine>()->Push<LocalServerState>(sceneName);
 }
 
 void HostItemsListWindow::Start(const Urho3D::String& sceneName,
@@ -38,5 +38,5 @@ void HostItemsListWindow::Start(const Urho3D::String& sceneName,
 								[[maybe_unused]] const Urho3D::String& serverPass)
 {
 	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
-	GetSubsystem<ShellStateMachine>()->Push<RemoteServerState>(sceneName, serverName, port);
+	GetSubsystem<FrontStateMachine>()->Push<RemoteServerState>(sceneName, serverName, port);
 }

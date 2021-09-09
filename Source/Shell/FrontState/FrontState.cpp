@@ -30,28 +30,28 @@
 #include <Urho3D/UI/MessageBox.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIEvents.h>
-#include "ShellState.h"
-#include "ShellStateMachine.h"
+#include "FrontState.h"
+#include "FrontStateMachine.h"
 
 using namespace Urho3D;
 
-ShellState::ShellState(Urho3D::Context* context)
+FrontState::FrontState(Urho3D::Context* context)
 	: Object(context)
 	, message_(nullptr)
 	, interactives_(0)
 {
-	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ShellState, OnKeyDown));
+	SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(FrontState, OnKeyDown));
 }
 
-void ShellState::Exit() { ReleaseSelf(); }
+void FrontState::Exit() { ReleaseSelf(); }
 
-Dialog* ShellState::GetDialog(Urho3D::StringHash type) const
+Dialog* FrontState::GetDialog(Urho3D::StringHash type) const
 {
 	const auto it = dialogs_.Find(type);
 	return it != dialogs_.End() ? it->second_.Get() : nullptr;
 }
 
-Dialog* ShellState::CreateDialog(Urho3D::StringHash type)
+Dialog* FrontState::CreateDialog(Urho3D::StringHash type)
 {
 	SharedPtr<Object> object = context_->CreateObject(type);
 	if (object.Null())
@@ -72,7 +72,7 @@ Dialog* ShellState::CreateDialog(Urho3D::StringHash type)
 	return dialog.Get();
 }
 
-void ShellState::RemoveDialog(Urho3D::StringHash type)
+void FrontState::RemoveDialog(Urho3D::StringHash type)
 {
 	auto it = dialogs_.Find(type);
 	if (it != dialogs_.End())
@@ -82,13 +82,13 @@ void ShellState::RemoveDialog(Urho3D::StringHash type)
 	}
 }
 
-void ShellState::RemoveAllDialogs()
+void FrontState::RemoveAllDialogs()
 {
 	dialogs_.Clear();
 	interactives_ = 0;
 }
 
-void ShellState::ShowErrorMessage(const Urho3D::String& text, const Urho3D::String& title)
+void FrontState::ShowErrorMessage(const Urho3D::String& text, const Urho3D::String& title)
 {
 	if (message_)
 		return;
@@ -103,7 +103,7 @@ void ShellState::ShowErrorMessage(const Urho3D::String& text, const Urho3D::Stri
 	okText->SetAutoLocalizable(true);
 }
 
-void ShellState::ShowQuestionMessage(const Urho3D::String& text, const Urho3D::String& title)
+void FrontState::ShowQuestionMessage(const Urho3D::String& text, const Urho3D::String& title)
 {
 	if (message_)
 		return;
@@ -122,28 +122,28 @@ void ShellState::ShowQuestionMessage(const Urho3D::String& text, const Urho3D::S
 	cancelText->SetAutoLocalizable(true);
 }
 
-void ShellState::ShowMessageBox(const Urho3D::String& text, const Urho3D::String& title)
+void FrontState::ShowMessageBox(const Urho3D::String& text, const Urho3D::String& title)
 {
 	Localization* l10n = GetSubsystem<Localization>();
 	message_ = new MessageBox(context_, l10n->Get(text), l10n->Get(title));
-	SubscribeToEvent(E_MESSAGEACK, URHO3D_HANDLER(ShellState, OnMessageACK));
+	SubscribeToEvent(E_MESSAGEACK, URHO3D_HANDLER(FrontState, OnMessageACK));
 }
 
-void ShellState::EnableCancelButton()
+void FrontState::EnableCancelButton()
 {
 	UIElement* cancel = message_->GetWindow()->GetChild("CancelButton", true);
 	cancel->SetFocus(true);
 	cancel->SetVisible(true);
 }
 
-bool ShellState::ReleaseSelf()
+bool FrontState::ReleaseSelf()
 {
 	if (interactives_)
 		GetSubsystem<Input>()->SetMouseVisible(false);
-	return GetSubsystem<ShellStateMachine>()->ProcessStateChanging();
+	return GetSubsystem<FrontStateMachine>()->ProcessStateChanging();
 }
 
-void ShellState::OnDialogAdd(Dialog* widget)
+void FrontState::OnDialogAdd(Dialog* widget)
 {
 	if (widget->IsCloseable())
 		++closeables_;
@@ -151,7 +151,7 @@ void ShellState::OnDialogAdd(Dialog* widget)
 		IncInteractives();
 }
 
-void ShellState::OnDialogRemove(Dialog* widget)
+void FrontState::OnDialogRemove(Dialog* widget)
 {
 	if (widget->IsCloseable())
 		--closeables_;
@@ -159,7 +159,7 @@ void ShellState::OnDialogRemove(Dialog* widget)
 		DecInteractives();
 }
 
-void ShellState::IncInteractives()
+void FrontState::IncInteractives()
 {
 	if (interactives_ == 0)
 	{
@@ -170,7 +170,7 @@ void ShellState::IncInteractives()
 		++interactives_;
 }
 
-void ShellState::DecInteractives()
+void FrontState::DecInteractives()
 {
 	if (interactives_ == 1)
 	{
@@ -181,9 +181,9 @@ void ShellState::DecInteractives()
 		--interactives_;
 }
 
-void ShellState::SetMouseVisible(bool visible) const { GetSubsystem<Input>()->SetMouseVisible(visible); }
+void FrontState::SetMouseVisible(bool visible) const { GetSubsystem<Input>()->SetMouseVisible(visible); }
 
-void ShellState::CloseFrontDialog()
+void FrontState::CloseFrontDialog()
 {
 	// TODO: Optimize for faster lookup
 	for (auto it = dialogs_.Begin(); it != dialogs_.End(); ++it)
@@ -195,7 +195,7 @@ void ShellState::CloseFrontDialog()
 		}
 }
 
-void ShellState::OnEscapePressed()
+void FrontState::OnEscapePressed()
 {
 	if (interactives_)
 		CloseFrontDialog();
@@ -203,7 +203,7 @@ void ShellState::OnEscapePressed()
 		BackState();
 }
 
-void ShellState::ToggleConsole()
+void FrontState::ToggleConsole()
 {
 	Console* console = GetSubsystem<Console>();
 	console->Toggle();
@@ -213,7 +213,7 @@ void ShellState::ToggleConsole()
 		DecInteractives();
 }
 
-void ShellState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+void FrontState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
 	using namespace KeyDown;
 	switch (eventData[P_KEY].GetInt())
@@ -227,7 +227,7 @@ void ShellState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 	}
 }
 
-void ShellState::OnMessageACK(Urho3D::StringHash, Urho3D::VariantMap&)
+void FrontState::OnMessageACK(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	message_ = nullptr;
 	UnsubscribeFromEvent(E_MESSAGEACK);

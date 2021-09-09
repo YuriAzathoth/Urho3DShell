@@ -20,18 +20,23 @@
 // THE SOFTWARE.
 //
 
-#include "MainMenuState.h"
+#ifndef MAINMENUSTATE_H
+#define MAINMENUSTATE_H
 
-using namespace Urho3D;
+#include <Urho3D/Scene/Scene.h>
+#include "FrontState.h"
 
-MainMenuState::MainMenuState(Urho3D::Context* context)
-	: ShellState(context)
-	, scene_(context)
+class URHO3DSHELLAPI_EXPORT MainMenuState : public FrontState
 {
-}
+	URHO3D_OBJECT(MainMenuState, FrontState)
 
-void MainMenuState::Enter()
-{
-	RemoveAllDialogs();
-	CreateDialog("MainMenuDialog");
-}
+public:
+	explicit MainMenuState(Urho3D::Context* context);
+
+	void Enter() override;
+
+private:
+	Urho3D::Scene scene_;
+};
+
+#endif // MAINMENUSTATE_H
