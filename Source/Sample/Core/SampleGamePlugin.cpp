@@ -32,7 +32,6 @@
 #include "ActionsDefs.h"
 #include "Core/ShellConfigurator.h"
 #include "Core/ShellEvents.h"
-#include "GameEvents.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/ControllersRegistry.h"
 #include "Input/InputController.h"
