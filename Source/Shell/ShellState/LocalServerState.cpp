@@ -41,7 +41,8 @@ void LocalServerState::Exit()
 
 void LocalServerState::OnSceneLoaded()
 {
-	ServerState::OnSceneLoaded();
+	server_.Start(port_);
+	server_.SetPausable(true);
 	client_.Connect(port_);
 }
 

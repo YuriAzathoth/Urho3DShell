@@ -36,8 +36,9 @@ public:
 	void Enter() override;
 
 protected:
+	virtual void OnSceneLoaded() = 0;
+
 	void SetSceneUpdate(bool update) override;
-	virtual void OnSceneLoaded();
 
 	Server server_;
 	Urho3D::String sceneName_;

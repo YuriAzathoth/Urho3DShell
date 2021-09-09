@@ -41,12 +41,6 @@ void ServerState::Enter()
 
 void ServerState::SetSceneUpdate(bool update) { server_.SetUpdate(update); }
 
-void ServerState::OnSceneLoaded()
-{
-	server_.Start(port_);
-	server_.SetPausable(true);
-}
-
 void ServerState::OnAsyncLoadFinished(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	OnSceneLoaded();
