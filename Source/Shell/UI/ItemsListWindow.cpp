@@ -35,7 +35,6 @@ static const StringHash VAR_GAMENAME = "GameName";
 
 ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
 	: Dialog(context)
-	, spawnedButton_(nullptr)
 {
 	LoadLayout("UI/ItemsListWindow.xml");
 	itemList_ = root_->GetChildStaticCast<ListView>("GamesList", true);
@@ -49,7 +48,8 @@ ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
 	SetServerPanelVisible(false);
 
 	BindButtonToClose(root_->GetChild("CloseButton", true));
-	SubscribeToEvent(itemList_, E_ITEMSELECTED, URHO3D_HANDLER(ItemsListWindow, OnItemSelected));
+	SubscribeToEvent(itemList_, E_ITEMCLICKED, URHO3D_HANDLER(ItemsListWindow, OnItemClicked));
+	SubscribeToEvent(itemList_, E_ITEMDOUBLECLICKED, URHO3D_HANDLER(ItemsListWindow, OnItemDoubleClicked));
 	SubscribeToEvent(root_->GetChild("Server", true), E_TOGGLED, URHO3D_HANDLER(ItemsListWindow, OnServerToggled));
 }
 
@@ -70,11 +70,7 @@ void ItemsListWindow::AddItem(const Urho3D::String& itemName, const Urho3D::Stri
 	}
 }
 
-void ItemsListWindow::RemoveAllItems()
-{
-	spawnedButton_ = nullptr;
-	itemList_->RemoveAllItems();
-}
+void ItemsListWindow::RemoveAllItems() { itemList_->RemoveAllItems(); }
 
 void ItemsListWindow::SetTitle(const Urho3D::String& title)
 {
@@ -92,6 +88,7 @@ void ItemsListWindow::SetCaptions(const Urho3D::StringVector& captions)
 		text->SetAutoLocalizable(true);
 		text->SetStyleAuto();
 	}
+	captionsPanel->CreateChild<UIElement>()->SetLayoutMode(LM_HORIZONTAL);
 }
 
 void ItemsListWindow::SetServerSettingsVisible(bool visible)
@@ -106,40 +103,32 @@ void ItemsListWindow::SetServerPanelVisible(bool visible)
 	ShrinkSize();
 }
 
-void ItemsListWindow::OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&)
+void ItemsListWindow::OnItemClicked(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
-	if (spawnedButton_)
-		spawnedButton_->Remove();
+	// TODO: Context menu
+}
 
-	spawnedButton_ = itemList_->GetSelectedItem()->CreateChild<Button>();
-	spawnedButton_->SetLayout(LM_VERTICAL, 0, {4, 4, 4, 4});
-	spawnedButton_->SetStyleAuto();
-
-	Text* caption = spawnedButton_->CreateChild<Text>();
-	caption->SetText("Start");
-	caption->SetTextAlignment(HA_CENTER);
-	caption->SetAutoLocalizable(true);
-	caption->SetStyleAuto();
-
-	spawnedButton_->SubscribeToEvent(spawnedButton_, E_PRESSED, URHO3D_HANDLER(ItemsListWindow, OnStart));
+void ItemsListWindow::OnItemDoubleClicked(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace ItemDoubleClicked;
+	const int button = eventData[P_BUTTON].GetInt();
+	if (button == MOUSEB_LEFT)
+	{
+		const UIElement* item = static_cast<UIElement*>(eventData[P_ITEM].GetPtr());
+		const String& gameName = item->GetVar(VAR_GAMENAME).GetString();
+		if (server_->IsChecked())
+		{
+			const String& serverName = serverName_->GetText();
+			const String& serverPass = serverPass_->GetText();
+			Start(gameName, serverName, serverPass);
+		}
+		else
+			Start(gameName);
+	}
 }
 
 void ItemsListWindow::OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
 	using namespace Toggled;
 	SetServerPanelVisible(eventData[P_STATE].GetBool());
-}
-
-void ItemsListWindow::OnStart(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-	const UIElement* item = spawnedButton_->GetParent();
-	const String& gameName = item->GetVar(VAR_GAMENAME).GetString();
-	if (server_->IsChecked())
-	{
-		const String& serverName = serverName_->GetText();
-		const String& serverPass = serverPass_->GetText();
-		Start(gameName, serverName, serverPass);
-	}
-	else
-		Start(gameName);
 }

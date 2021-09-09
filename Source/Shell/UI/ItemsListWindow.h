@@ -53,13 +53,12 @@ private:
 
 	void SetServerPanelVisible(bool visible);
 
-	void OnItemSelected(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnItemDoubleClicked(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnItemClicked(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 	void OnServerToggled(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnStart(Urho3D::StringHash, Urho3D::VariantMap&);
 
 	Urho3D::ListView* itemList_;
 	Urho3D::UIElement* serverPanel_;
-	Urho3D::UIElement* spawnedButton_;
 	Urho3D::CheckBox* server_;
 	Urho3D::LineEdit* serverName_;
 	Urho3D::LineEdit* serverPass_;
