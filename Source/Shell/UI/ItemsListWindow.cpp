@@ -26,6 +26,7 @@
 #include <Urho3D/UI/ListView.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UIEvents.h>
+#include <Urho3D/UI/UISelectable.h>
 #include "ItemsListWindow.h"
 
 using namespace Urho3D;
@@ -54,7 +55,7 @@ ItemsListWindow::ItemsListWindow(Urho3D::Context* context)
 
 void ItemsListWindow::AddItem(const Urho3D::String& itemName, const Urho3D::StringVector& itemRow)
 {
-	SharedPtr<UIElement> item = MakeShared<UIElement>(context_);
+	SharedPtr<UISelectable> item = MakeShared<UISelectable>(context_);
 	itemList_->AddItem(item);
 	item->SetVar(VAR_GAMENAME, itemName);
 	item->SetLayout(LM_HORIZONTAL, 0, {4, 4, 4, 4});
