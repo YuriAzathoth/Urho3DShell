@@ -22,8 +22,8 @@
 
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/ProcessUtils.h>
+#include "ShellApplication.h"
 #include "FrontApplication.h"
-#include "HeadlessApplication.h"
 #include "Launch.h"
 #include "ShellDefs.h"
 
@@ -100,7 +100,7 @@ extern "C" int LaunchShell(int argc1, char** argv1, int argc2, char** argv2)
 	SharedPtr<Context> context = MakeShared<Context>();
 	UniquePtr<ShellApplication> app;
 	if (shellParameters.Contains(SP_NO_CLIENT))
-		app = new HeadlessApplication(context, std::move(shellParameters));
+		app = new ShellApplication(context, std::move(shellParameters));
 	else
 		app = new FrontApplication(context, std::move(shellParameters));
 	return app->Run();

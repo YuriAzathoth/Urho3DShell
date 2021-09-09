@@ -24,10 +24,10 @@
 #include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
+#include "ShellApplication.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
 #include "Plugin/PluginsRegistry.h"
-#include "ShellApplication.h"
 #include "ShellConfigurator.h"
 #include "ShellDefs.h"
 #include "Urho3DShellConfig.h"
