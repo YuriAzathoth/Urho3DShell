@@ -79,6 +79,7 @@ private:
 	void CloseFrontDialog();
 	void OnEscapePressed();
 	void ToggleConsole();
+	void ToggleDebugHud();
 
 	void ShowMessageBox(const Urho3D::String& text, const Urho3D::String& title);
 	void EnableCancelButton();

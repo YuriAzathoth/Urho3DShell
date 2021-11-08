@@ -213,6 +213,12 @@ void FrontState::ToggleConsole()
 		DecInteractives();
 }
 
+void FrontState::ToggleDebugHud()
+{
+	DebugHud* debugHud = GetSubsystem<DebugHud>();
+	debugHud->SetMode(debugHud->GetMode() ? DEBUGHUD_SHOW_NONE : DEBUGHUD_SHOW_ALL);
+}
+
 void FrontState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 {
 	using namespace KeyDown;
@@ -223,6 +229,9 @@ void FrontState::OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData)
 		break;
 	case KEY_F1:
 		ToggleConsole();
+		break;
+	case KEY_F2:
+		ToggleDebugHud();
 		break;
 	}
 }
