@@ -24,4 +24,4 @@
 # Consider not to use it in your project. 
 SET (LIBS Urho3DShell)
 
-SETUP_GAME_LIBRARY (NAME Game RESOURCES Data)
+SETUP_GAME_LIBRARY (NAME Game)
