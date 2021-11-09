@@ -26,4 +26,5 @@ SETUP_GAME_LIBRARY (NAME Urho3DDev)
 
 SETUP_GAME_LAUNCHER(NAME ProjectManager
 					LIB Urho3DDev
-					RESOURCES Data CoreData Editor)
+					RESOURCES Data CoreData Editor
+					ARGUMENTS -w -s)
