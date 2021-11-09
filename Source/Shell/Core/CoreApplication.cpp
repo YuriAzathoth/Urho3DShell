@@ -54,26 +54,32 @@ CoreApplication::CoreApplication(Urho3D::Context* context, Urho3D::VariantMap&& 
 
 void CoreApplication::Setup()
 {
+	const auto itLib = shellParameters_.Find(SP_GAME_LIB);
+	if (itLib == shellParameters_.End())
+	{
+		GetSubsystem<Engine>()->Exit();
+		return;
+	}
+
 	context_->RegisterSubsystem<ActionsRegistry>();
-	context_->RegisterSubsystem<PluginsRegistry>();
-	context_->RegisterSubsystem<ShellConfigurator>();
+	ShellConfigurator* configurator = context_->RegisterSubsystem<ShellConfigurator>();
 
-	const String gamelib = GetParameter<String>(shellParameters_, SP_GAME_LIB, "Game");
-	GetSubsystem<PluginsRegistry>()->Load(gamelib, true);
+	PluginsRegistry* plugins = context_->RegisterSubsystem<PluginsRegistry>();
+	plugins->Load(itLib->second_.GetString(), true);
 
-	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters_, shellParameters_);
+	configurator->Initialize(engineParameters_, shellParameters_);
 
 #ifdef URHO3D_ANGELSCRIPT
-	context_->RegisterSubsystem<Script>();
+	Script* script = context_->RegisterSubsystem<Script>();
 #endif // URHO3DSHELL_EXPERIMENTAL
 
 #ifdef URHO3DSHELL_EXPERIMENTAL
 #ifdef URHO3D_ANGELSCRIPT
-	RegisterServerAPI(GetSubsystem<Script>()->GetScriptEngine());
+	RegisterServerAPI(script->GetScriptEngine());
 #endif // URHO3D_ANGELSCRIPT
 #ifdef URHO3D_LUA
-	context_->RegisterSubsystem<LuaScript>();
-	RegisterServerLuaAPI(GetSubsystem<LuaScript>()->GetState());
+	LuaScript* lua = context_->RegisterSubsystem<LuaScript>();
+	RegisterServerLuaAPI(lua->GetState());
 #endif // URHO3D_LUA
 #endif // URHO3DSHELL_EXPERIMENTAL
 }

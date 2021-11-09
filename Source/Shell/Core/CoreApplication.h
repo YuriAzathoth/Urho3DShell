@@ -37,13 +37,4 @@ protected:
 	Urho3D::VariantMap shellParameters_;
 };
 
-template <typename T>
-inline T GetParameter(const Urho3D::VariantMap& parameters,
-					  Urho3D::StringHash parameter,
-					  const T& defaultValue)
-{
-	const auto it = parameters.Find(parameter);
-	return it != parameters.End() ? it->second_.Get<T>() : defaultValue;
-}
-
 #endif // COREAPPLICATION_H
