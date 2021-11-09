@@ -32,8 +32,6 @@
 #include "ShellDefs.h"
 #include "Urho3DShellConfig.h"
 
-#define MAIN_PLUGIN_LIB "Game"
-
 extern void RegisterServerParameters(Config* config);
 #ifdef URHO3DSHELL_EXPERIMENTAL
 #ifdef URHO3D_ANGELSCRIPT
@@ -60,7 +58,9 @@ void CoreApplication::Setup()
 	context_->RegisterSubsystem<PluginsRegistry>();
 	context_->RegisterSubsystem<ShellConfigurator>();
 
-	GetSubsystem<PluginsRegistry>()->Initialize(MAIN_PLUGIN_LIB);
+	const String gamelib = GetParameter<String>(shellParameters_, SP_GAME_LIB, "Game");
+	GetSubsystem<PluginsRegistry>()->Load(gamelib, true);
+
 	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters_, shellParameters_);
 
 #ifdef URHO3D_ANGELSCRIPT
@@ -94,10 +94,4 @@ void CoreApplication::Stop()
 {
 	context_->RemoveSubsystem<ShellConfigurator>();
 	context_->RemoveSubsystem<PluginsRegistry>();
-}
-
-Urho3D::Variant CoreApplication::GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue) const
-{
-	const auto it = shellParameters_.Find(parameter);
-	return it != shellParameters_.End() ? it->second_ : defaultValue;
 }

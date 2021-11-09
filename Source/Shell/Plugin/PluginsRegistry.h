@@ -33,9 +33,8 @@ class URHO3DSHELLAPI_EXPORT PluginsRegistry : public Urho3D::Object
 
 public:
 	using Urho3D::Object::Object;
-	void Initialize(const Urho3D::String& coreLibraryName);
 
-	bool Load(const Urho3D::String& pluginName);
+	bool Load(const Urho3D::String& pluginName, bool vital = false);
 	void Close(Urho3D::StringHash plugin);
 	Urho3D::StringVector GetAllNames() const;
 	void CloseAll();

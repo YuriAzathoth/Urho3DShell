@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/Engine/Engine.h>
 #include <Urho3D/IO/Log.h>
 #include "BinaryPlugin.h"
 #include "Core/ShellConfigurator.h"
@@ -33,13 +34,7 @@
 
 using namespace Urho3D;
 
-void PluginsRegistry::Initialize(const Urho3D::String& coreLibraryName)
-{
-	mainPlugin_.StaticCast(MakeShared<BinaryPlugin>(context_));
-	mainPlugin_->Load(coreLibraryName);
-}
-
-bool PluginsRegistry::Load(const Urho3D::String& pluginName)
+bool PluginsRegistry::Load(const Urho3D::String& pluginName, bool vital)
 {
 	SharedPtr<Plugin> plugin;
 	if (pluginName.EndsWith(".as", false))
@@ -50,7 +45,7 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 #if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));
 #else
-			URHO3D_LOGERROR("Loading Lua scripts is only supported in experimental mode.");
+		URHO3D_LOGERROR("Loading Lua scripts is only supported in experimental mode.");
 #endif // defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
@@ -61,7 +56,12 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 		plugins_[pluginName] = plugin;
 		return true;
 	}
-	return false;
+	else
+	{
+		if (vital)
+			GetSubsystem<Engine>()->Exit();
+		return false;
+	}
 }
 
 void PluginsRegistry::Close(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
