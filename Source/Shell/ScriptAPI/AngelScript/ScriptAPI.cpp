@@ -23,11 +23,11 @@
 class asIScriptEngine;
 
 extern void RegisterConfigAPI(asIScriptEngine* engine);
+extern void RegisterFrontStateMachineAPI(asIScriptEngine* engine);
 extern void RegisterPluginsRegistryAPI(asIScriptEngine* engine);
 extern void RegisterShellConfiguratorAPI(asIScriptEngine* engine);
-extern void RegisterShellStateMachineAPI(asIScriptEngine* engine);
 
-void RegisterClientAPI(asIScriptEngine* engine) { RegisterShellStateMachineAPI(engine); }
+void RegisterClientAPI(asIScriptEngine* engine) { RegisterFrontStateMachineAPI(engine); }
 
 void RegisterServerAPI(asIScriptEngine* engine)
 {

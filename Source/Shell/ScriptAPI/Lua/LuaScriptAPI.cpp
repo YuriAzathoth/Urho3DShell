@@ -23,10 +23,10 @@
 struct lua_State;
 
 extern int tolua_ConfigAPI_open(lua_State*);
+extern int tolua_FrontStateAPI_open(lua_State*);
 extern int tolua_PluginAPI_open(lua_State*);
-extern int tolua_ShellStateAPI_open(lua_State*);
 
-void RegisterClientLuaAPI(lua_State* state) { tolua_ShellStateAPI_open(state); }
+void RegisterClientLuaAPI(lua_State* state) { tolua_FrontStateAPI_open(state); }
 
 void RegisterServerLuaAPI(lua_State* state)
 {

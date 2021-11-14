@@ -21,41 +21,41 @@
 //
 
 #include <Urho3D/AngelScript/Generated_Members.h>
-#include "ShellState/ShellStateMachine.h"
+#include "FrontState/FrontStateMachine.h"
 
 using namespace Urho3D;
 
-extern void RegisterShellStateAPI(asIScriptEngine* engine);
+extern void RegisterFrontStateAPI(asIScriptEngine* engine);
 
-static ShellStateMachine* CreateShellStateMachine() { return new ShellStateMachine(GetScriptContext()); }
+static FrontStateMachine* CreateFrontStateMachine() { return new FrontStateMachine(GetScriptContext()); }
 
-static ShellStateMachine* GetShellStateMachine() { return GetScriptContext()->GetSubsystem<ShellStateMachine>(); }
+static FrontStateMachine* GetFrontStateMachine() { return GetScriptContext()->GetSubsystem<FrontStateMachine>(); }
 
-void RegisterShellStateMachineAPI(asIScriptEngine* engine)
+void RegisterFrontStateMachineAPI(asIScriptEngine* engine)
 {
-	RegisterShellStateAPI(engine);
+	RegisterFrontStateAPI(engine);
 
-	engine->RegisterObjectType("ShellStateMachine", 0, asOBJ_REF);
+	engine->RegisterObjectType("FrontStateMachine", 0, asOBJ_REF);
 
-	engine->RegisterGlobalFunction("ShellStateMachine@+ get_ssm()", AS_FUNCTION(GetShellStateMachine), AS_CALL_CDECL);
+	engine->RegisterGlobalFunction("FrontStateMachine@+ get_ssm()", AS_FUNCTION(GetFrontStateMachine), AS_CALL_CDECL);
 
-	engine->RegisterObjectBehaviour("ShellStateMachine",
+	engine->RegisterObjectBehaviour("FrontStateMachine",
 									asBEHAVE_FACTORY,
-									"ShellStateMachine@+ f()",
-									AS_FUNCTION(CreateShellStateMachine),
+									"FrontStateMachine@+ f()",
+									AS_FUNCTION(CreateFrontStateMachine),
 									AS_CALL_CDECL);
 
-	RegisterSubclass<Object, ShellStateMachine>(engine, "Object", "ShellStateMachine");
-	RegisterSubclass<RefCounted, ShellStateMachine>(engine, "RefCounted", "ShellStateMachine");
+	RegisterSubclass<Object, FrontStateMachine>(engine, "Object", "FrontStateMachine");
+	RegisterSubclass<RefCounted, FrontStateMachine>(engine, "RefCounted", "FrontStateMachine");
 
-	RegisterMembers_Object<ShellStateMachine>(engine, "ShellStateMachine");
+	RegisterMembers_Object<FrontStateMachine>(engine, "FrontStateMachine");
 
-	engine->RegisterObjectMethod("ShellStateMachine",
-								 "void Push(ShellState@+)",
-								 AS_METHODPR(ShellStateMachine, Push, (ShellState*), void),
+	engine->RegisterObjectMethod("FrontStateMachine",
+								 "void Push(FrontState@+)",
+								 AS_METHODPR(FrontStateMachine, Push, (FrontState*), void),
 								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("ShellStateMachine",
-								 "ShellState& Get() const",
-								 AS_METHOD(ShellStateMachine, Get),
+	engine->RegisterObjectMethod("FrontStateMachine",
+								 "FrontState& Get() const",
+								 AS_METHOD(FrontStateMachine, Get),
 								 AS_CALL_THISCALL);
 }

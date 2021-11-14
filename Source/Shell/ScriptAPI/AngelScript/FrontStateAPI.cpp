@@ -21,12 +21,12 @@
 //
 
 #include <Urho3D/AngelScript/Generated_Members.h>
-#include "ShellState/ClientState.h"
-#include "ShellState/GameState.h"
-#include "ShellState/LocalServerState.h"
-#include "ShellState/MainMenuState.h"
-#include "ShellState/RemoteServerState.h"
-#include "ShellState/ServerState.h"
+#include "FrontState/ClientState.h"
+#include "FrontState/GameState.h"
+#include "FrontState/LocalServerState.h"
+#include "FrontState/MainMenuState.h"
+#include "FrontState/RemoteServerState.h"
+#include "FrontState/ServerState.h"
 
 using namespace Urho3D;
 
@@ -40,7 +40,7 @@ using namespace Urho3D;
 #pragma clang diagnostic ignored "-Wconversion"
 #endif // defined(__clang__)
 
-template <typename T> void RegisterMembers_ShellState(asIScriptEngine* engine, const char* className)
+template <typename T> void RegisterMembers_FrontState(asIScriptEngine* engine, const char* className)
 {
 	RegisterMembers_Object<T>(engine, className);
 	engine->RegisterObjectMethod(className, "void Enter()", AS_METHOD(T, Enter), AS_CALL_THISCALL);
@@ -96,7 +96,7 @@ Create_RemoteServerState(const String& sceneName, const String& serverName, unsi
 	return new RemoteServerState(GetScriptContext(), sceneName, serverName, port);
 }
 
-void RegisterShellStateAPI(asIScriptEngine* engine)
+void RegisterFrontStateAPI(asIScriptEngine* engine)
 {
 	RegisterDialogAPI(engine);
 
@@ -106,7 +106,7 @@ void RegisterShellStateAPI(asIScriptEngine* engine)
 	engine->RegisterObjectType("MainMenuState", 0, asOBJ_REF);
 	engine->RegisterObjectType("RemoteServerState", 0, asOBJ_REF);
 	engine->RegisterObjectType("ServerState", 0, asOBJ_REF);
-	engine->RegisterObjectType("ShellState", 0, asOBJ_REF);
+	engine->RegisterObjectType("FrontState", 0, asOBJ_REF);
 
 	engine->RegisterObjectBehaviour("MainMenuState",
 									asBEHAVE_FACTORY,
@@ -129,44 +129,44 @@ void RegisterShellStateAPI(asIScriptEngine* engine)
 									AS_FUNCTION(Create_RemoteServerState),
 									AS_CALL_CDECL);
 
-	RegisterSubclass<Object, ShellState>(engine, "Object", "ShellState");
-	RegisterSubclass<RefCounted, ShellState>(engine, "RefCounted", "ShellState");
+	RegisterSubclass<Object, FrontState>(engine, "Object", "FrontState");
+	RegisterSubclass<RefCounted, FrontState>(engine, "RefCounted", "FrontState");
 
-	RegisterSubclass<ShellState, MainMenuState>(engine, "ShellState", "MainMenuState");
+	RegisterSubclass<FrontState, MainMenuState>(engine, "FrontState", "MainMenuState");
 	RegisterSubclass<Object, MainMenuState>(engine, "Object", "MainMenuState");
 	RegisterSubclass<RefCounted, MainMenuState>(engine, "RefCounted", "MainMenuState");
 
-	RegisterSubclass<ShellState, GameState>(engine, "ShellState", "GameState");
+	RegisterSubclass<FrontState, GameState>(engine, "FrontState", "GameState");
 	RegisterSubclass<Object, GameState>(engine, "Object", "GameState");
 	RegisterSubclass<RefCounted, GameState>(engine, "RefCounted", "GameState");
 
 	RegisterSubclass<GameState, ClientState>(engine, "GameState", "ClientState");
-	RegisterSubclass<ShellState, ClientState>(engine, "ShellState", "ClientState");
+	RegisterSubclass<FrontState, ClientState>(engine, "FrontState", "ClientState");
 	RegisterSubclass<Object, ClientState>(engine, "Object", "ClientState");
 	RegisterSubclass<RefCounted, ClientState>(engine, "RefCounted", "ClientState");
 
 	RegisterSubclass<GameState, ServerState>(engine, "GameState", "ServerState");
-	RegisterSubclass<ShellState, ServerState>(engine, "ShellState", "ServerState");
+	RegisterSubclass<FrontState, ServerState>(engine, "FrontState", "ServerState");
 	RegisterSubclass<Object, ServerState>(engine, "Object", "ServerState");
 	RegisterSubclass<RefCounted, ServerState>(engine, "RefCounted", "ServerState");
 
 	RegisterSubclass<ServerState, LocalServerState>(engine, "ServerState", "LocalServerState");
 	RegisterSubclass<GameState, LocalServerState>(engine, "GameState", "LocalServerState");
-	RegisterSubclass<ShellState, LocalServerState>(engine, "ShellState", "LocalServerState");
+	RegisterSubclass<FrontState, LocalServerState>(engine, "FrontState", "LocalServerState");
 	RegisterSubclass<Object, LocalServerState>(engine, "Object", "LocalServerState");
 	RegisterSubclass<RefCounted, LocalServerState>(engine, "RefCounted", "LocalServerState");
 
 	RegisterSubclass<ServerState, RemoteServerState>(engine, "ServerState", "RemoteServerState");
 	RegisterSubclass<GameState, RemoteServerState>(engine, "GameState", "RemoteServerState");
-	RegisterSubclass<ShellState, RemoteServerState>(engine, "ShellState", "RemoteServerState");
+	RegisterSubclass<FrontState, RemoteServerState>(engine, "FrontState", "RemoteServerState");
 	RegisterSubclass<Object, RemoteServerState>(engine, "Object", "RemoteServerState");
 	RegisterSubclass<RefCounted, RemoteServerState>(engine, "RefCounted", "RemoteServerState");
 
-	RegisterMembers_ShellState<ClientState>(engine, "ClientState");
-	RegisterMembers_ShellState<GameState>(engine, "GameState");
-	RegisterMembers_ShellState<LocalServerState>(engine, "LocalServerState");
-	RegisterMembers_ShellState<MainMenuState>(engine, "MainMenuState");
-	RegisterMembers_ShellState<RemoteServerState>(engine, "RemoteServerState");
-	RegisterMembers_ShellState<ServerState>(engine, "ServerState");
-	RegisterMembers_ShellState<ShellState>(engine, "ShellState");
+	RegisterMembers_FrontState<ClientState>(engine, "ClientState");
+	RegisterMembers_FrontState<FrontState>(engine, "FrontState");
+	RegisterMembers_FrontState<GameState>(engine, "GameState");
+	RegisterMembers_FrontState<LocalServerState>(engine, "LocalServerState");
+	RegisterMembers_FrontState<MainMenuState>(engine, "MainMenuState");
+	RegisterMembers_FrontState<RemoteServerState>(engine, "RemoteServerState");
+	RegisterMembers_FrontState<ServerState>(engine, "ServerState");
 }

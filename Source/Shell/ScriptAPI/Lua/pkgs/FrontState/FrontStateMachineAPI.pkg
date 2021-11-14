@@ -1,0 +1,19 @@
+$#include "FrontState/FrontStateMachine.h"
+
+class FrontStateMachine : public Object
+{
+}
+
+FrontStateMachine* GetFrontStateMachine();
+tolua_readonly tolua_property__get_set FrontStateMachine* ssm;
+
+${
+#define TOLUA_DISABLE_tolua_FrontStateAPI_GetFrontStateMachine00
+static int tolua_FrontStateAPI_GetFrontStateMachine00(lua_State* tolua_S)
+{
+    return ToluaGetSubsystem<FrontStateMachine>(tolua_S);
+}
+
+#define TOLUA_DISABLE_tolua_get_ssm_ptr
+#define tolua_get_ssm_ptr tolua_FrontStateAPI_GetFrontStateMachine00
+$}
