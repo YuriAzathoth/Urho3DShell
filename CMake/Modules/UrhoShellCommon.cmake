@@ -60,7 +60,7 @@ MACRO (SETUP_GAME_PROJECT)
 		)
 		ADD_CUSTOM_TARGET (
 			FORMAT
-			COMMAND clang-format
+			COMMAND ${CLANG_FORMAT}
 			-i
 			-style=file
 			${ALL_SOURCE_FILES}
