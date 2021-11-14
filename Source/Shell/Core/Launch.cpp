@@ -55,7 +55,7 @@ static Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments)
 				ret[SP_APP_NAME] = value;
 				++i;
 			}
-			if (argument == "client")
+			else if (argument == "client")
 			{
 				ret[SP_CLIENT] = value;
 				++i;
