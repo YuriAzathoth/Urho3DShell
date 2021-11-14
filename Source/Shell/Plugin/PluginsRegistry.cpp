@@ -45,12 +45,14 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 	if (pluginName.EndsWith(".as", false))
 #ifdef URHO3D_ANGELSCRIPT
 		plugin.StaticCast(MakeShared<ScriptPlugin>(context_));
+#else
+		URHO3D_LOGERROR("Loading AngelScript scripts is not supported.");
 #endif // URHO3D_ANGELSCRIPT
 	else if (pluginName.EndsWith(".lua", false))
 #if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));
 #else
-			URHO3D_LOGERROR("Loading Lua scripts is only supported in experimental mode.");
+		URHO3D_LOGERROR("Loading Lua scripts is not supported.");
 #endif // defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
