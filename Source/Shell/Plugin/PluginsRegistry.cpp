@@ -33,12 +33,6 @@
 
 using namespace Urho3D;
 
-void PluginsRegistry::Initialize(const Urho3D::String& coreLibraryName)
-{
-	mainPlugin_.StaticCast(MakeShared<BinaryPlugin>(context_));
-	mainPlugin_->Load(coreLibraryName);
-}
-
 bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 {
 	SharedPtr<Plugin> plugin;
