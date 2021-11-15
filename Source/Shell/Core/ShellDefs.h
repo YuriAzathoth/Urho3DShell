@@ -27,6 +27,7 @@
 
 static Urho3D::StringHash SP_APP_NAME = "AppName";
 static Urho3D::StringHash SP_CLIENT = "Client";
+static Urho3D::StringHash SP_GAME_LIB = "GameLib";
 static Urho3D::StringHash SP_NO_CLIENT = "NoClient";
 static Urho3D::StringHash SP_SERVER = "Server";
 static Urho3D::StringHash SP_SCENE = "Scene";

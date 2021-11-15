@@ -60,6 +60,11 @@ static Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments)
 				ret[SP_CLIENT] = value;
 				++i;
 			}
+			else if (argument == "gamelib")
+			{
+				ret[SP_GAME_LIB] = value;
+				++i;
+			}
 			else if (argument == "headless" || argument == "noclient")
 				ret[SP_NO_CLIENT] = true;
 			else if (argument == "scene")

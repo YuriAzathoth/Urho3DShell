@@ -60,6 +60,7 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 		plugins_[pluginName] = plugin;
 		return true;
 	}
+	printf("5\n");
 	return false;
 }
 

@@ -34,7 +34,7 @@ public:
 	void Stop() override;
 
 protected:
-	Urho3D::Variant GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue) const;
+	const Urho3D::Variant& GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue) const;
 
 	Urho3D::VariantMap shellParameters_;
 };
