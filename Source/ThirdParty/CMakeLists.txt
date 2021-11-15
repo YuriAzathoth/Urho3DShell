@@ -21,9 +21,6 @@
 #
 
 IF (URHO3D_LUA)
-	IF (NOT URHO3D_LUAJIT)
-		MESSAGE (FATAL_ERROR "Only JIT version of LUA is supported.")
-	ENDIF ()
 	ADD_SUBDIRECTORY (Lua${JIT})
 	ADD_SUBDIRECTORY (toluapp)
 ENDIF ()
