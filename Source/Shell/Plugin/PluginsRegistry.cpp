@@ -24,12 +24,15 @@
 #include "BinaryPlugin.h"
 #include "Core/ShellConfigurator.h"
 #include "PluginsRegistry.h"
-#include "ScriptPlugin.h"
 #include "Urho3DShellConfig.h"
 
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#ifdef URHO3D_ANGELSCRIPT
+#include "ScriptPlugin.h"
+#endif // URHO3D_ANGELSCRIPT
+
+#ifdef URHO3D_LUA
 #include "LuaScriptPlugin.h"
-#endif // defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#endif // URHO3D_LUA
 
 using namespace Urho3D;
 
@@ -43,11 +46,11 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 		URHO3D_LOGERROR("Loading AngelScript scripts is not supported.");
 #endif // URHO3D_ANGELSCRIPT
 	else if (pluginName.EndsWith(".lua", false))
-#if defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#ifdef URHO3D_LUA
 		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));
 #else
 		URHO3D_LOGERROR("Loading Lua scripts is not supported.");
-#endif // defined(URHO3DSHELL_EXPERIMENTAL) && defined(URHO3D_LUA)
+#endif // URHO3D_LUA
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
 
