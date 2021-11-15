@@ -46,7 +46,7 @@ private:
 	Urho3D::SharedPtr<FrontState> nextState_;
 
 	bool ProcessStateChanging(); // May be called only from Shell
-	friend class FrontState;	 // Allow to call ProcessStateChanging only from ShellState
+	friend class FrontState;	 // Allow to call ProcessStateChanging only from FrontState
 };
 
 template <typename T, typename... TArgs> void FrontStateMachine::Initialize(TArgs&&... args)
