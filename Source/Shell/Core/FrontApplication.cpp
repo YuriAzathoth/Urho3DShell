@@ -48,14 +48,12 @@
 #include "Urho3DShellConfig.h"
 
 extern void RegisterClientParameters(Config* config);
-#ifdef URHO3DSHELL_EXPERIMENTAL
 #ifdef URHO3D_ANGELSCRIPT
 extern void RegisterClientAPI(asIScriptEngine* engine);
 #endif // URHO3D_ANGELSCRIPT
 #ifdef URHO3D_LUA
 extern void RegisterClientLuaAPI(lua_State* state);
 #endif // URHO3D_LUA
-#endif // URHO3DSHELL_EXPERIMENTAL
 
 using namespace Urho3D;
 
@@ -77,14 +75,12 @@ void FrontApplication::Setup()
 	context_->RegisterFactory<SettingsDialog>();
 	context_->RegisterSubsystem<FrontStateMachine>();
 
-#ifdef URHO3DSHELL_EXPERIMENTAL
 #ifdef URHO3D_ANGELSCRIPT
 	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
 #endif // URHO3D_ANGELSCRIPT
 #ifdef URHO3D_LUA
 	RegisterClientLuaAPI(GetSubsystem<LuaScript>()->GetState());
 #endif // URHO3D_LUA
-#endif // URHO3DSHELL_EXPERIMENTAL
 }
 
 void FrontApplication::Start()
