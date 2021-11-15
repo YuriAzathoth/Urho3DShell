@@ -62,14 +62,13 @@ void CoreApplication::Setup()
 #endif // URHO3D_LUA
 
 	context_->RegisterSubsystem<ActionsRegistry>();
-	context_->RegisterSubsystem<PluginsRegistry>();
-	context_->RegisterSubsystem<ShellConfigurator>();
+	ShellConfigurator* configurator = context_->RegisterSubsystem<ShellConfigurator>();
 
 	const String& gameLib = GetParameter(SP_GAME_LIB, "Game").GetString();
-	if (!GetSubsystem<PluginsRegistry>()->Load(gameLib))
+	if (!context_->RegisterSubsystem<PluginsRegistry>()->Load(gameLib))
 		GetSubsystem<Engine>()->Exit();
 
-	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters_, shellParameters_);
+	configurator->Initialize(engineParameters_, shellParameters_);
 }
 
 void CoreApplication::Start()
