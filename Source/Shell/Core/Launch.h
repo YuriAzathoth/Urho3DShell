@@ -48,8 +48,6 @@
 #define URHO3DSHELL_GPU_PARAMETERS
 #endif // _WIN32
 
-URHO3DSHELLAPI_EXPORT Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments);
-
 // extern "C" int URHO3DSHELLAPI_EXPORT LaunchShell(int argc1, char** argv1, int argc2, char** argv2);
 
 #endif // LAUNCH_H

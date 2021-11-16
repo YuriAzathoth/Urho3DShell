@@ -21,6 +21,7 @@
 //
 
 #include <Urho3D/AngelScript/Script.h>
+#include <Urho3D/Core/ProcessUtils.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Urho3DConfig.h>
@@ -46,6 +47,8 @@ using namespace Urho3D;
 CoreShell::CoreShell(Urho3D::Context* context)
 	: Object(context)
 {
+	ParseParameters();
+
 	RegisterServerParameters(context_->RegisterSubsystem<Config>());
 
 	InputReceiver::RegisterObject(context_);
@@ -87,4 +90,51 @@ const Variant& CoreShell::GetShellParameter(Urho3D::StringHash parameter, const 
 {
 	const auto it = shellParameters_.Find(parameter);
 	return it != shellParameters_.End() ? it->second_ : defaultValue;
+}
+
+void CoreShell::ParseParameters()
+{
+	const StringVector& arguments = GetArguments();
+	String argument, value;
+	for (unsigned i = 0; i < arguments.Size(); ++i)
+		if (arguments[i].Length() > 1 && arguments[i][0] == '-')
+		{
+			argument = arguments[i].Substring(1).ToLower();
+			value = i + 1 < arguments.Size() ? arguments[i + 1] : String::EMPTY;
+			if (argument == "appname")
+			{
+				shellParameters_[SP_APP_NAME] = value;
+				++i;
+			}
+			else if (argument == "client")
+			{
+				shellParameters_[SP_CLIENT] = value;
+				++i;
+			}
+			else if (argument == "gamelib")
+			{
+				shellParameters_[SP_GAME_LIB] = value;
+				++i;
+			}
+			else if (argument == "scene")
+			{
+				shellParameters_[SP_SCENE] = value;
+				++i;
+			}
+			else if (argument == "script")
+			{
+				shellParameters_[SP_SCRIPT] = value;
+				++i;
+			}
+			else if (argument == "server")
+			{
+				if (value.Empty() || value[0] == '-')
+					shellParameters_[SP_SERVER] = String::EMPTY;
+				else
+				{
+					shellParameters_[SP_SERVER] = value;
+					++i;
+				}
+			}
+		}
 }

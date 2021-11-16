@@ -23,7 +23,6 @@
 #ifndef CORESHELL_H
 #define CORESHELL_H
 
-#include <Urho3D/Container/FlagSet.h>
 #include <Urho3D/Core/Object.h>
 #include "Urho3DShellAPI.h"
 
@@ -45,13 +44,9 @@ public:
 											 const Urho3D::Variant& defaultValue = Urho3D::Variant::EMPTY) const;
 
 private:
-	enum class Flags
-	{
-		CREATED = 0x1
-	};
+	void ParseParameters();
 
 	Urho3D::VariantMap shellParameters_;
-	Urho3D::FlagSet<Flags> flags_;
 };
 
 #endif // CORESHELL_H
