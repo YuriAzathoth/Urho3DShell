@@ -23,7 +23,6 @@
 #ifndef SERVERAPPLICATION_H
 #define SERVERAPPLICATION_H
 
-//#define URHO3D_WIN32_CONSOLE
 #include <Urho3D/Engine/Application.h>
 #include "Core/CoreShell.h"
 #include "Core/FrontShell.h"
