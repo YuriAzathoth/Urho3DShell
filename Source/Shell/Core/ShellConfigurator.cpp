@@ -58,8 +58,12 @@ ShellConfigurator::~ShellConfigurator()
 	file.SaveFile(GetProfileFilename());
 }
 
-void ShellConfigurator::Initialize(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters)
+void ShellConfigurator::Initialize(Urho3D::VariantMap& engineParameters,
+								   Urho3D::VariantMap& shellParameters,
+								   const Urho3D::String& appName)
 {
+	appName_ = appName;
+
 	FileSystem* fileSystem = GetSubsystem<FileSystem>();
 	String path = GetGameDataPath();
 	if (fileSystem->DirExists(path))
@@ -71,9 +75,6 @@ void ShellConfigurator::Initialize(Urho3D::VariantMap& engineParameters, Urho3D:
 	}
 	else
 		fileSystem->CreateDir(path);
-
-	const auto it = shellParameters.Find(SP_APP_NAME);
-	appName_ = it != shellParameters.End() ? it->second_.GetString() : "Unnamed";
 
 	if (InitProfile())
 	{

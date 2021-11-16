@@ -29,7 +29,7 @@
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
-#include "FrontApplication.h"
+#include "FrontShell.h"
 #include "FrontState/ClientState.h"
 #include "FrontState/FrontStateMachine.h"
 #include "FrontState/LocalServerState.h"
@@ -57,15 +57,17 @@ extern void RegisterClientLuaAPI(lua_State* state);
 
 using namespace Urho3D;
 
-FrontApplication::FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters)
-	: CoreApplication(context, std::move(shellParameters))
+FrontShell::FrontShell(Urho3D::Context* context)
+	: Object(context)
 {
 	RegisterClientParameters(GetSubsystem<Config>());
-}
 
-void FrontApplication::Setup()
-{
-	CoreApplication::Setup();
+#ifdef URHO3D_ANGELSCRIPT
+	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
+#endif // URHO3D_ANGELSCRIPT
+#ifdef URHO3D_LUA
+	RegisterClientLuaAPI(GetSubsystem<LuaScript>()->GetState());
+#endif // URHO3D_LUA
 
 	context_->RegisterFactory<LoadGameDialog>();
 	context_->RegisterFactory<MainMenuDialog>();
@@ -74,65 +76,49 @@ void FrontApplication::Setup()
 	context_->RegisterFactory<ServersListDialog>();
 	context_->RegisterFactory<SettingsDialog>();
 	context_->RegisterSubsystem<FrontStateMachine>();
-
-#ifdef URHO3D_ANGELSCRIPT
-	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
-#endif // URHO3D_ANGELSCRIPT
-#ifdef URHO3D_LUA
-	RegisterClientLuaAPI(GetSubsystem<LuaScript>()->GetState());
-#endif // URHO3D_LUA
 }
 
-void FrontApplication::Start()
+FrontShell::~FrontShell()
 {
-	CoreApplication::Start();
+	context_->RemoveSubsystem<FrontStateMachine>();
+	context_->RemoveSubsystem<ControllersRegistry>();
+}
 
+void FrontShell::SetUIStyle(const Urho3D::String& filename)
+{
 	ResourceCache* cache = GetSubsystem<ResourceCache>();
-	XMLFile* styleFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
+	XMLFile* styleFile = cache->GetResource<XMLFile>(filename);
 	GetSubsystem<UI>()->GetRoot()->SetDefaultStyle(styleFile);
 
 	Engine* engine = GetSubsystem<Engine>();
 	engine->CreateConsole()->SetDefaultStyle(styleFile);
 	engine->CreateDebugHud()->SetDefaultStyle(styleFile);
+}
 
+void FrontShell::InitInput()
+{
 	ControllersRegistry* controllers = context_->RegisterSubsystem<ControllersRegistry>();
 
 	SendEvent(E_SHELLCLIENTSTARTED);
 
 	controllers->Enable("KeyboardController");
-
-	FrontStateMachine* ssm = GetSubsystem<FrontStateMachine>();
-	auto it = shellParameters_.Find(SP_SCENE);
-	if (it != shellParameters_.End())
-	{
-		const String& sceneName = it->second_.GetString();
-		it = shellParameters_.Find(SP_SERVER);
-		if (it == shellParameters_.End())
-			ssm->Initialize<LocalServerState>(sceneName);
-		else
-		{
-			const String& serverName = it->second_.IsZero()
-										   ? GetSubsystem<ShellConfigurator>()->GetGameName() + " Server"
-										   : it->second_.GetString();
-			const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
-			ssm->Initialize<RemoteServerState>(sceneName, serverName, port);
-		}
-		return;
-	}
-	it = shellParameters_.Find(SP_CLIENT);
-	if (it != shellParameters_.End())
-	{
-		const String& address = it->second_.GetString();
-		const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
-		ssm->Initialize<ClientState>(address, port);
-		return;
-	}
-	ssm->Initialize<MainMenuState>();
 }
 
-void FrontApplication::Stop()
+void FrontShell::StartMainMenu() { GetSubsystem<FrontStateMachine>()->Initialize<MainMenuState>(); }
+
+void FrontShell::StartLocalServer(const Urho3D::String& sceneName)
 {
-	context_->RemoveSubsystem<FrontStateMachine>();
-	context_->RemoveSubsystem<ControllersRegistry>();
-	CoreApplication::Stop();
+	GetSubsystem<FrontStateMachine>()->Initialize<LocalServerState>(sceneName);
+}
+
+void FrontShell::StartRemoteServer(const Urho3D::String& sceneName, const Urho3D::String& serverName)
+{
+	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
+	GetSubsystem<FrontStateMachine>()->Initialize<RemoteServerState>(sceneName, serverName, port);
+}
+
+void FrontShell::StartClient(const Urho3D::String& address)
+{
+	const unsigned short port = GetSubsystem<ShellConfigurator>()->GetPort();
+	GetSubsystem<FrontStateMachine>()->Initialize<ClientState>(address, port);
 }

@@ -20,23 +20,38 @@
 // THE SOFTWARE.
 //
 
-#ifndef COREAPPLICATION_H
-#define COREAPPLICATION_H
+#ifndef CORESHELL_H
+#define CORESHELL_H
 
-#include <Urho3D/Engine/Application.h>
+#include <Urho3D/Container/FlagSet.h>
+#include <Urho3D/Core/Object.h>
+#include "Urho3DShellAPI.h"
 
-class CoreApplication : public Urho3D::Application
+class URHO3DSHELLAPI_EXPORT CoreShell : public Urho3D::Object
 {
-public:
-	CoreApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters);
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	URHO3D_OBJECT(CoreShell, Urho3D::Object)
 
-protected:
-	const Urho3D::Variant& GetParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue) const;
+public:
+	explicit CoreShell(Urho3D::Context* context);
+	~CoreShell();
+
+	void LoadGameLibrary(const Urho3D::String& gameLib);
+	void LoadConfig(Urho3D::VariantMap& engineParameters, const Urho3D::String& appName);
+
+	void LoadPlugin(const Urho3D::String& plugin);
+	void ApplyConfig();
+
+	const Urho3D::Variant& GetShellParameter(Urho3D::StringHash parameter,
+											 const Urho3D::Variant& defaultValue = Urho3D::Variant::EMPTY) const;
+
+private:
+	enum class Flags
+	{
+		CREATED = 0x1
+	};
 
 	Urho3D::VariantMap shellParameters_;
+	Urho3D::FlagSet<Flags> flags_;
 };
 
-#endif // COREAPPLICATION_H
+#endif // CORESHELL_H

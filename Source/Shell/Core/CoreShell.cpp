@@ -21,10 +21,11 @@
 //
 
 #include <Urho3D/AngelScript/Script.h>
+#include <Urho3D/Engine/Engine.h>
 #include <Urho3D/LuaScript/LuaScript.h>
 #include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
-#include "CoreApplication.h"
+#include "CoreShell.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
 #include "Plugin/PluginsRegistry.h"
@@ -42,55 +43,50 @@ extern void RegisterServerLuaAPI(lua_State* state);
 
 using namespace Urho3D;
 
-CoreApplication::CoreApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters)
-	: Application(context)
-	, shellParameters_(std::move(shellParameters))
+CoreShell::CoreShell(Urho3D::Context* context)
+	: Object(context)
 {
-	context_->RegisterSubsystem<Config>();
-	RegisterServerParameters(GetSubsystem<Config>());
-}
+	RegisterServerParameters(context_->RegisterSubsystem<Config>());
 
-void CoreApplication::Setup()
-{
+	InputReceiver::RegisterObject(context_);
+
 #ifdef URHO3D_ANGELSCRIPT
-	Script* as = context_->RegisterSubsystem<Script>();
-	RegisterServerAPI(as->GetScriptEngine());
+	RegisterServerAPI(context_->RegisterSubsystem<Script>()->GetScriptEngine());
 #endif // URHO3D_ANGELSCRIPT
 #ifdef URHO3D_LUA
-	LuaScript* lua = context_->RegisterSubsystem<LuaScript>();
-	RegisterServerLuaAPI(lua->GetState());
+	RegisterServerLuaAPI(context_->RegisterSubsystem<LuaScript>()->GetState());
 #endif // URHO3D_LUA
 
 	context_->RegisterSubsystem<ActionsRegistry>();
-	ShellConfigurator* configurator = context_->RegisterSubsystem<ShellConfigurator>();
-
-	const String& gameLib = GetParameter(SP_GAME_LIB, "Game").GetString();
-	if (!context_->RegisterSubsystem<PluginsRegistry>()->Load(gameLib))
-		GetSubsystem<Engine>()->Exit();
-
-	configurator->Initialize(engineParameters_, shellParameters_);
+	context_->RegisterSubsystem<PluginsRegistry>();
+	context_->RegisterSubsystem<ShellConfigurator>();
 }
 
-void CoreApplication::Start()
-{
-	InputReceiver::RegisterObject(context_);
-
-	PluginsRegistry* plugins = GetSubsystem<PluginsRegistry>();
-	const auto itScript = shellParameters_.Find(SP_SCRIPT);
-	if (itScript != shellParameters_.End())
-		plugins->Load(itScript->second_.GetString());
-
-	GetSubsystem<Config>()->Apply(shellParameters_);
-}
-
-void CoreApplication::Stop()
+CoreShell::~CoreShell()
 {
 	context_->RemoveSubsystem<ShellConfigurator>();
 	context_->RemoveSubsystem<PluginsRegistry>();
 }
 
-const Urho3D::Variant& CoreApplication::GetParameter(Urho3D::StringHash parameter,
-													 const Urho3D::Variant& defaultValue) const
+void CoreShell::LoadGameLibrary(const Urho3D::String& gameLib)
+{
+	if (!GetSubsystem<PluginsRegistry>()->Load(gameLib))
+	{
+		GetSubsystem<Engine>()->Exit();
+		return;
+	}
+}
+
+void CoreShell::LoadConfig(Urho3D::VariantMap& engineParameters, const Urho3D::String& appName)
+{
+	GetSubsystem<ShellConfigurator>()->Initialize(engineParameters, shellParameters_, appName);
+}
+
+void CoreShell::LoadPlugin(const Urho3D::String& plugin) { GetSubsystem<PluginsRegistry>()->Load(plugin); }
+
+void CoreShell::ApplyConfig() { GetSubsystem<Config>()->Apply(shellParameters_); }
+
+const Variant& CoreShell::GetShellParameter(Urho3D::StringHash parameter, const Urho3D::Variant& defaultValue) const
 {
 	const auto it = shellParameters_.Find(parameter);
 	return it != shellParameters_.End() ? it->second_ : defaultValue;

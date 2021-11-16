@@ -20,16 +20,44 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELLDEFS_H
-#define SHELLDEFS_H
+#include <Urho3D/Container/Str.h>
+#include <Urho3D/Engine/EngineDefs.h>
+#include "Core/Launch.h"
+#include "EditorApplication.h"
+#include "Plugin/PluginsRegistry.h"
 
-#include <Urho3D/Math/StringHash.h>
+#define APP_NAME "Editor"
+#define GAME_LIB "SampleGame"
+#define SCRIPT_FILE "Scripts/Editor.as"
+#define UI_STYLE "UI/DefaultStyle.xml"
 
-static Urho3D::StringHash SP_APP_NAME = "AppName";
-static Urho3D::StringHash SP_CLIENT = "Client";
-static Urho3D::StringHash SP_GAME_LIB = "GameLib";
-static Urho3D::StringHash SP_SERVER = "Server";
-static Urho3D::StringHash SP_SCENE = "Scene";
-static Urho3D::StringHash SP_SCRIPT = "Script";
+using namespace Urho3D;
 
-#endif // SHELLDEFS_H
+void EditorApplication::Setup()
+{
+	core_ = MakeUnique<CoreShell>(context_);
+	front_ = MakeUnique<FrontShell>(context_);
+
+	core_->LoadGameLibrary(GAME_LIB);
+	core_->LoadConfig(engineParameters_, APP_NAME);
+
+	engineParameters_[EP_RESOURCE_PACKAGES] = "CoreData.pak;Data.pak;Editor.pak";
+	engineParameters_[EP_FULL_SCREEN] = false;
+	engineParameters_[EP_WINDOW_RESIZABLE] = true;
+}
+
+void EditorApplication::Start()
+{
+	core_->LoadPlugin(SCRIPT_FILE);
+	core_->ApplyConfig();
+}
+
+void EditorApplication::Stop()
+{
+	front_.Reset();
+	core_.Reset();
+}
+
+URHO3D_DEFINE_APPLICATION_MAIN(EditorApplication)
+
+URHO3DSHELL_GPU_PARAMETERS

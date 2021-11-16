@@ -20,18 +20,27 @@
 // THE SOFTWARE.
 //
 
-#ifndef FRONTAPPLICATION_H
-#define FRONTAPPLICATION_H
+#ifndef FRONTSHELL_H
+#define FRONTSHELL_H
 
-#include "CoreApplication.h"
+#include <Urho3D/Core/Object.h>
+#include "Urho3DShellAPI.h"
 
-class FrontApplication : public CoreApplication
+class URHO3DSHELLAPI_EXPORT FrontShell : public Urho3D::Object
 {
+	URHO3D_OBJECT(FrontShell, Urho3D::Object)
+
 public:
-	FrontApplication(Urho3D::Context* context, Urho3D::VariantMap&& shellParameters);
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	explicit FrontShell(Urho3D::Context* context);
+	~FrontShell();
+
+	void SetUIStyle(const Urho3D::String& filename);
+	void InitInput();
+
+	void StartMainMenu();
+	void StartLocalServer(const Urho3D::String& sceneName);
+	void StartRemoteServer(const Urho3D::String& sceneName, const Urho3D::String& serverName);
+	void StartClient(const Urho3D::String& address);
 };
 
-#endif // FRONTAPPLICATION_H
+#endif // FRONTSHELL_H

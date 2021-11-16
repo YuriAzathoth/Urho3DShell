@@ -20,16 +20,24 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELLDEFS_H
-#define SHELLDEFS_H
+#ifndef CLIENTAPPLICATION_H
+#define CLIENTAPPLICATION_H
 
-#include <Urho3D/Math/StringHash.h>
+#include <Urho3D/Engine/Application.h>
+#include "Core/CoreShell.h"
+#include "Core/FrontShell.h"
 
-static Urho3D::StringHash SP_APP_NAME = "AppName";
-static Urho3D::StringHash SP_CLIENT = "Client";
-static Urho3D::StringHash SP_GAME_LIB = "GameLib";
-static Urho3D::StringHash SP_SERVER = "Server";
-static Urho3D::StringHash SP_SCENE = "Scene";
-static Urho3D::StringHash SP_SCRIPT = "Script";
+class ClientApplication : public Urho3D::Application
+{
+public:
+	using Urho3D::Application::Application;
+	void Setup() override;
+	void Start() override;
+	void Stop() override;
 
-#endif // SHELLDEFS_H
+private:
+	Urho3D::UniquePtr<CoreShell> core_;
+	Urho3D::UniquePtr<FrontShell> front_;
+};
+
+#endif // CLIENTAPPLICATION_H

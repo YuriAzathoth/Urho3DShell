@@ -23,8 +23,33 @@
 #ifndef LAUNCH_H
 #define LAUNCH_H
 
+#include <Urho3D/Core/Context.h>
+#include <Urho3D/Core/ProcessUtils.h>
+#include <Urho3D/Engine/Application.h>
 #include "Urho3DShellAPI.h"
 
-extern "C" int URHO3DSHELLAPI_EXPORT LaunchShell(int argc1, char** argv1, int argc2, char** argv2);
+#define URHO3DSHELL_APPLICATION(CLASS)                                                                                 \
+	int main(int argc, char** argv)                                                                                    \
+	{                                                                                                                  \
+		VariantMap shellParameters = ParseParameters(GetArguments());                                                  \
+		SharedPtr<Context> context = MakeShared<Context>();                                                            \
+		UniquePtr<CLASS> app = new CLASS(context);                                                                     \
+		return app->Run();                                                                                             \
+	}
+
+#ifdef _WIN32
+#define URHO3DSHELL_GPU_PARAMETERS                                                                                     \
+	extern "C"                                                                                                         \
+	{                                                                                                                  \
+		__declspec(dllexport) unsigned NvOptimusEnablement = 1;                                                        \
+		__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;                                            \
+	}
+#else
+#define URHO3DSHELL_GPU_PARAMETERS
+#endif // _WIN32
+
+URHO3DSHELLAPI_EXPORT Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments);
+
+// extern "C" int URHO3DSHELLAPI_EXPORT LaunchShell(int argc1, char** argv1, int argc2, char** argv2);
 
 #endif // LAUNCH_H

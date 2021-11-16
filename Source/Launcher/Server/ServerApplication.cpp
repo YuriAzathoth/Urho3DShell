@@ -20,16 +20,32 @@
 // THE SOFTWARE.
 //
 
-#ifndef SHELLDEFS_H
-#define SHELLDEFS_H
+#define URHO3D_WIN32_CONSOLE
+#include <stdio.h>
+#include <Urho3D/Container/Str.h>
+#include <Urho3D/Engine/EngineDefs.h>
+#include "Core/Launch.h"
+#include "Plugin/PluginsRegistry.h"
+#include "ServerApplication.h"
 
-#include <Urho3D/Math/StringHash.h>
+#define APP_NAME "Server"
+#define GAME_LIB "SampleGame"
+#define SCRIPT_FILE "Scripts/Editor.as"
+#define UI_STYLE "UI/DefaultStyle.xml"
 
-static Urho3D::StringHash SP_APP_NAME = "AppName";
-static Urho3D::StringHash SP_CLIENT = "Client";
-static Urho3D::StringHash SP_GAME_LIB = "GameLib";
-static Urho3D::StringHash SP_SERVER = "Server";
-static Urho3D::StringHash SP_SCENE = "Scene";
-static Urho3D::StringHash SP_SCRIPT = "Script";
+using namespace Urho3D;
 
-#endif // SHELLDEFS_H
+void ServerApplication::Setup()
+{
+	core_ = MakeUnique<CoreShell>(context_);
+	core_->LoadGameLibrary(GAME_LIB);
+	core_->LoadConfig(engineParameters_, APP_NAME);
+
+	engineParameters_[EP_HEADLESS] = true;
+}
+
+void ServerApplication::Start() { core_->ApplyConfig(); }
+
+void ServerApplication::Stop() { core_.Reset(); }
+
+URHO3D_DEFINE_APPLICATION_MAIN(ServerApplication)

@@ -20,40 +20,40 @@
 // THE SOFTWARE.
 //
 
-#include <vector>
+#include "ClientApplication.h"
 #include "Core/Launch.h"
+#include "stdio.h"
 
-#if defined (__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#endif // defined (__GNUC__) || defined(__GNUG__)
+#define APP_NAME "Client"
+#define GAME_LIB "SampleGame"
+#define UI_STYLE "UI/DefaultStyle.xml"
 
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wwrite-strings"
-#endif // defined(__clang__)
+using namespace Urho3D;
 
-int main(int argc, char** argv)
+void ClientApplication::Setup()
 {
-	char* launcher_args[] =
-	{
-		@LAUNCHER_ARGUMENTS@
-	};
-	return LaunchShell(argc, argv, std::size(launcher_args), launcher_args);
+	core_ = MakeUnique<CoreShell>(context_);
+	front_ = MakeUnique<FrontShell>(context_);
+
+	core_->LoadGameLibrary(GAME_LIB);
+	core_->LoadConfig(engineParameters_, APP_NAME);
 }
 
-#ifdef _WIN32
-extern "C"
+void ClientApplication::Start()
 {
-	__declspec(dllexport) unsigned NvOptimusEnablement = 1;
-	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+	core_->ApplyConfig();
+
+	front_->SetUIStyle(UI_STYLE);
+	front_->InitInput();
+	front_->StartMainMenu();
 }
-#endif // _WIN32
 
-#if defined (__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic pop
-#endif // defined (__GNUC__) || defined(__GNUG__)
+void ClientApplication::Stop()
+{
+	front_.Reset();
+	core_.Reset();
+}
 
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif // defined(__clang__)
+URHO3D_DEFINE_APPLICATION_MAIN(ClientApplication)
+
+URHO3DSHELL_GPU_PARAMETERS

@@ -103,7 +103,7 @@ void ItemsListWindow::SetServerPanelVisible(bool visible)
 	ShrinkSize();
 }
 
-void ItemsListWindow::OnItemClicked(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+void ItemsListWindow::OnItemClicked(Urho3D::StringHash, [[maybe_unused]] Urho3D::VariantMap& eventData)
 {
 	// TODO: Context menu
 }

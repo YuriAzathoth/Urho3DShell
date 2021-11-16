@@ -22,26 +22,11 @@
 
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/ProcessUtils.h>
-#include "CoreApplication.h"
-#include "FrontApplication.h"
-#include "Launch.h"
 #include "ShellDefs.h"
 
 using namespace Urho3D;
 
-static void JoinArgs(char** dst, int argc1, char** argv1, int argc2, char** argv2)
-{
-	char** src_ptr;
-	char** dst_ptr = dst;
-	char** src_ptr_end = argv1 + argc1;
-	for (src_ptr = argv1; src_ptr < src_ptr_end; ++src_ptr, ++dst_ptr)
-		*dst_ptr = *src_ptr;
-	src_ptr_end = argv2 + argc2;
-	for (src_ptr = argv2; src_ptr < src_ptr_end; ++src_ptr, ++dst_ptr)
-		*dst_ptr = *src_ptr;
-}
-
-static Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments)
+Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments)
 {
 	VariantMap ret;
 	String argument, value;
@@ -65,8 +50,6 @@ static Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments)
 				ret[SP_GAME_LIB] = value;
 				++i;
 			}
-			else if (argument == "headless" || argument == "noclient")
-				ret[SP_NO_CLIENT] = true;
 			else if (argument == "scene")
 			{
 				ret[SP_SCENE] = value;
@@ -89,24 +72,4 @@ static Urho3D::VariantMap ParseParameters(const Urho3D::StringVector& arguments)
 			}
 		}
 	return ret;
-}
-
-extern "C" int LaunchShell(int argc1, char** argv1, int argc2, char** argv2)
-{
-	{
-		const int argc = argc1 + argc2;
-		char** argv = new char*[argc];
-		JoinArgs(argv, argc1, argv1, argc2, argv2);
-		ParseArguments(argc, argv);
-		delete[] argv;
-	}
-
-	VariantMap shellParameters = ParseParameters(GetArguments());
-	SharedPtr<Context> context = MakeShared<Context>();
-	UniquePtr<CoreApplication> app;
-	if (shellParameters.Contains(SP_NO_CLIENT))
-		app = new CoreApplication(context, std::move(shellParameters));
-	else
-		app = new FrontApplication(context, std::move(shellParameters));
-	return app->Run();
 }

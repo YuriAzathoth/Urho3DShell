@@ -34,7 +34,10 @@ public:
 	explicit ShellConfigurator(Urho3D::Context* context);
 	~ShellConfigurator();
 
-	void Initialize(Urho3D::VariantMap& engineParameters, Urho3D::VariantMap& shellParameters);
+	void Initialize(Urho3D::VariantMap& engineParameters,
+					Urho3D::VariantMap& shellParameters,
+					const Urho3D::String& appName);
+
 	void LoadProfile(const Urho3D::String& profileName);
 	void SaveProfile() const;
 	void CreateProfile(const Urho3D::String& profileName);
