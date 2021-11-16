@@ -21,7 +21,6 @@
 //
 
 #define URHO3D_WIN32_CONSOLE
-#include <stdio.h>
 #include <Urho3D/Container/Str.h>
 #include <Urho3D/Engine/EngineDefs.h>
 #include "Core/Launch.h"
