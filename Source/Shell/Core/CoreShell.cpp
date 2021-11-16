@@ -71,10 +71,7 @@ CoreShell::~CoreShell()
 void CoreShell::LoadGameLibrary(const Urho3D::String& gameLib)
 {
 	if (!GetSubsystem<PluginsRegistry>()->Load(gameLib))
-	{
 		GetSubsystem<Engine>()->Exit();
-		return;
-	}
 }
 
 void CoreShell::LoadConfig(Urho3D::VariantMap& engineParameters, const Urho3D::String& appName)
