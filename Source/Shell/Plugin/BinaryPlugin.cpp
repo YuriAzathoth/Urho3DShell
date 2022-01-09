@@ -105,7 +105,7 @@ bool BinaryPlugin::Load(const Urho3D::String& fileName)
 	}
 	dlerror();
 
-	CreatePlugin = static_cast<PluginFactory*>(dlsym(library_, "CreatePlugin"));
+	CreatePlugin = reinterpret_cast<PluginFactory*>(dlsym(library_, "CreatePlugin"));
 	const char* error = dlerror();
 	if (error != nullptr)
 	{
