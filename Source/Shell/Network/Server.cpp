@@ -136,7 +136,7 @@ void Server::OnClientDisconnected(Urho3D::StringHash, Urho3D::VariantMap& eventD
 			node->Remove();
 		nodes_.Erase(it);
 	}
-	URHO3D_LOGTRACEF("Server::OnClientDisconnected %s", address);
+	URHO3D_LOGTRACEF("Server::OnClientDisconnected %s", address.CString());
 }
 
 void Server::OnClientIdentity(Urho3D::StringHash, Urho3D::VariantMap& eventData)
