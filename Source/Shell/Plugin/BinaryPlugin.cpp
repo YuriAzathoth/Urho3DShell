@@ -43,6 +43,7 @@ BinaryPlugin::BinaryPlugin(Urho3D::Context* context)
 
 BinaryPlugin::~BinaryPlugin()
 {
+	interface_.Reset();
 #ifdef _WIN32
 	FreeLibrary(library_);
 #else
