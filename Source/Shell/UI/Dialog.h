@@ -25,12 +25,11 @@
 
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/UI/UIElement.h>
-#include <boost/noncopyable.hpp>
 #include "Urho3DShellAPI.h"
 
 class FrontState;
 
-class URHO3DSHELLAPI_EXPORT Dialog : public Urho3D::Object, private boost::noncopyable
+class URHO3DSHELLAPI_EXPORT Dialog : public Urho3D::Object
 {
 	URHO3D_OBJECT(Dialog, Urho3D::Object)
 

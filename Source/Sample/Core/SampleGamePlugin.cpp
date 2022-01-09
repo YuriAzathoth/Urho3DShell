@@ -141,4 +141,4 @@ void SampleGamePlugin::OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMa
 	renderer->SetViewport(0, viewport);
 }
 
-URHO3DSHELL_PLUGIN_REGISTER(SampleGamePlugin)
+URHO3DSHELL_PLUGIN(SampleGamePlugin)

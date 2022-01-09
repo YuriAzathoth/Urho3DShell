@@ -23,23 +23,33 @@
 #ifndef BINARYPLUGIN_H
 #define BINARYPLUGIN_H
 
-#include <boost/dll/shared_library.hpp>
 #include "Plugin.h"
+
+#ifdef _WIN32
+#include <minwindef.h>
+#endif // _WIN32
 
 class BinaryPlugin : public Plugin
 {
 	URHO3D_OBJECT(BinaryPlugin, Plugin)
 
 public:
-	using Plugin::Plugin;
+	explicit BinaryPlugin(Urho3D::Context* context);
+	~BinaryPlugin();
 
 	bool Load(const Urho3D::String& fileName) override;
 
 	const Urho3D::String& GetName() const override;
 
 private:
-	boost::dll::shared_library plugin_;
+#ifdef _WIN32
+	using Library = HMODULE;
+#else
+	using Library = void*;
+#endif // WIN32
+
 	Urho3D::UniquePtr<PluginInterface> interface_;
+	Library library_;
 };
 
 #endif // BINARYPLUGIN_H

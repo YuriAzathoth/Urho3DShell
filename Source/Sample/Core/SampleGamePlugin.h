@@ -29,7 +29,6 @@
 class SampleGamePlugin : public PluginInterface
 {
 	URHO3D_OBJECT(SampleGamePlugin, PluginInterface)
-	URHO3DSHELL_PLUGIN()
 
 public:
 	explicit SampleGamePlugin(Urho3D::Context* context);

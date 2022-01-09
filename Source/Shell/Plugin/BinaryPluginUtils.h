@@ -23,15 +23,16 @@
 #ifndef BINARYPLUGINUTILS_H
 #define BINARYPLUGINUTILS_H
 
-#define BOOST_DLL_FORCE_ALIAS_INSTANTIATION
-#include <boost/dll/alias.hpp>
+#if _WIN32
+#define SYMBOL_VISIBLE __declspec(dllexport)
+#elif defined(__GNUC__) || defined (__clang__)
+#define SYMBOL_VISIBLE __attribute__((__visibility__("default")))
+#endif
 
-#define URHO3DSHELL_PLUGIN() static Urho3D::UniquePtr<PluginInterface> Create(Urho3D::Context* context);
-#define URHO3DSHELL_PLUGIN_REGISTER(CLASS)                                                                             \
-	Urho3D::UniquePtr<PluginInterface> CLASS::Create(Urho3D::Context* context)                                         \
+#define URHO3DSHELL_PLUGIN(CLASS)                                                                                      \
+	extern "C" SYMBOL_VISIBLE Urho3D::UniquePtr<PluginInterface> CreatePlugin(Urho3D::Context* context)         \
 	{                                                                                                                  \
 		return UniquePtr<PluginInterface>(new CLASS(context));                                                         \
-	}                                                                                                                  \
-	BOOST_DLL_ALIAS(CLASS::Create, CreatePlugin)
+	}
 
 #endif // BINARYPLUGINUTILS_H
