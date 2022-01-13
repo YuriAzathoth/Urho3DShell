@@ -108,16 +108,6 @@ template <typename T> static CScriptArray* EnumVector_Create(T* _ptr)
 	return VectorToArray<EnumVariant>(result, "Array<EnumVariant>");
 }
 
-#if defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#endif // defined (__GNUC__) || defined(__GNUG__)
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wconversion"
-#endif // defined(__clang__)
-
 template <typename T> void RegisterMembers_Config(asIScriptEngine* engine, const char* className)
 {
 	RegisterMembers_Object<Config>(engine, "Config");
@@ -259,14 +249,6 @@ template <typename T> void RegisterMembers_EnumVariant(asIScriptEngine* engine, 
 	engine->RegisterObjectProperty(className, "String caption", offsetof(T, caption_));
 	engine->RegisterObjectProperty(className, "Variant value", offsetof(T, value_));
 }
-
-#if defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic pop
-#endif // defined (__GNUC__) || defined(__GNUG__)
-
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif // defined(__clang__)
 
 static void RegisterMembers(asIScriptEngine* engine)
 {

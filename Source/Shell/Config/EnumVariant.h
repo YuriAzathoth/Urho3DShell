@@ -53,7 +53,7 @@ struct EnumVariant
 		, value_(src.value_)
 	{
 	}
-	EnumVariant(EnumVariant&& src) noexcept
+	EnumVariant(EnumVariant&& src)
 		: caption_(std::move(src.caption_))
 		, value_(src.value_)
 	{
@@ -85,7 +85,7 @@ public:
 	virtual ~EnumConstructor() {}
 	virtual EnumVector Create() = 0;
 
-	bool IsLocalized() const noexcept { return localized_; }
+	bool IsLocalized() const { return localized_; }
 
 private:
 	bool localized_;

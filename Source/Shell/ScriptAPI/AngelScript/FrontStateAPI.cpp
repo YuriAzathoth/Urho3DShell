@@ -30,16 +30,6 @@
 
 using namespace Urho3D;
 
-#if defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#endif // defined (__GNUC__) || defined(__GNUG__)
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wconversion"
-#endif // defined(__clang__)
-
 template <typename T> void RegisterMembers_FrontState(asIScriptEngine* engine, const char* className)
 {
 	RegisterMembers_Object<T>(engine, className);
@@ -67,14 +57,6 @@ template <typename T> void RegisterMembers_FrontState(asIScriptEngine* engine, c
 								 asMETHOD(T, GetInteractives),
 								 AS_CALL_THISCALL);
 }
-
-#if defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic pop
-#endif // defined (__GNUC__) || defined(__GNUG__)
-
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif // defined(__clang__)
 
 extern void RegisterDialogAPI(asIScriptEngine* engine);
 

@@ -56,10 +56,10 @@ public:
 	void SetGameName(const Urho3D::String& gameName) { gameName_ = gameName; }
 	void SetPort(unsigned short port) { port_ = port; }
 
-	const Urho3D::String& GetAppName() const noexcept { return appName_; }
-	const Urho3D::String& GetGameName() const noexcept { return gameName_; }
-	const Urho3D::String& GetProfileName() const noexcept { return profileName_; }
-	unsigned short GetPort() const noexcept { return port_; }
+	const Urho3D::String& GetAppName() const { return appName_; }
+	const Urho3D::String& GetGameName() const { return gameName_; }
+	const Urho3D::String& GetProfileName() const { return profileName_; }
+	unsigned short GetPort() const { return port_; }
 
 private:
 	void CreatePath(const Urho3D::String& path) const;

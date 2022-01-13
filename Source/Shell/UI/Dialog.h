@@ -40,15 +40,15 @@ public:
 	void LoadLayout(const Urho3D::String& layoutName);
 	void ShrinkSize();
 
-	void SetCloseable(bool closeable) noexcept { closeable_ = closeable; }
-	void SetInteractive(bool interactive) noexcept { interactive_ = interactive; }
+	void SetCloseable(bool closeable) { closeable_ = closeable; }
+	void SetInteractive(bool interactive) { interactive_ = interactive; }
 	void SetParent(FrontState* parent) { parent_ = parent; }
 
 	FrontState* GetParent() const { return parent_; }
 	Urho3D::UIElement* GetRoot() const { return root_.Get(); }
-	bool IsCloseable() const noexcept { return closeable_; }
+	bool IsCloseable() const { return closeable_; }
 	bool IsFrontElement() const;
-	bool IsInteractive() const noexcept { return interactive_; }
+	bool IsInteractive() const { return interactive_; }
 
 protected:
 	void Close();

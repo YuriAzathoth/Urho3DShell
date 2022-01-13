@@ -49,12 +49,8 @@ void RegisterShellConfiguratorAPI(asIScriptEngine* engine)
 	RegisterMembers_Object<ShellConfigurator>(engine, "ShellConfigurator");
 
 	engine->RegisterObjectMethod("ShellConfigurator",
-								 "const String& get_profile() const",
-								 AS_METHOD(ShellConfigurator, GetProfileName),
-								 AS_CALL_THISCALL);
-	engine->RegisterObjectMethod("ShellConfigurator",
 								 "void LoadProfile(const String&in)",
-								 AS_METHODPR(ShellConfigurator, LoadProfile, (const Urho3D::String&), void),
+								 AS_METHOD(ShellConfigurator, LoadProfile),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("ShellConfigurator",
 								 "void SaveProfile() const",
@@ -109,6 +105,10 @@ void RegisterShellConfiguratorAPI(asIScriptEngine* engine)
 	engine->RegisterObjectMethod("ShellConfigurator",
 								 "const String& get_gameName() const",
 								 AS_METHOD(ShellConfigurator, GetGameName),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("ShellConfigurator",
+								 "const String& get_profile() const",
+								 AS_METHOD(ShellConfigurator, GetProfileName),
 								 AS_CALL_THISCALL);
 	engine->RegisterObjectMethod("ShellConfigurator",
 								 "uint16 get_port() const",

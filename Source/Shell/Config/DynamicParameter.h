@@ -39,9 +39,9 @@ public:
 	virtual Urho3D::Variant Read() = 0;
 	virtual void Write(const Urho3D::Variant& value) = 0;
 
-	Urho3D::StringHash GetSettingsTab() const noexcept { return settingsTab_; }
-	Urho3D::VariantType GetType() const noexcept { return type_; }
-	bool IsEngine() const noexcept { return engine_; }
+	Urho3D::StringHash GetSettingsTab() const { return settingsTab_; }
+	Urho3D::VariantType GetType() const { return type_; }
+	bool IsEngine() const { return engine_; }
 
 protected:
 	Urho3D::StringHash settingsTab_;
@@ -74,7 +74,7 @@ public:
 		changed_ = true;
 	}
 
-	bool IsEngine() const noexcept { return engine_; }
+	bool IsEngine() const { return engine_; }
 
 protected:
 	Urho3D::VariantMap parameters_;

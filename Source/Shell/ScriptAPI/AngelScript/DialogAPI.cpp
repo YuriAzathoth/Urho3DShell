@@ -25,16 +25,6 @@
 
 using namespace Urho3D;
 
-#if defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#endif // defined (__GNUC__) || defined(__GNUG__)
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wconversion"
-#endif // defined(__clang__)
-
 template <typename T> void RegisterMembers_Dialog(asIScriptEngine* engine, const char* className)
 {
 	RegisterMembers_Object<T>(engine, className);
@@ -56,14 +46,6 @@ template <typename T> void RegisterMembers_Dialog(asIScriptEngine* engine, const
 	engine->RegisterObjectMethod(className, "bool get_isFront() const", AS_METHOD(T, IsFrontElement), AS_CALL_THISCALL);
 	engine->RegisterObjectMethod(className, "UIElement@+ get_root() const", AS_METHOD(T, GetRoot), AS_CALL_THISCALL);
 }
-
-#if defined(__GNUC__) || defined(__GNUG__)
-#pragma GCC diagnostic pop
-#endif // defined (__GNUC__) || defined(__GNUG__)
-
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif // defined(__clang__)
 
 static Dialog* Create_Dialog() { return new Dialog(GetScriptContext()); }
 
