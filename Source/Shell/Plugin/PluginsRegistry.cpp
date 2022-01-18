@@ -30,10 +30,6 @@
 #include "ScriptPlugin.h"
 #endif // URHO3D_ANGELSCRIPT
 
-#ifdef URHO3D_LUA
-#include "LuaScriptPlugin.h"
-#endif // URHO3D_LUA
-
 using namespace Urho3D;
 
 bool PluginsRegistry::Load(const Urho3D::String& pluginName)
@@ -46,11 +42,7 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 		URHO3D_LOGERROR("Loading AngelScript scripts is not supported.");
 #endif // URHO3D_ANGELSCRIPT
 	else if (pluginName.EndsWith(".lua", false))
-#ifdef URHO3D_LUA
-		plugin.StaticCast(MakeShared<LuaScriptPlugin>(context_));
-#else
-		URHO3D_LOGERROR("Loading Lua scripts is not supported.");
-#endif // URHO3D_LUA
+		URHO3D_LOGERROR("Lua scripts are not supported.");
 	else
 		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
 

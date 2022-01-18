@@ -38,9 +38,6 @@ extern void RegisterServerParameters(Config* config);
 #ifdef URHO3D_ANGELSCRIPT
 extern void RegisterServerAPI(asIScriptEngine* engine);
 #endif // URHO3D_ANGELSCRIPT
-#ifdef URHO3D_LUA
-extern void RegisterServerLuaAPI(lua_State* state);
-#endif // URHO3D_LUA
 
 using namespace Urho3D;
 
@@ -56,9 +53,6 @@ CoreShell::CoreShell(Urho3D::Context* context)
 #ifdef URHO3D_ANGELSCRIPT
 	RegisterServerAPI(context_->RegisterSubsystem<Script>()->GetScriptEngine());
 #endif // URHO3D_ANGELSCRIPT
-#ifdef URHO3D_LUA
-	RegisterServerLuaAPI(context_->RegisterSubsystem<LuaScript>()->GetState());
-#endif // URHO3D_LUA
 
 	context_->RegisterSubsystem<ActionsRegistry>();
 	context_->RegisterSubsystem<PluginsRegistry>();

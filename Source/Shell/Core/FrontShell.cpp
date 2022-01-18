@@ -51,9 +51,6 @@ extern void RegisterClientParameters(Config* config);
 #ifdef URHO3D_ANGELSCRIPT
 extern void RegisterClientAPI(asIScriptEngine* engine);
 #endif // URHO3D_ANGELSCRIPT
-#ifdef URHO3D_LUA
-extern void RegisterClientLuaAPI(lua_State* state);
-#endif // URHO3D_LUA
 
 using namespace Urho3D;
 
@@ -65,9 +62,6 @@ FrontShell::FrontShell(Urho3D::Context* context)
 #ifdef URHO3D_ANGELSCRIPT
 	RegisterClientAPI(GetSubsystem<Script>()->GetScriptEngine());
 #endif // URHO3D_ANGELSCRIPT
-#ifdef URHO3D_LUA
-	RegisterClientLuaAPI(GetSubsystem<LuaScript>()->GetState());
-#endif // URHO3D_LUA
 
 	context_->RegisterFactory<LoadGameDialog>();
 	context_->RegisterFactory<MainMenuDialog>();
