@@ -24,7 +24,6 @@
 #include <Urho3D/Container/Str.h>
 #include <Urho3D/Engine/EngineDefs.h>
 #include "Core/Launch.h"
-#include "Plugin/PluginsRegistry.h"
 #include "ServerApplication.h"
 
 #define APP_NAME "Server"

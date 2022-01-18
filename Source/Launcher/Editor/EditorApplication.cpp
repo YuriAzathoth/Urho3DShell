@@ -24,7 +24,6 @@
 #include <Urho3D/Engine/EngineDefs.h>
 #include "Core/Launch.h"
 #include "EditorApplication.h"
-#include "Plugin/PluginsRegistry.h"
 
 #define APP_NAME "Editor"
 #define GAME_LIB "SampleGame"

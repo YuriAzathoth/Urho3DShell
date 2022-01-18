@@ -22,7 +22,6 @@
 
 #include "ClientApplication.h"
 #include "Core/Launch.h"
-#include "stdio.h"
 
 #define APP_NAME "Client"
 #define GAME_LIB "SampleGame"
