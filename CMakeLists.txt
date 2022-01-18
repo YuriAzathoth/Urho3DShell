@@ -27,8 +27,8 @@ PROJECT (Urho3DShell VERSION 0.0.0.0)
 IF (COMMAND CMAKE_POLICY)
 	# Honor visibility properties for all target types
 	CMAKE_POLICY (SET CMP0063 NEW)
-	# Find_package uses <PackageName>_ROOT warning
-	CMAKE_POLICY (SET CMP0074 NEW)
+	# cmake_dependent_option() supports full Condition Syntax
+	CMAKE_POLICY (SET CMP0127 NEW)
 ENDIF ()
 
 SET (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/Modules)
