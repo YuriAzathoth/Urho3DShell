@@ -45,7 +45,6 @@
 #include "UI/PauseDialog.h"
 #include "UI/ServersListDialog.h"
 #include "UI/SettingsDialog.h"
-#include "Urho3DShellConfig.h"
 
 extern void RegisterClientParameters(Config* config);
 #ifdef URHO3D_ANGELSCRIPT

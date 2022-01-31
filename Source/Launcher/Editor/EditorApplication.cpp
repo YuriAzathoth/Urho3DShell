@@ -40,7 +40,7 @@ void EditorApplication::Setup()
 	core_->LoadGameLibrary(GAME_LIB);
 	core_->LoadConfig(engineParameters_, APP_NAME);
 
-	engineParameters_[EP_RESOURCE_PACKAGES] = "CoreData.pak;Data.pak;Editor.pak";
+	engineParameters_[EP_RESOURCE_PATHS] = "CoreData;Data;Editor";
 	engineParameters_[EP_FULL_SCREEN] = false;
 	engineParameters_[EP_WINDOW_RESIZABLE] = true;
 }

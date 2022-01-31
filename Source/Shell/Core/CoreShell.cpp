@@ -32,7 +32,6 @@
 #include "Plugin/PluginsRegistry.h"
 #include "ShellConfigurator.h"
 #include "ShellDefs.h"
-#include "Urho3DShellConfig.h"
 
 extern void RegisterServerParameters(Config* config);
 #ifdef URHO3D_ANGELSCRIPT

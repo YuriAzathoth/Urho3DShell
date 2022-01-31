@@ -24,7 +24,6 @@
 #include "BinaryPlugin.h"
 #include "Core/ShellConfigurator.h"
 #include "PluginsRegistry.h"
-#include "Urho3DShellConfig.h"
 
 #ifdef URHO3D_ANGELSCRIPT
 #include "ScriptPlugin.h"

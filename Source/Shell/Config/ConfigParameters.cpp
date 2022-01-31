@@ -96,21 +96,16 @@ void RegisterClientParameters(Config* config)
 			{
 				// TODO: Convenient complex storage values extractor
 				VariantMap::ConstIterator it = values.Find(ECP_WINDOW_MODE);
-				bool borderless, fullscreen;
+				bool borderless = false;
+				bool fullscreen = false;
 				const int windowMode =
 					(it != values.End() ? it->second_ : config->GetParameter(ECP_WINDOW_MODE)->Read()).GetInt();
 				switch (windowMode)
 				{
-				case 0:
-					borderless = false;
-					fullscreen = false;
-					break;
-				case 1:
-					borderless = false;
-					fullscreen = true;
-					break;
 				case 2:
 					borderless = true;
+					[[fallthrough]];
+				case 1:
 					fullscreen = true;
 					break;
 				}

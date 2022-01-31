@@ -20,8 +20,7 @@
 # THE SOFTWARE.
 #
 
-# This set is used ONLY in this project case.
-# Consider not to use it in your project.
-SET (LIBS Urho3DShell)
-
-SETUP_GAME_LIBRARY (NAME SampleGame RESOURCES Data)
+SET (TARGET_NAME SampleGame)
+DEFINE_SOURCE_FILES (RECURSE)
+DEFINE_RESOURCE_DIRS (GLOB_PATTERNS ${CMAKE_SOURCE_DIR}/Assets/Data)
+SETUP_GAME_LIBRARY (LIB Urho3DShell)
