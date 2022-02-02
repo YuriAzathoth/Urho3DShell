@@ -20,22 +20,28 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef PLUGINSREGISTRY_H
+#define PLUGINSREGISTRY_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Core/Object.h>
+#include "Plugin.h"
+#include "U3SCoreAPI.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCOREAPI_EXPORT PluginsRegistry : public Urho3D::Object
 {
+	URHO3D_OBJECT(PluginsRegistry, Urho3D::Object)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	using Urho3D::Object::Object;
+
+	bool Load(const Urho3D::String& pluginName);
+	void Close(Urho3D::StringHash plugin);
+	Urho3D::StringVector GetAllNames() const;
+	void CloseAll();
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Plugin>> plugins_;
+	Urho3D::SharedPtr<Plugin> mainPlugin_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // PLUGINSREGISTRY_H

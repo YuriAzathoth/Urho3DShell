@@ -20,22 +20,33 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef CORESHELL_H
+#define CORESHELL_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Core/Object.h>
+#include "U3SCoreAPI.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCOREAPI_EXPORT CoreShell : public Urho3D::Object
 {
+	URHO3D_OBJECT(CoreShell, Urho3D::Object)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	explicit CoreShell(Urho3D::Context* context);
+	~CoreShell();
+
+	void LoadGameLibrary(const Urho3D::String& gameLib);
+	void LoadConfig(Urho3D::VariantMap& engineParameters, const Urho3D::String& appName);
+
+	void LoadPlugin(const Urho3D::String& plugin);
+	void ApplyConfig();
+
+	const Urho3D::Variant& GetShellParameter(Urho3D::StringHash parameter,
+											 const Urho3D::Variant& defaultValue = Urho3D::Variant::EMPTY) const;
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	void ParseParameters();
+
+	Urho3D::VariantMap shellParameters_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // CORESHELL_H

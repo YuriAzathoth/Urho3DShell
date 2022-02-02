@@ -20,22 +20,43 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef FRONTSTATEMACHINE_H
+#define FRONTSTATEMACHINE_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Core/Object.h>
+#include "FrontState/FrontState.h"
+#include "U3SClientAPI.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCLIENTAPI_EXPORT FrontStateMachine : public Urho3D::Object
 {
+	URHO3D_OBJECT(FrontStateMachine, Urho3D::Object)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	using Urho3D::Object::Object;
+
+	void Initialize(FrontState* newState);
+	void Push(FrontState* newState);
+	FrontState* Get() const { return currState_.Get(); }
+
+	template <typename T, typename... TArgs> void Initialize(TArgs&&... args);
+	template <typename T, typename... TArgs> void Push(TArgs&&... args);
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	Urho3D::SharedPtr<FrontState> currState_;
+	Urho3D::SharedPtr<FrontState> nextState_;
+
+	bool ProcessStateChanging(); // May be called only from Shell
+	friend class FrontState;	 // Allow to call ProcessStateChanging only from FrontState
 };
 
-#endif // EDITORAPPLICATION_H
+template <typename T, typename... TArgs> void FrontStateMachine::Initialize(TArgs&&... args)
+{
+	Initialize(new T(context_, std::forward<TArgs>(args)...));
+}
+
+template <typename T, typename... TArgs> void FrontStateMachine::Push(TArgs&&... args)
+{
+	Push(new T(context_, std::forward<TArgs>(args)...));
+}
+
+#endif // FRONTSTATEMACHINE_H

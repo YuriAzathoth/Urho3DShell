@@ -20,22 +20,38 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef INPUTRECEIVER_H
+#define INPUTRECEIVER_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Input/Controls.h>
+#include <Urho3D/Scene/Component.h>
+#include "U3SCoreAPI.h"
 
-class EditorApplication : public Urho3D::Application
+namespace Urho3D
 {
+class Connection;
+}
+
+class U3SCOREAPI_EXPORT InputReceiver : public Urho3D::Component
+{
+	URHO3D_OBJECT(InputReceiver, Urho3D::Component)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	explicit InputReceiver(Urho3D::Context* context);
+
+	void SetConnection(const Urho3D::Connection* connection);
+
+	const Urho3D::Controls& GetControls() const noexcept { return current_; }
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	void OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&);
+
+	Urho3D::Controls current_;
+	Urho3D::Controls previous_;
+	const Urho3D::Connection* connection_;
+
+public:
+	static void RegisterObject(Urho3D::Context* context);
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // INPUTRECEIVER_H

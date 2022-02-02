@@ -20,22 +20,32 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef KEYBOARDCONTROLLER_H
+#define KEYBOARDCONTROLLER_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include "InputController.h"
+#include "U3SCoreAPI.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCOREAPI_EXPORT KeyboardController : public InputController
 {
+	URHO3D_OBJECT(KeyboardController, InputController)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	using InputController::InputController;
+
+	bool Enable() override;
+	bool Disable() override;
+	void ReadControls(Urho3D::Controls& controls) const override;
+	Urho3D::String GetKeyName(unsigned keyCode) const override;
+	unsigned GetKeyCode(const Urho3D::String& keyName) const override;
+	void StartBinding(Urho3D::StringHash action) override;
+	void EndBinding() override;
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	void OnKeyDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnKeyUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnMouseDown(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnMouseUp(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // KEYBOARDCONTROLLER_H

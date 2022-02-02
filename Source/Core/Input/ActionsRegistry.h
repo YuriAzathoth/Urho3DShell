@@ -20,22 +20,38 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef ACTIONSREGISTRY_H
+#define ACTIONSREGISTRY_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Core/Object.h>
+#include "U3SCoreAPI.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCOREAPI_EXPORT ActionsRegistry : public Urho3D::Object
 {
+	URHO3D_OBJECT(ActionsRegistry, Urho3D::Object)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	using ActionsVector = Urho3D::PODVector<Urho3D::StringHash>;
+
+	explicit ActionsRegistry(Urho3D::Context* context);
+
+	void RegisterLocal(const Urho3D::String& actionName);
+	unsigned RegisterRemote(const Urho3D::String& actionName);
+	void Remove(Urho3D::StringHash action);
+	void RemoveAll();
+
+	unsigned GetFlag(Urho3D::StringHash action) const;
+	const Urho3D::String& GetName(Urho3D::StringHash action) const;
+	bool IsRemote(Urho3D::StringHash action) const { return remoteFlags_.Contains(action); }
+	const ActionsVector& GetAll() const noexcept { return ordered_; }
+
+	Urho3D::String GetDebugString() const;
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	ActionsVector ordered_;
+	Urho3D::HashMap<Urho3D::StringHash, unsigned> remoteFlags_;
+	Urho3D::StringMap names_;
+	unsigned lastRemoteFlag_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // ACTIONSREGISTRY_H

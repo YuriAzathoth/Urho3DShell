@@ -20,22 +20,24 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#include "Config.h"
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#if defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-promo"
+#endif // defined (__GNUC__) || defined(__GNUG__)
 
-class EditorApplication : public Urho3D::Application
-{
-public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-promo"
+#endif // defined(__clang__)
 
-private:
-	Urho3D::UniquePtr<CoreShell> core_;
-};
+void RegisterServerParameters(Config*) {}
 
-#endif // EDITORAPPLICATION_H
+#if defined(__GNUC__) || defined(__GNUG__)
+#pragma GCC diagnostic pop
+#endif // defined (__GNUC__) || defined(__GNUG__)
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // defined(__clang__)

@@ -20,22 +20,25 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef REMOTESERVERSTATE_H
+#define REMOTESERVERSTATE_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include "LocalServerState.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCLIENTAPI_EXPORT RemoteServerState : public LocalServerState
 {
-public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	URHO3D_OBJECT(RemoteServerState, LocalServerState)
 
-private:
-	Urho3D::UniquePtr<CoreShell> core_;
+public:
+	explicit RemoteServerState(Urho3D::Context* context,
+							   const Urho3D::String& sceneName,
+							   const Urho3D::String& serverName,
+							   unsigned short port);
+
+protected:
+	void OnSceneLoaded() override;
+
+	Urho3D::String serverName_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // REMOTESERVERSTATE_H

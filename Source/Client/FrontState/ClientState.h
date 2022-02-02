@@ -20,22 +20,29 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef CLIENTSTATE_H
+#define CLIENTSTATE_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include "GameState.h"
+#include "Network/Client.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCLIENTAPI_EXPORT ClientState : public GameState
 {
+	URHO3D_OBJECT(ClientState, GameState)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	explicit ClientState(Urho3D::Context* context, const Urho3D::String& address, unsigned short port);
+
+	void Enter() override;
+	void Exit() override;
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	// On Shutdown
+	void OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&);
+
+	Client client_;
+	Urho3D::String address_;
+	unsigned short port_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // CLIENTSTATE_H

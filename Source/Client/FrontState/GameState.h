@@ -20,22 +20,17 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef GAMESTATE_H
+#define GAMESTATE_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include "FrontState.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCLIENTAPI_EXPORT GameState : public FrontState
 {
+	URHO3D_OBJECT(GameState, FrontState)
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
-
-private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	using FrontState::FrontState;
+	void BackState() override;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // GAMESTATE_H

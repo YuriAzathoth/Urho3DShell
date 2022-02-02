@@ -20,22 +20,44 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef DIALOG_H
+#define DIALOG_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Core/Object.h>
+#include <Urho3D/UI/UIElement.h>
+#include "U3SClientAPI.h"
 
-class EditorApplication : public Urho3D::Application
+class FrontState;
+
+class U3SCLIENTAPI_EXPORT Dialog : public Urho3D::Object
 {
-public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	URHO3D_OBJECT(Dialog, Urho3D::Object)
 
-private:
-	Urho3D::UniquePtr<CoreShell> core_;
+public:
+	explicit Dialog(Urho3D::Context* context);
+	virtual ~Dialog();
+
+	void LoadLayout(const Urho3D::String& layoutName);
+	void ShrinkSize();
+
+	void SetCloseable(bool closeable) { closeable_ = closeable; }
+	void SetInteractive(bool interactive) { interactive_ = interactive; }
+	void SetParent(FrontState* parent) { parent_ = parent; }
+
+	FrontState* GetParent() const { return parent_; }
+	Urho3D::UIElement* GetRoot() const { return root_.Get(); }
+	bool IsCloseable() const { return closeable_; }
+	bool IsFrontElement() const;
+	bool IsInteractive() const { return interactive_; }
+
+protected:
+	void Close();
+	void BindButtonToClose(Urho3D::UIElement* button);
+
+	Urho3D::SharedPtr<Urho3D::UIElement> root_;
+	FrontState* parent_;
+	bool closeable_;
+	bool interactive_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // DIALOG_H

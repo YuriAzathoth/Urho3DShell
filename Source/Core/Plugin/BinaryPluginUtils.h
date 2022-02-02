@@ -20,22 +20,19 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef BINARYPLUGINUTILS_H
+#define BINARYPLUGINUTILS_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#if _WIN32
+#define SYMBOL_VISIBLE __declspec(dllexport)
+#elif defined(__GNUC__) || defined(__clang__)
+#define SYMBOL_VISIBLE __attribute__((__visibility__("default")))
+#endif
 
-class EditorApplication : public Urho3D::Application
-{
-public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+#define URHO3DSHELL_PLUGIN(CLASS)                                                                                      \
+	extern "C" SYMBOL_VISIBLE Urho3D::UniquePtr<PluginInterface> CreatePlugin(Urho3D::Context* context)                \
+	{                                                                                                                  \
+		return UniquePtr<PluginInterface>(new CLASS(context));                                                         \
+	}
 
-private:
-	Urho3D::UniquePtr<CoreShell> core_;
-};
-
-#endif // EDITORAPPLICATION_H
+#endif // BINARYPLUGINUTILS_H

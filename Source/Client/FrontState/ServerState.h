@@ -20,22 +20,32 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef SERVERSTATE_H
+#define SERVERSTATE_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include "GameState.h"
+#include "Network/Server.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCLIENTAPI_EXPORT ServerState : public GameState
 {
+	URHO3D_OBJECT(ServerState, GameState)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	ServerState(Urho3D::Context* context, const Urho3D::String& sceneName);
+
+	void Enter() override;
+
+protected:
+	virtual void OnSceneLoaded() = 0;
+
+	void SetSceneUpdate(bool update) override;
+
+	Server server_;
+	Urho3D::String sceneName_;
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	// On Start
+	void OnAsyncLoadFinished(Urho3D::StringHash, Urho3D::VariantMap&);
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // SERVERSTATE_H

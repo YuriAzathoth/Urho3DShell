@@ -20,22 +20,8 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+class asIScriptEngine;
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+extern void RegisterFrontStateMachineAPI(asIScriptEngine* engine);
 
-class EditorApplication : public Urho3D::Application
-{
-public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
-
-private:
-	Urho3D::UniquePtr<CoreShell> core_;
-};
-
-#endif // EDITORAPPLICATION_H
+void RegisterClientAPI(asIScriptEngine* engine) { RegisterFrontStateMachineAPI(engine); }

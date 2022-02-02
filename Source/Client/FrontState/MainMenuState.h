@@ -20,22 +20,23 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef MAINMENUSTATE_H
+#define MAINMENUSTATE_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Scene/Scene.h>
+#include "FrontState.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCLIENTAPI_EXPORT MainMenuState : public FrontState
 {
+	URHO3D_OBJECT(MainMenuState, FrontState)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	explicit MainMenuState(Urho3D::Context* context);
+
+	void Enter() override;
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	Urho3D::Scene scene_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // MAINMENUSTATE_H

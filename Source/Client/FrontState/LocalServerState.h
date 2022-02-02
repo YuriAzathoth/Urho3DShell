@@ -20,22 +20,34 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef LOCALSERVERSTATE_H
+#define LOCALSERVERSTATE_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include "Network/Client.h"
+#include "ServerState.h"
 
-class EditorApplication : public Urho3D::Application
+#define LOCAL_SERVER_PORT 10
+
+class U3SCLIENTAPI_EXPORT LocalServerState : public ServerState
 {
+	URHO3D_OBJECT(LocalServerState, ServerState)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	explicit LocalServerState(Urho3D::Context* context,
+							  const Urho3D::String& sceneName,
+							  unsigned short port = LOCAL_SERVER_PORT);
+
+	void Exit() override;
+
+protected:
+	void OnSceneLoaded() override;
+
+	Client client_;
+	unsigned short port_;
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	// On Shutdown
+	void OnServerDisconnected(Urho3D::StringHash, Urho3D::VariantMap&);
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // LOCALSERVERSTATE_H

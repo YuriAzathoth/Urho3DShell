@@ -20,22 +20,41 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef CLIENT_H
+#define CLIENT_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Core/Object.h>
+#include <Urho3D/Input/Controls.h>
+#include <Urho3D/Scene/Scene.h>
+#include "U3SCoreAPI.h"
 
-class EditorApplication : public Urho3D::Application
+namespace Urho3D
 {
+class Connection;
+}
+class InputController;
+
+class U3SCOREAPI_EXPORT Client : public Urho3D::Object
+{
+	URHO3D_OBJECT(Client, Urho3D::Object)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	explicit Client(Urho3D::Context* context);
+	~Client();
+
+	void Connect(unsigned short port, const Urho3D::String& address = "localhost");
+	void Disconnect();
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	void OnServerConnected(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnConnectFailed(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnSceneUpdated(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&);
+
+	Urho3D::Controls controls_;
+	Urho3D::Scene scene_;
+	Urho3D::Connection* connection_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // CLIENT_H

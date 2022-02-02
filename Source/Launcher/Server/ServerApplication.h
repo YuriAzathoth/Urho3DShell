@@ -25,7 +25,6 @@
 
 #include <Urho3D/Engine/Application.h>
 #include "Core/CoreShell.h"
-#include "Core/FrontShell.h"
 
 class ServerApplication : public Urho3D::Application
 {
@@ -37,7 +36,6 @@ public:
 
 private:
 	Urho3D::UniquePtr<CoreShell> core_;
-	Urho3D::UniquePtr<FrontShell> front_;
 };
 
 #endif // SERVERAPPLICATION_H

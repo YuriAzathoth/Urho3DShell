@@ -20,22 +20,30 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef PLUGININTERFACE_H
+#define PLUGININTERFACE_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Core/Object.h>
+#include "U3SCoreAPI.h"
 
-class EditorApplication : public Urho3D::Application
+#define REGISTER_OBJECT(CLASS)                                                                                         \
+	CLASS::RegisterObject(context_);                                                                                   \
+	RegisterObject(CLASS::GetTypeInfoStatic()->GetType())
+
+class U3SCOREAPI_EXPORT PluginInterface : public Urho3D::Object
 {
+	URHO3D_OBJECT(PluginInterface, Urho3D::Object)
+
 public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	using Urho3D::Object::Object;
+	virtual ~PluginInterface();
+
+	virtual const Urho3D::String& GetName() const = 0;
+
+	void RegisterObject(Urho3D::StringHash objectType);
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	Urho3D::PODVector<Urho3D::StringHash> factories_;
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // PLUGININTERFACE_H

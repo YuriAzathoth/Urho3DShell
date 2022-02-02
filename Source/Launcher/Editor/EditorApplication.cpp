@@ -35,7 +35,6 @@ using namespace Urho3D;
 void EditorApplication::Setup()
 {
 	core_ = MakeUnique<CoreShell>(context_);
-	front_ = MakeUnique<FrontShell>(context_);
 
 	core_->LoadGameLibrary(GAME_LIB);
 	core_->LoadConfig(engineParameters_, APP_NAME);
@@ -53,7 +52,6 @@ void EditorApplication::Start()
 
 void EditorApplication::Stop()
 {
-	front_.Reset();
 	core_.Reset();
 }
 

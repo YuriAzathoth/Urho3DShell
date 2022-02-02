@@ -20,22 +20,27 @@
 // THE SOFTWARE.
 //
 
-#ifndef EDITORAPPLICATION_H
-#define EDITORAPPLICATION_H
+#ifndef FRONTSHELL_H
+#define FRONTSHELL_H
 
-#include <Urho3D/Engine/Application.h>
-#include "Core/CoreShell.h"
+#include <Urho3D/Core/Object.h>
+#include "U3SClientAPI.h"
 
-class EditorApplication : public Urho3D::Application
+class U3SCLIENTAPI_EXPORT FrontShell : public Urho3D::Object
 {
-public:
-	using Urho3D::Application::Application;
-	void Setup() override;
-	void Start() override;
-	void Stop() override;
+	URHO3D_OBJECT(FrontShell, Urho3D::Object)
 
-private:
-	Urho3D::UniquePtr<CoreShell> core_;
+public:
+	explicit FrontShell(Urho3D::Context* context);
+	~FrontShell();
+
+	void SetUIStyle(const Urho3D::String& filename);
+	void InitInput();
+
+	void StartMainMenu();
+	void StartLocalServer(const Urho3D::String& sceneName);
+	void StartRemoteServer(const Urho3D::String& sceneName, const Urho3D::String& serverName);
+	void StartClient(const Urho3D::String& address);
 };
 
-#endif // EDITORAPPLICATION_H
+#endif // FRONTSHELL_H
