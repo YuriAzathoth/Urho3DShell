@@ -20,39 +20,53 @@
 // THE SOFTWARE.
 //
 
-#include "ClientApplication.h"
+#include <Urho3D/Container/Str.h>
+#include <Urho3D/Engine/Application.h>
+#include <Urho3D/Engine/EngineDefs.h>
+#include "Core/CoreShell.h"
 #include "Core/Launch.h"
 
-#define APP_NAME "Client"
-#define GAME_LIB "SampleGame"
+#define APP_NAME "Editor"
+#define SDK_NAME "@SDK_NAME@"
+#define SCRIPT_FILE "Scripts/Editor.as"
 #define UI_STYLE "UI/DefaultStyle.xml"
 
 using namespace Urho3D;
 
-void ClientApplication::Setup()
+class EditorApplication : public Application
+{
+public:
+	using Application::Application;
+	void Setup() override;
+	void Start() override;
+	void Stop() override;
+
+private:
+	UniquePtr<CoreShell> core_;
+};
+
+void EditorApplication::Setup()
 {
 	core_ = MakeUnique<CoreShell>(context_);
-	front_ = MakeUnique<FrontShell>(context_);
-
-	core_->LoadGameLibrary(GAME_LIB);
+	core_->LoadGameLibrary(SDK_NAME);
 	core_->LoadConfig(engineParameters_, APP_NAME);
+
+	engineParameters_[EP_RESOURCE_PATHS] = "CoreData;Data;Editor";
+	engineParameters_[EP_FULL_SCREEN] = false;
+	engineParameters_[EP_WINDOW_RESIZABLE] = true;
 }
 
-void ClientApplication::Start()
+void EditorApplication::Start()
 {
+	core_->LoadPlugin(SCRIPT_FILE);
 	core_->ApplyConfig();
-
-	front_->SetUIStyle(UI_STYLE);
-	front_->InitInput();
-	front_->StartMainMenu();
 }
 
-void ClientApplication::Stop()
+void EditorApplication::Stop()
 {
-	front_.Reset();
 	core_.Reset();
 }
 
-URHO3D_DEFINE_APPLICATION_MAIN(ClientApplication)
+URHO3D_DEFINE_APPLICATION_MAIN(EditorApplication)
 
 URHO3DSHELL_GPU_PARAMETERS

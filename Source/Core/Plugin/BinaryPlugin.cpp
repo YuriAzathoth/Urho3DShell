@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
 #include <functional>
 #include "BinaryPlugin.h"
@@ -57,6 +58,17 @@ bool BinaryPlugin::Load(const Urho3D::String& fileName)
 #ifndef NDEBUG
 	dllName += "_d";
 #endif // NDEBUG
+#if defined (_WIN32)
+	dllName += ".dll";
+#elif defined(EMSCRIPTEN)
+	dllName += ".wasm";
+#else
+	dllName += ".so";
+#endif
+
+	FileSystem* fs = GetSubsystem<FileSystem>();
+	if (!fs->FileExists(fs->GetProgramDir() + dllName))
+		return true;
 
 	using PluginFactory = Urho3D::UniquePtr<PluginInterface>(Urho3D::Context*);
 	std::function<PluginFactory> CreatePlugin;

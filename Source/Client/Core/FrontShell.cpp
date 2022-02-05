@@ -39,6 +39,7 @@
 #include "FrontState/MainMenuState.h"
 #include "FrontState/RemoteServerState.h"
 #include "Input/ControllersRegistry.h"
+#include "Plugin/PluginsRegistry.h"
 #include "UI/LoadGameDialog.h"
 #include "UI/MainMenuDialog.h"
 #include "UI/NewGameDialog.h"
@@ -69,6 +70,8 @@ FrontShell::FrontShell(Urho3D::Context* context)
 	context_->RegisterFactory<ServersListDialog>();
 	context_->RegisterFactory<SettingsDialog>();
 	context_->RegisterSubsystem<FrontStateMachine>();
+
+	GetSubsystem<PluginsRegistry>()->SetClient(true);
 }
 
 FrontShell::~FrontShell()

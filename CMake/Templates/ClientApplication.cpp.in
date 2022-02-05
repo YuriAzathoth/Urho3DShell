@@ -20,13 +20,19 @@
 // THE SOFTWARE.
 //
 
-#ifndef SERVERAPPLICATION_H
-#define SERVERAPPLICATION_H
 
 #include <Urho3D/Engine/Application.h>
 #include "Core/CoreShell.h"
+#include "Core/FrontShell.h"
+#include "Core/Launch.h"
 
-class ServerApplication : public Urho3D::Application
+#define APP_NAME "Client"
+#define SDK_NAME "@SDK_NAME@"
+#define UI_STYLE "UI/DefaultStyle.xml"
+
+using namespace Urho3D;
+
+class ClientApplication : public Application
 {
 public:
 	using Urho3D::Application::Application;
@@ -35,7 +41,34 @@ public:
 	void Stop() override;
 
 private:
-	Urho3D::UniquePtr<CoreShell> core_;
+	UniquePtr<CoreShell> core_;
+	UniquePtr<FrontShell> front_;
 };
 
-#endif // SERVERAPPLICATION_H
+void ClientApplication::Setup()
+{
+	core_ = MakeUnique<CoreShell>(context_);
+	front_ = MakeUnique<FrontShell>(context_);
+
+	core_->LoadGameLibrary(SDK_NAME);
+	core_->LoadConfig(engineParameters_, APP_NAME);
+}
+
+void ClientApplication::Start()
+{
+	core_->ApplyConfig();
+
+	front_->SetUIStyle(UI_STYLE);
+	front_->InitInput();
+	front_->StartMainMenu();
+}
+
+void ClientApplication::Stop()
+{
+	front_.Reset();
+	core_.Reset();
+}
+
+URHO3D_DEFINE_APPLICATION_MAIN(ClientApplication)
+
+URHO3DSHELL_GPU_PARAMETERS

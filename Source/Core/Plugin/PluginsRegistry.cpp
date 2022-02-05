@@ -33,6 +33,27 @@ using namespace Urho3D;
 
 bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 {
+	bool success = LoadPlugin(pluginName + "Core");
+	if (success && client_)
+		success = LoadPlugin(pluginName + "Client");
+	return success;
+}
+
+void PluginsRegistry::Close(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
+
+Urho3D::StringVector PluginsRegistry::GetAllNames() const
+{
+	StringVector ret;
+	ret.Reserve(plugins_.Size());
+	for (const auto& pluginPair : plugins_)
+		ret.Push(pluginPair.second_->GetName());
+	return ret;
+}
+
+void PluginsRegistry::CloseAll() { plugins_.Clear(); }
+
+bool PluginsRegistry::LoadPlugin(const Urho3D::String& pluginName)
+{
 	SharedPtr<Plugin> plugin;
 	if (pluginName.EndsWith(".as", false))
 #ifdef URHO3D_ANGELSCRIPT
@@ -53,16 +74,3 @@ bool PluginsRegistry::Load(const Urho3D::String& pluginName)
 	}
 	return false;
 }
-
-void PluginsRegistry::Close(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
-
-Urho3D::StringVector PluginsRegistry::GetAllNames() const
-{
-	StringVector ret;
-	ret.Reserve(plugins_.Size());
-	for (const auto& pluginPair : plugins_)
-		ret.Push(pluginPair.second_->GetName());
-	return ret;
-}
-
-void PluginsRegistry::CloseAll() { plugins_.Clear(); }

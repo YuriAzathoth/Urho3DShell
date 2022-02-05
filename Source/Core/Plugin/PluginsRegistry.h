@@ -39,9 +39,14 @@ public:
 	Urho3D::StringVector GetAllNames() const;
 	void CloseAll();
 
+	void SetClient(bool client) { client_ = client; }
+
 private:
+	bool LoadPlugin(const Urho3D::String& pluginName);
+
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Plugin>> plugins_;
 	Urho3D::SharedPtr<Plugin> mainPlugin_;
+	bool client_;
 };
 
 #endif // PLUGINSREGISTRY_H
