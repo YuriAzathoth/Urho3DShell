@@ -34,19 +34,16 @@ class U3SCOREAPI_EXPORT PluginsRegistry : public Urho3D::Object
 public:
 	using Urho3D::Object::Object;
 
-	bool Load(const Urho3D::String& pluginName);
+	Urho3D::StringVector FindPlugins(const Urho3D::String& pluginName) const;
+
+	bool Load(const Urho3D::String& fileName);
 	void Close(Urho3D::StringHash plugin);
 	Urho3D::StringVector GetAllNames() const;
 	void CloseAll();
 
-	void SetClient(bool client) { client_ = client; }
-
 private:
-	bool LoadPlugin(const Urho3D::String& pluginName);
-
 	Urho3D::HashMap<Urho3D::StringHash, Urho3D::SharedPtr<Plugin>> plugins_;
 	Urho3D::SharedPtr<Plugin> mainPlugin_;
-	bool client_;
 };
 
 #endif // PLUGINSREGISTRY_H

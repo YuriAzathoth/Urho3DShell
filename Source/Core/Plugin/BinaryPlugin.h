@@ -43,13 +43,16 @@ public:
 
 private:
 #ifdef _WIN32
-	using Library = HMODULE;
+	using LibHandle = HMODULE;
 #else
-	using Library = void*;
+	using LibHandle = void*;
 #endif // WIN32
 
 	Urho3D::UniquePtr<PluginInterface> interface_;
-	Library library_;
+	LibHandle library_;
+
+public:
+	static const char* GetExtension();
 };
 
 #endif // BINARYPLUGIN_H

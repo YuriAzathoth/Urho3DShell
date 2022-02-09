@@ -70,8 +70,6 @@ FrontShell::FrontShell(Urho3D::Context* context)
 	context_->RegisterFactory<ServersListDialog>();
 	context_->RegisterFactory<SettingsDialog>();
 	context_->RegisterSubsystem<FrontStateMachine>();
-
-	GetSubsystem<PluginsRegistry>()->SetClient(true);
 }
 
 FrontShell::~FrontShell()

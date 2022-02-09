@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/IO/Log.h>
 #include "BinaryPlugin.h"
 #include "Core/ShellConfigurator.h"
@@ -31,12 +32,87 @@
 
 using namespace Urho3D;
 
-bool PluginsRegistry::Load(const Urho3D::String& pluginName)
+// TODO: Refactoring
+// TODO: Plugins in "plugins" path
+Urho3D::StringVector PluginsRegistry::FindPlugins(const Urho3D::String& pluginName) const
 {
-	bool success = LoadPlugin(pluginName + "Core");
-	if (success && client_)
-		success = LoadPlugin(pluginName + "Client");
-	return success;
+	const bool client = GetSubsystem("FrontShell") != NULL;
+
+	FileSystem* fileSystem = GetSubsystem<FileSystem>();
+	StringVector ret;
+
+#ifdef NDEBUG
+	String path = fileSystem->GetCurrentDir();
+	String fileName = path + pluginName + BinaryPlugin::GetExtension();
+	if (fileSystem->FileExists(fileName))
+		ret.Push(fileName);
+	fileName = path + pluginName + "Core" + BinaryPlugin::GetExtension();
+	if (fileSystem->FileExists(fileName))
+		ret.Push(fileName);
+	if (client)
+	{
+		fileName = path + pluginName + "Client" + BinaryPlugin::GetExtension();
+		if (fileSystem->FileExists(fileName))
+			ret.Push(fileName);
+	}
+#else
+	String path = fileSystem->GetCurrentDir();
+	String fileName = path + pluginName + "_d" + BinaryPlugin::GetExtension();
+	if (fileSystem->FileExists(fileName))
+		ret.Push(fileName);
+	else
+	{
+		fileName = path + pluginName + BinaryPlugin::GetExtension();
+		if (fileSystem->FileExists(fileName))
+			ret.Push(fileName);
+	}
+	fileName = path + pluginName + "Core" + BinaryPlugin::GetExtension();
+	if (fileSystem->FileExists(fileName))
+		ret.Push(fileName);
+	else
+	{
+		fileName = path + pluginName + "Core_d" + BinaryPlugin::GetExtension();
+		if (fileSystem->FileExists(fileName))
+			ret.Push(fileName);
+	}
+	if (client)
+	{
+		fileName = path + pluginName + "Client" + BinaryPlugin::GetExtension();
+		if (fileSystem->FileExists(fileName))
+			ret.Push(fileName);
+		else
+		{
+			fileName = path + pluginName + "Client_d" + BinaryPlugin::GetExtension();
+			if (fileSystem->FileExists(fileName))
+				ret.Push(fileName);
+		}
+	}
+#endif // NDEBUG
+
+	return ret;
+}
+
+bool PluginsRegistry::Load(const Urho3D::String& fileName)
+{
+	SharedPtr<Plugin> plugin;
+	if (fileName.EndsWith(ScriptPlugin::GetExtension(), false))
+#ifdef URHO3D_ANGELSCRIPT
+		plugin.StaticCast(MakeShared<ScriptPlugin>(context_));
+#else
+		URHO3D_LOGERROR("Loading AngelScript scripts is not supported.");
+#endif // URHO3D_ANGELSCRIPT
+	else if (fileName.EndsWith(BinaryPlugin::GetExtension(), false))
+		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
+	else
+		URHO3D_LOGERRORF("Unsupported plugin extension: %s.", fileName.Substring(fileName.FindLast('.')).CString());
+
+	const String pluginsPath = GetSubsystem<ShellConfigurator>()->GetPluginsPath();
+	if (plugin.NotNull() && plugin->Load(fileName))
+	{
+		plugins_[fileName] = plugin;
+		return true;
+	}
+	return false;
 }
 
 void PluginsRegistry::Close(Urho3D::StringHash plugin) { plugins_.Erase(plugin); }
@@ -51,26 +127,3 @@ Urho3D::StringVector PluginsRegistry::GetAllNames() const
 }
 
 void PluginsRegistry::CloseAll() { plugins_.Clear(); }
-
-bool PluginsRegistry::LoadPlugin(const Urho3D::String& pluginName)
-{
-	SharedPtr<Plugin> plugin;
-	if (pluginName.EndsWith(".as", false))
-#ifdef URHO3D_ANGELSCRIPT
-		plugin.StaticCast(MakeShared<ScriptPlugin>(context_));
-#else
-		URHO3D_LOGERROR("Loading AngelScript scripts is not supported.");
-#endif // URHO3D_ANGELSCRIPT
-	else if (pluginName.EndsWith(".lua", false))
-		URHO3D_LOGERROR("Lua scripts are not supported.");
-	else
-		plugin.StaticCast(MakeShared<BinaryPlugin>(context_));
-
-	const String pluginsPath = GetSubsystem<ShellConfigurator>()->GetPluginsPath();
-	if (plugin.NotNull() && plugin->Load(/*pluginsPath + */ pluginName))
-	{
-		plugins_[pluginName] = plugin;
-		return true;
-	}
-	return false;
-}

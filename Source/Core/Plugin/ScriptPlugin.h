@@ -48,6 +48,9 @@ private:
 				 Urho3D::Variant* returnVar = nullptr);
 
 	Urho3D::ScriptFile* script_;
+
+public:
+	static const char* GetExtension() { return ".as"; }
 };
 
 #endif // SCRIPTPLUGIN_H

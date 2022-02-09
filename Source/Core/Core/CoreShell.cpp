@@ -21,9 +21,10 @@
 //
 
 #include <Urho3D/AngelScript/Script.h>
+#include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/ProcessUtils.h>
 #include <Urho3D/Engine/Engine.h>
-#include <Urho3D/LuaScript/LuaScript.h>
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
 #include "CoreShell.h"
@@ -66,8 +67,17 @@ CoreShell::~CoreShell()
 
 void CoreShell::LoadGameLibrary(const Urho3D::String& gameLib)
 {
-	if (!GetSubsystem<PluginsRegistry>()->Load(gameLib))
-		GetSubsystem<Engine>()->Exit();
+	PluginsRegistry* plugins = GetSubsystem<PluginsRegistry>();
+	const StringVector paths = plugins->FindPlugins(gameLib);
+	if (!paths.Empty())
+	{
+		for (const String& lib : paths)
+			if (!plugins->Load(lib))
+				break;
+		return;
+	}
+	URHO3D_LOGERRORF("Failed to find and load game library: %s.", gameLib.CString());
+	GetSubsystem<Engine>()->Exit();
 }
 
 void CoreShell::LoadConfig(Urho3D::VariantMap& engineParameters, const Urho3D::String& appName)

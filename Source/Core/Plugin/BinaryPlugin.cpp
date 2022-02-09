@@ -54,27 +54,11 @@ BinaryPlugin::~BinaryPlugin()
 
 bool BinaryPlugin::Load(const Urho3D::String& fileName)
 {
-	String dllName = fileName;
-#ifndef NDEBUG
-	dllName += "_d";
-#endif // NDEBUG
-#if defined (_WIN32)
-	dllName += ".dll";
-#elif defined(EMSCRIPTEN)
-	dllName += ".wasm";
-#else
-	dllName += ".so";
-#endif
-
-	FileSystem* fs = GetSubsystem<FileSystem>();
-	if (!fs->FileExists(fs->GetProgramDir() + dllName))
-		return true;
-
 	using PluginFactory = Urho3D::UniquePtr<PluginInterface>(Urho3D::Context*);
 	std::function<PluginFactory> CreatePlugin;
 
 #ifdef _WIN32
-	library_ = LoadLibrary(dllName.CString());
+	library_ = LoadLibrary(fileName.CString());
 	if (!library_)
 	{
 		char* message;
@@ -85,7 +69,7 @@ bool BinaryPlugin::Load(const Urho3D::String& fileName)
 					  (LPTSTR)&message,
 					  0,
 					  nullptr);
-		URHO3D_LOGERRORF("Failed to load binary plugin \"%s\": %s.", dllName.CString(), message);
+		URHO3D_LOGERRORF("Failed to load binary plugin \"%s\": %s.", fileName.CString(), message);
 		LocalFree(message);
 		return false;
 	}
@@ -103,16 +87,16 @@ bool BinaryPlugin::Load(const Urho3D::String& fileName)
 					  0,
 					  nullptr);
 		URHO3D_LOGERRORF("Failed to get function \"CreatePlugin\" address in plugin \"%s\": %s.",
-						 dllName.CString(),
+						 fileName.CString(),
 						 message);
 		LocalFree(message);
 		return false;
 	}
 #else
-	library_ = dlopen(dllName.CString(), RTLD_LAZY);
+	library_ = dlopen(fileName.CString(), RTLD_LAZY);
 	if (!library_)
 	{
-		URHO3D_LOGERRORF("Failed to load binary plugin \"%s\": %s.", dllName.CString(), dlerror());
+		URHO3D_LOGERRORF("Failed to load binary plugin \"%s\": %s.", fileName.CString(), dlerror());
 		return false;
 	}
 	dlerror();
@@ -122,7 +106,7 @@ bool BinaryPlugin::Load(const Urho3D::String& fileName)
 	if (error != nullptr)
 	{
 		URHO3D_LOGERRORF("Failed to get function \"CreatePlugin\" address in plugin \"%s\": %s.",
-						 dllName.CString(),
+						 fileName.CString(),
 						 error);
 		return false;
 	}
@@ -133,9 +117,22 @@ bool BinaryPlugin::Load(const Urho3D::String& fileName)
 		return true;
 	else
 	{
-		URHO3D_LOGERRORF("Failed to load binary plugin \"%s\": could not create plugin interface.", dllName.CString());
+		URHO3D_LOGERRORF("Failed to load binary plugin \"%s\": could not create plugin interface.", fileName.CString());
 		return false;
 	}
 }
 
 const Urho3D::String& BinaryPlugin::GetName() const { return interface_->GetName(); }
+
+const char* BinaryPlugin::GetExtension()
+{
+#if defined (_WIN32)
+	return ".dll";
+#elif defined(__OSX__)
+	return ".dylib";
+#elif defined(__EMSCRIPTEN__)
+	return ".wasm";
+#else
+	return ".so";
+#endif
+}
