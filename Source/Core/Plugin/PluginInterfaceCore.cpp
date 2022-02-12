@@ -39,7 +39,7 @@ void PluginInterfaceCore::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::Varian
 {
 	using namespace ClientSceneLoaded;
 	Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-	const unsigned nodeId = SpawnClient(connection);
+	const unsigned nodeId = Spawn(connection);
 	if (nodeId)
 	{
 		using namespace ServerSideSpawned;

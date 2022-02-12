@@ -40,7 +40,7 @@ public:
 
 	virtual void Start() const {}
 	virtual void Stop() const {}
-	virtual unsigned SpawnClient(Urho3D::Connection* connection) { return 0; }
+	virtual unsigned Spawn(Urho3D::Connection* connection) { return 0; }
 
 	virtual const Urho3D::String& GetName() const = 0;
 

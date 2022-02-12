@@ -34,7 +34,7 @@ public:
 
 	void Start() const override;
 	void Stop() const override;
-	unsigned SpawnClient(Urho3D::Connection* connection) override;
+	unsigned Spawn(Urho3D::Connection* connection) override;
 
 	const Urho3D::String& GetName() const override;
 

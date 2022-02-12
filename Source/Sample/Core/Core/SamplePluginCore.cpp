@@ -56,9 +56,9 @@ void SamplePluginCore::Start() const {}
 
 void SamplePluginCore::Stop() const {}
 
-unsigned SamplePluginCore::SpawnClient(Urho3D::Connection* connection)
+unsigned SamplePluginCore::Spawn(Urho3D::Connection* connection)
 {
-	URHO3D_LOGTRACE("SamplePluginCore::SpawnClient");
+	URHO3D_LOGTRACE("SamplePluginCore::Spawn");
 
 	Scene* scene = connection->GetScene();
 	Node* node = scene->CreateChild();
