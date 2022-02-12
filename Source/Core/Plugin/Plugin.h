@@ -35,4 +35,25 @@ public:
 	virtual bool Load(const Urho3D::String& fileName) = 0;
 };
 
+class PluginFactory : public Urho3D::RefCounted
+{
+public:
+	PluginFactory(const char* extension)
+		: extension_(extension)
+	{
+	}
+	virtual ~PluginFactory() {}
+	virtual Urho3D::SharedPtr<Plugin> CreatePlugin(Urho3D::Context* context) = 0;
+	const char* GetExtension() const { return extension_; }
+
+private:
+	const char* extension_;
+};
+
+template <typename T> struct PluginFactoryImpl : public PluginFactory
+{
+	using PluginFactory::PluginFactory;
+	Urho3D::SharedPtr<Plugin> CreatePlugin(Urho3D::Context* context) override { return Urho3D::MakeShared<T>(context); }
+};
+
 #endif // PLUGIN_H

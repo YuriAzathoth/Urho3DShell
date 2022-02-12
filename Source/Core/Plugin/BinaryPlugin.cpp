@@ -126,7 +126,7 @@ const Urho3D::String& BinaryPlugin::GetName() const { return interface_->GetName
 
 const char* BinaryPlugin::GetExtension()
 {
-#if defined (_WIN32)
+#if defined(_WIN32)
 	return ".dll";
 #elif defined(__OSX__)
 	return ".dylib";

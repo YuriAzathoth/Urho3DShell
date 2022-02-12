@@ -23,18 +23,22 @@
 #include <Urho3D/AngelScript/Script.h>
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/ProcessUtils.h>
-#include <Urho3D/Engine/Engine.h>
-#include <Urho3D/IO/Log.h>
 #include <Urho3D/Urho3DConfig.h>
 #include "Config/Config.h"
 #include "CoreShell.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
+#include "Plugin/BinaryPlugin.h"
 #include "Plugin/PluginsRegistry.h"
 #include "ShellConfigurator.h"
 #include "ShellDefs.h"
 
+#ifdef URHO3D_ANGELSCRIPT
+#include "Plugin/ScriptPlugin.h"
+#endif // URHO3D_ANGELSCRIPT
+
 extern void RegisterServerParameters(Config* config);
+
 #ifdef URHO3D_ANGELSCRIPT
 extern void RegisterServerAPI(asIScriptEngine* engine);
 #endif // URHO3D_ANGELSCRIPT
@@ -55,7 +59,13 @@ CoreShell::CoreShell(Urho3D::Context* context)
 #endif // URHO3D_ANGELSCRIPT
 
 	context_->RegisterSubsystem<ActionsRegistry>();
-	context_->RegisterSubsystem<PluginsRegistry>();
+
+	PluginsRegistry* plugins = context_->RegisterSubsystem<PluginsRegistry>();
+	plugins->RegisterPluginFactory<BinaryPlugin>();
+#ifdef URHO3D_ANGELSCRIPT
+	plugins->RegisterPluginFactory<ScriptPlugin>();
+#endif // URHO3D_ANGELSCRIPT
+
 	context_->RegisterSubsystem<ShellConfigurator>();
 }
 
@@ -65,20 +75,7 @@ CoreShell::~CoreShell()
 	context_->RemoveSubsystem<PluginsRegistry>();
 }
 
-void CoreShell::LoadGameLibrary(const Urho3D::String& gameLib)
-{
-	PluginsRegistry* plugins = GetSubsystem<PluginsRegistry>();
-	const StringVector paths = plugins->FindPlugins(gameLib);
-	if (!paths.Empty())
-	{
-		for (const String& lib : paths)
-			if (!plugins->Load(lib))
-				break;
-		return;
-	}
-	URHO3D_LOGERRORF("Failed to find and load game library: %s.", gameLib.CString());
-	GetSubsystem<Engine>()->Exit();
-}
+void CoreShell::LoadGameLibrary(const Urho3D::String& gameLib) { GetSubsystem<PluginsRegistry>()->Initialize(gameLib); }
 
 void CoreShell::LoadConfig(Urho3D::VariantMap& engineParameters, const Urho3D::String& appName)
 {
