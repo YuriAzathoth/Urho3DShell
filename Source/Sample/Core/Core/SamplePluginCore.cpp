@@ -29,6 +29,7 @@
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
 #include "Network/NetworkEvents.h"
+#include "Plugin/BinaryPluginUtils.h"
 #include "SampleActorController.h"
 #include "SamplePluginCore.h"
 

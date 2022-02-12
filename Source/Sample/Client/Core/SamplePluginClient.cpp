@@ -31,6 +31,7 @@
 #include "Core/ShellEvents.h"
 #include "Input/ControllersRegistry.h"
 #include "Network/NetworkEvents.h"
+#include "Plugin/BinaryPluginUtils.h"
 #include "SamplePluginClient.h"
 
 using namespace Urho3D;

@@ -23,7 +23,6 @@
 #ifndef SAMPLEPLUGINCORE_H
 #define SAMPLEPLUGINCORE_H
 
-#include "Plugin/BinaryPluginUtils.h"
 #include "Plugin/PluginInterface.h"
 
 class SamplePluginCore : public PluginInterface

@@ -23,7 +23,6 @@
 #ifndef SAMPLEPLUGINCLIENT_H
 #define SAMPLEPLUGINCLIENT_H
 
-#include "Plugin/BinaryPluginUtils.h"
 #include "Plugin/PluginInterface.h"
 
 class SamplePluginClient : public PluginInterface
