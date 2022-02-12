@@ -41,7 +41,11 @@ public:
 
 	void SetConnection(const Urho3D::Connection* connection);
 
-	const Urho3D::Controls& GetControls() const noexcept { return current_; }
+	const Urho3D::Controls& GetControls() const { return current_; }
+
+	bool IsDown(unsigned flag) const { return current_.IsDown(flag); }
+	bool IsPressed(unsigned flag) const { return current_.IsDown(flag) && !previous_.IsDown(flag); }
+	bool IsReleased(unsigned flag) const { return !current_.IsDown(flag) && previous_.IsDown(flag); }
 
 private:
 	void OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&);
