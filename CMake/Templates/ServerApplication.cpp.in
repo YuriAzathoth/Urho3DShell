@@ -25,7 +25,6 @@
 #include <Urho3D/Engine/Application.h>
 #include <Urho3D/Engine/EngineDefs.h>
 #include "Core/CoreShell.h"
-#include "Core/Launch.h"
 
 #define APP_NAME "Server"
 #define SDK_NAME "@SDK_NAME@"
