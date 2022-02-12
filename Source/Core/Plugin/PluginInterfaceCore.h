@@ -20,26 +20,36 @@
 // THE SOFTWARE.
 //
 
-#ifndef SAMPLEPLUGINCORE_H
-#define SAMPLEPLUGINCORE_H
+#ifndef PLUGININTERFACECORE_H
+#define PLUGININTERFACECORE_H
 
-#include "Plugin/PluginInterfaceCore.h"
+#include "PluginInterface.h"
+#include "U3SCoreAPI.h"
 
-class SamplePluginCore : public PluginInterfaceCore
+namespace Urho3D
 {
-	URHO3D_OBJECT(SamplePluginCore, PluginInterfaceCore)
+class Connection;
+}
+
+class U3SCOREAPI_EXPORT PluginInterfaceCore : public PluginInterface
+{
+	URHO3D_OBJECT(PluginInterfaceCore, PluginInterface)
 
 public:
-	explicit SamplePluginCore(Urho3D::Context* context);
+	explicit PluginInterfaceCore(Urho3D::Context* context);
 
-	void Start() const override;
-	void Stop() const override;
-	unsigned SpawnClient(Urho3D::Connection* connection) override;
+	virtual void Start() const {}
+	virtual void Stop() const {}
+	virtual unsigned SpawnClient(Urho3D::Connection* connection) { return 0; }
 
-	const Urho3D::String& GetName() const override;
+	virtual const Urho3D::String& GetName() const = 0;
 
 private:
-	static const Urho3D::String PLUGIN_NAME;
+	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData);
+	void OnRemoteClientStarted(Urho3D::StringHash, Urho3D::VariantMap&);
+	void OnRemoteClientStopped(Urho3D::StringHash, Urho3D::VariantMap&);
+
+	Urho3D::PODVector<Urho3D::StringHash> factories_;
 };
 
-#endif // SAMPLEPLUGINCORE_H
+#endif // PLUGININTERFACECORE_H

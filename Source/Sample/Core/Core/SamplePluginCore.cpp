@@ -21,14 +21,12 @@
 //
 
 #include <Urho3D/IO/Log.h>
-#include <Urho3D/Network/Network.h>
-#include <Urho3D/Network/NetworkEvents.h>
+#include <Urho3D/Network/Connection.h>
 #include <Urho3D/Scene/Scene.h>
 #include "ActionsDefs.h"
 #include "Core/ShellConfigurator.h"
 #include "Input/ActionsRegistry.h"
 #include "Input/InputReceiver.h"
-#include "Network/NetworkEvents.h"
 #include "Plugin/BinaryPluginUtils.h"
 #include "SampleActorController.h"
 #include "SamplePluginCore.h"
@@ -38,15 +36,11 @@ using namespace Urho3D;
 const String SamplePluginCore::PLUGIN_NAME = "Sample game";
 
 SamplePluginCore::SamplePluginCore(Urho3D::Context* context)
-	: PluginInterface(context)
+	: PluginInterfaceCore(context)
 {
 	GetSubsystem<ShellConfigurator>()->SetGameName("SampleGame");
 
-	SubscribeToEvent(E_REMOTECLIENTSTARTED, URHO3D_HANDLER(SamplePluginCore, OnRemoteClientStarted));
-	SubscribeToEvent(E_REMOTECLIENTSTOPPED, URHO3D_HANDLER(SamplePluginCore, OnRemoteClientStopped));
-	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(SamplePluginCore, OnClientSceneLoaded));
-
-	REGISTER_OBJECT(SampleActorController);
+	RegisterObject<SampleActorController>();
 
 	ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
 	actions->RegisterRemote(MOVE_FORWARD);
@@ -58,26 +52,14 @@ SamplePluginCore::SamplePluginCore(Urho3D::Context* context)
 	actions->RegisterRemote(WALK);
 }
 
-const Urho3D::String& SamplePluginCore::GetName() const { return PLUGIN_NAME; }
+void SamplePluginCore::Start() const {}
 
-void SamplePluginCore::OnRemoteClientStarted(Urho3D::StringHash, Urho3D::VariantMap&)
+void SamplePluginCore::Stop() const {}
+
+unsigned SamplePluginCore::SpawnClient(Urho3D::Connection* connection)
 {
-	Network* network = GetSubsystem<Network>();
-	network->RegisterRemoteEvent(E_SERVERSIDESPAWNED);
-}
+	URHO3D_LOGTRACE("SamplePluginCore::SpawnClient");
 
-void SamplePluginCore::OnRemoteClientStopped(Urho3D::StringHash, Urho3D::VariantMap&)
-{
-	Network* network = GetSubsystem<Network>();
-	network->UnregisterAllRemoteEvents();
-}
-
-void SamplePluginCore::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData)
-{
-	URHO3D_LOGTRACE("SamplePluginCore::OnClientSceneLoaded");
-
-	using namespace ClientSceneLoaded;
-	Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
 	Scene* scene = connection->GetScene();
 	Node* node = scene->CreateChild();
 	node->SetPosition({0.0f, 4.0f, 0.0f});
@@ -89,9 +71,9 @@ void SamplePluginCore::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMa
 	receiver->SetConnection(connection);
 	receiver->SetTemporary(true);
 
-	using namespace ServerSideSpawned;
-	eventData[P_NODE] = node->GetID();
-	connection->SendRemoteEvent(E_SERVERSIDESPAWNED, true, eventData);
+	return node->GetID();
 }
+
+const Urho3D::String& SamplePluginCore::GetName() const { return PLUGIN_NAME; }
 
 URHO3DSHELL_PLUGIN(SamplePluginCore)

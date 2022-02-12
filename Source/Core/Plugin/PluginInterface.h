@@ -26,10 +26,6 @@
 #include <Urho3D/Core/Object.h>
 #include "U3SCoreAPI.h"
 
-#define REGISTER_OBJECT(CLASS)                                                                                         \
-	CLASS::RegisterObject(context_);                                                                                   \
-	RegisterObject(CLASS::GetTypeInfoStatic()->GetType())
-
 class U3SCOREAPI_EXPORT PluginInterface : public Urho3D::Object
 {
 	URHO3D_OBJECT(PluginInterface, Urho3D::Object)
@@ -42,8 +38,16 @@ public:
 
 	void RegisterObject(Urho3D::StringHash objectType);
 
+	template <typename T> void RegisterObject();
+
 private:
 	Urho3D::PODVector<Urho3D::StringHash> factories_;
 };
+
+template <typename T> void PluginInterface::RegisterObject()
+{
+	T::RegisterObject(context_);
+	RegisterObject(T::GetTypeInfoStatic()->GetType());
+}
 
 #endif // PLUGININTERFACE_H
