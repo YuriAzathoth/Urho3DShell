@@ -29,6 +29,12 @@ static PluginsRegistry* CreatePluginsRegistry() { return new PluginsRegistry(Get
 
 static PluginsRegistry* GetPluginsRegistry() { return GetScriptContext()->GetSubsystem<PluginsRegistry>(); }
 
+template <typename T> static CScriptArray* ScanPlugins(T* _ptr)
+{
+	const StringVector& result = _ptr->ScanPlugins();
+	return VectorToArray<String>(result, "Array<String>");
+}
+
 template <typename T> static CScriptArray* GetPluginsList(T* _ptr)
 {
 	const StringVector& result = _ptr->GetAllNames();
@@ -51,6 +57,15 @@ void RegisterPluginsRegistryAPI(asIScriptEngine* engine)
 	RegisterSubclass<RefCounted, PluginsRegistry>(engine, "RefCounted", "PluginsRegistry");
 
 	RegisterMembers_Object<PluginsRegistry>(engine, "PluginsRegistry");
+
+	engine->RegisterObjectMethod("PluginsRegistry",
+								 "bool LoadPlugin(const String&in)",
+								 AS_METHOD(PluginsRegistry, LoadPlugin),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("PluginsRegistry",
+								 "Array<String>@+ ScanPlugins() const",
+								 AS_FUNCTION_OBJFIRST(ScanPlugins<PluginsRegistry>),
+								 AS_CALL_CDECL_OBJFIRST);
 
 	engine->RegisterObjectMethod("PluginsRegistry",
 								 "bool Load(const String&in)",
