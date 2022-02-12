@@ -20,31 +20,27 @@
 // THE SOFTWARE.
 //
 
-#ifndef SAMPLEGAMEPLUGIN_H
-#define SAMPLEGAMEPLUGIN_H
+#ifndef SAMPLEPLUGINCORE_H
+#define SAMPLEPLUGINCORE_H
 
 #include "Plugin/BinaryPluginUtils.h"
 #include "Plugin/PluginInterface.h"
 
-class SampleGamePlugin : public PluginInterface
+class SamplePluginCore : public PluginInterface
 {
-	URHO3D_OBJECT(SampleGamePlugin, PluginInterface)
+	URHO3D_OBJECT(SamplePluginCore, PluginInterface)
 
 public:
-	explicit SampleGamePlugin(Urho3D::Context* context);
+	explicit SamplePluginCore(Urho3D::Context* context);
 
 	const Urho3D::String& GetName() const override;
 
 private:
-	void OnShellClientStarted(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnRemoteClientStarted(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnRemoteClientStopped(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnRemoteServerStarted(Urho3D::StringHash, Urho3D::VariantMap&);
-	void OnRemoteServerStopped(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData);
-	void OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 
 	static const Urho3D::String PLUGIN_NAME;
 };
 
-#endif // SAMPLEGAMEPLUGIN_H
+#endif // SAMPLEPLUGINCORE_H
