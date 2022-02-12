@@ -20,25 +20,27 @@
 // THE SOFTWARE.
 //
 
-#ifndef SAMPLEPLUGINCLIENT_H
-#define SAMPLEPLUGINCLIENT_H
+#include <Urho3D/Network/Connection.h>
+#include "Core/ShellEvents.h"
+#include "Network/NetworkEvents.h"
+#include "PluginInterfaceClient.h"
 
-#include "Plugin/PluginInterfaceClient.h"
+using namespace Urho3D;
 
-class SamplePluginClient : public PluginInterfaceClient
+PluginInterfaceClient::PluginInterfaceClient(Urho3D::Context* context)
+	: PluginInterface(context)
 {
-	URHO3D_OBJECT(SamplePluginClient, PluginInterfaceClient)
+	SubscribeToEvent(E_REMOTESERVERSTARTED, [this](StringHash, VariantMap) { Start(); });
+	SubscribeToEvent(E_REMOTESERVERSTOPPED, [this](StringHash, VariantMap) { Stop(); });
+	SubscribeToEvent(E_SHELLCLIENTSTARTED, [this](StringHash, VariantMap) { Setup(); });
+	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(PluginInterfaceClient, OnServerSideSpawned));
+}
 
-public:
-	using PluginInterfaceClient::PluginInterfaceClient;
-
-	void Setup();
-	void Spawn(Urho3D::Scene* scene, unsigned nodeId) override;
-
-	const Urho3D::String& GetName() const override;
-
-private:
-	static const Urho3D::String PLUGIN_NAME;
-};
-
-#endif // SAMPLEPLUGINCLIENT_H
+void PluginInterfaceClient::OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+{
+	using namespace ServerSideSpawned;
+	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
+	const unsigned nodeId = eventData[P_NODE].GetInt();
+	Scene* scene = connection->GetScene();
+	Spawn(scene, nodeId);
+}

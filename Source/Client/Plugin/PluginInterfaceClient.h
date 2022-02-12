@@ -20,25 +20,31 @@
 // THE SOFTWARE.
 //
 
-#ifndef SAMPLEPLUGINCLIENT_H
-#define SAMPLEPLUGINCLIENT_H
+#ifndef PLUGININTERFACECLIENT_H
+#define PLUGININTERFACECLIENT_H
 
-#include "Plugin/PluginInterfaceClient.h"
+#include "Plugin/PluginInterface.h"
+#include "U3SClientAPI.h"
 
-class SamplePluginClient : public PluginInterfaceClient
+namespace Urho3D
 {
-	URHO3D_OBJECT(SamplePluginClient, PluginInterfaceClient)
+class Scene;
+}
+
+class U3SCLIENTAPI_EXPORT PluginInterfaceClient : public PluginInterface
+{
+	URHO3D_OBJECT(PluginInterfaceClient, PluginInterface)
 
 public:
-	using PluginInterfaceClient::PluginInterfaceClient;
+	explicit PluginInterfaceClient(Urho3D::Context* context);
 
-	void Setup();
-	void Spawn(Urho3D::Scene* scene, unsigned nodeId) override;
-
-	const Urho3D::String& GetName() const override;
+	virtual void Setup() {}
+	virtual void Start() {}
+	virtual void Stop() {}
+	virtual void Spawn(Urho3D::Scene* scene, unsigned nodeId) {}
 
 private:
-	static const Urho3D::String PLUGIN_NAME;
+	void OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData);
 };
 
-#endif // SAMPLEPLUGINCLIENT_H
+#endif // PLUGININTERFACECLIENT_H

@@ -25,12 +25,9 @@
 #include <Urho3D/Graphics/Viewport.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/InputConstants.h>
-#include <Urho3D/Network/Connection.h>
 #include <Urho3D/Scene/Scene.h>
 #include "Core/ActionsDefs.h"
-#include "Core/ShellEvents.h"
 #include "Input/ControllersRegistry.h"
-#include "Network/NetworkEvents.h"
 #include "Plugin/BinaryPluginUtils.h"
 #include "SamplePluginClient.h"
 
@@ -38,16 +35,7 @@ using namespace Urho3D;
 
 const String SamplePluginClient::PLUGIN_NAME = "Sample game";
 
-SamplePluginClient::SamplePluginClient(Urho3D::Context* context)
-	: PluginInterface(context)
-{
-	SubscribeToEvent(E_REMOTESERVERSTARTED, URHO3D_HANDLER(SamplePluginClient, OnRemoteServerStarted));
-	SubscribeToEvent(E_REMOTESERVERSTOPPED, URHO3D_HANDLER(SamplePluginClient, OnRemoteServerStopped));
-	SubscribeToEvent(E_SERVERSIDESPAWNED, URHO3D_HANDLER(SamplePluginClient, OnServerSideSpawned));
-	SubscribeToEvent(E_SHELLCLIENTSTARTED, URHO3D_HANDLER(SamplePluginClient, OnShellClientStarted));
-}
-
-void SamplePluginClient::OnShellClientStarted(Urho3D::StringHash, Urho3D::VariantMap&)
+void SamplePluginClient::Setup()
 {
 	ControllersRegistry* controllers = GetSubsystem<ControllersRegistry>();
 	InputController* keyboard = controllers->Get("KeyboardController");
@@ -63,20 +51,11 @@ void SamplePluginClient::OnShellClientStarted(Urho3D::StringHash, Urho3D::Varian
 	}
 }
 
-void SamplePluginClient::OnRemoteServerStarted(Urho3D::StringHash, Urho3D::VariantMap&) {}
-
-void SamplePluginClient::OnRemoteServerStopped(Urho3D::StringHash, Urho3D::VariantMap&) {}
-
-void SamplePluginClient::OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData)
+void SamplePluginClient::Spawn(Urho3D::Scene* scene, unsigned nodeId)
 {
-	URHO3D_LOGTRACE("SamplePluginClient::OnServerSideSpawned");
+	URHO3D_LOGTRACE("SamplePluginClient::Spawn");
 
-	using namespace ServerSideSpawned;
-	const Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-	const unsigned nodeId = eventData[P_NODE].GetInt();
-	Scene* scene = connection->GetScene();
 	Node* node = scene->GetNode(nodeId);
-
 	Camera* camera = node->CreateComponent<Camera>();
 	camera->SetTemporary(true);
 	SharedPtr<Viewport> viewport = MakeShared<Viewport>(context_, scene, camera);
