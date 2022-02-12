@@ -24,6 +24,12 @@ IF (NOT CMAKE_PROJECT_NAME STREQUAL Urho3DShell)
 	CMAKE_MINIMUM_REQUIRED (VERSION 3.2.3)
 	PROJECT (SampleGame VERSION 0.0.0)
 	FIND_PACKAGE (U3S REQUIRED)
+	IF (COMMAND CMAKE_POLICY)
+		# Honor visibility properties for all target types
+		CMAKE_POLICY (SET CMP0063 NEW)
+		# cmake_dependent_option() supports full Condition Syntax
+		CMAKE_POLICY (SET CMP0127 NEW)
+	ENDIF ()
 ENDIF ()
 
 SET (DEPENDENCY U3S)
