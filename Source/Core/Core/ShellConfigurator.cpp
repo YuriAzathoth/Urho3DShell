@@ -47,6 +47,7 @@ ShellConfigurator::ShellConfigurator(Urho3D::Context* context)
 	, profileName_(DEFAULT_PROFILE)
 	, userDataPath_(DEFAULT_USER_DATA_PATH)
 	, port_(27500)
+	, client_(false)
 {
 }
 

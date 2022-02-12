@@ -144,13 +144,12 @@ bool PluginsRegistry::FindPlugin(Urho3D::StringVector& paths,
 	constexpr bool debug = false;
 #endif // NDEBUG
 
-	const bool client = GetSubsystem("FrontShell") != NULL;
 	bool found = false;
 	FileSystem* fileSystem = GetSubsystem<FileSystem>();
 
 	String filePrefix = scanPath + pluginName;
 	String fileName;
-	if (client)
+	if (GetSubsystem<ShellConfigurator>()->IsClient())
 	{
 		fileName = filePrefix + CLIENT_PREFIX;
 		if (!debug || (debug && !FindPlugin(paths, fileName + "_d")))

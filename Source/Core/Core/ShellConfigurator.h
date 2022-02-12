@@ -53,6 +53,7 @@ public:
 	Urho3D::String GetProfileFilename() const;
 	Urho3D::String GetSavesPath() const;
 
+	void SetClient(bool client) { client_ = client; }
 	void SetGameName(const Urho3D::String& gameName) { gameName_ = gameName; }
 	void SetPort(unsigned short port) { port_ = port; }
 
@@ -60,6 +61,7 @@ public:
 	const Urho3D::String& GetGameName() const { return gameName_; }
 	const Urho3D::String& GetProfileName() const { return profileName_; }
 	unsigned short GetPort() const { return port_; }
+	bool IsClient() const { return client_; }
 
 private:
 	void CreatePath(const Urho3D::String& path) const;
@@ -71,6 +73,7 @@ private:
 	Urho3D::String profileName_;
 	Urho3D::String userDataPath_;
 	unsigned short port_;
+	bool client_;
 };
 
 #endif // SHELLCONFIGURATOR_H

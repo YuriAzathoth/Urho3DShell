@@ -99,6 +99,10 @@ void RegisterShellConfiguratorAPI(asIScriptEngine* engine)
 								 AS_CALL_THISCALL);
 
 	engine->RegisterObjectMethod("ShellConfigurator",
+								 "bool get_client() const",
+								 AS_METHOD(ShellConfigurator, IsClient),
+								 AS_CALL_THISCALL);
+	engine->RegisterObjectMethod("ShellConfigurator",
 								 "const String& get_appName() const",
 								 AS_METHOD(ShellConfigurator, GetAppName),
 								 AS_CALL_THISCALL);
