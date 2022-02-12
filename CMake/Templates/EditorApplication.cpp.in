@@ -24,7 +24,7 @@
 #include <Urho3D/Engine/Application.h>
 #include <Urho3D/Engine/EngineDefs.h>
 #include "Core/CoreShell.h"
-#include "Core/Launch.h"
+#include "Core/GPUParameters.h"
 
 #define APP_NAME "Editor"
 #define SDK_NAME "@SDK_NAME@"
@@ -68,5 +68,3 @@ void EditorApplication::Stop()
 }
 
 URHO3D_DEFINE_APPLICATION_MAIN(EditorApplication)
-
-URHO3DSHELL_GPU_PARAMETERS

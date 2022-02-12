@@ -20,18 +20,15 @@
 // THE SOFTWARE.
 //
 
-#ifndef LAUNCH_H
-#define LAUNCH_H
+#ifndef GPUPARAMETERS_H
+#define GPUPARAMETERS_H
 
 #ifdef _WIN32
-#define URHO3DSHELL_GPU_PARAMETERS                                                                                     \
-	extern "C"                                                                                                         \
-	{                                                                                                                  \
-		__declspec(dllexport) unsigned NvOptimusEnablement = 1;                                                        \
-		__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;                                            \
-	}
-#else
-#define URHO3DSHELL_GPU_PARAMETERS
+extern "C"
+{
+	__declspec(dllexport) unsigned NvOptimusEnablement = 1;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
 #endif // _WIN32
 
-#endif // LAUNCH_H
+#endif // GPUPARAMETERS_H

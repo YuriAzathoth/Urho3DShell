@@ -23,8 +23,8 @@
 
 #include <Urho3D/Engine/Application.h>
 #include "Core/CoreShell.h"
+#include "Core/GPUParameters.h"
 #include "Core/FrontShell.h"
-#include "Core/Launch.h"
 
 #define APP_NAME "Client"
 #define SDK_NAME "@SDK_NAME@"
@@ -70,5 +70,3 @@ void ClientApplication::Stop()
 }
 
 URHO3D_DEFINE_APPLICATION_MAIN(ClientApplication)
-
-URHO3DSHELL_GPU_PARAMETERS
