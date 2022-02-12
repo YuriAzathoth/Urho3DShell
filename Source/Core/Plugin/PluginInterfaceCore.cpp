@@ -33,6 +33,7 @@ PluginInterfaceCore::PluginInterfaceCore(Urho3D::Context* context)
 	SubscribeToEvent(E_CLIENTSCENELOADED, URHO3D_HANDLER(PluginInterfaceCore, OnClientSceneLoaded));
 	SubscribeToEvent(E_REMOTECLIENTSTARTED, URHO3D_HANDLER(PluginInterfaceCore, OnRemoteClientStarted));
 	SubscribeToEvent(E_REMOTECLIENTSTOPPED, URHO3D_HANDLER(PluginInterfaceCore, OnRemoteClientStopped));
+	Setup();
 }
 
 void PluginInterfaceCore::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData)

@@ -38,8 +38,9 @@ class U3SCOREAPI_EXPORT PluginInterfaceCore : public PluginInterface
 public:
 	explicit PluginInterfaceCore(Urho3D::Context* context);
 
-	virtual void Start() const {}
-	virtual void Stop() const {}
+	virtual void Setup() {}
+	virtual void Start() {}
+	virtual void Stop() {}
 	virtual unsigned Spawn(Urho3D::Connection* connection) { return 0; }
 
 	virtual const Urho3D::String& GetName() const = 0;

@@ -35,8 +35,7 @@ using namespace Urho3D;
 
 const String SamplePluginCore::PLUGIN_NAME = "Sample game";
 
-SamplePluginCore::SamplePluginCore(Urho3D::Context* context)
-	: PluginInterfaceCore(context)
+void SamplePluginCore::Setup()
 {
 	GetSubsystem<ShellConfigurator>()->SetGameName("SampleGame");
 
@@ -52,9 +51,9 @@ SamplePluginCore::SamplePluginCore(Urho3D::Context* context)
 	actions->RegisterRemote(WALK);
 }
 
-void SamplePluginCore::Start() const {}
+void SamplePluginCore::Start() {}
 
-void SamplePluginCore::Stop() const {}
+void SamplePluginCore::Stop() {}
 
 unsigned SamplePluginCore::Spawn(Urho3D::Connection* connection)
 {
