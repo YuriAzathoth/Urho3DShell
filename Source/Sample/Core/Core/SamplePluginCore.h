@@ -35,7 +35,7 @@ public:
 	void Setup() override;
 	void Start() override;
 	void Stop() override;
-	unsigned Spawn(Urho3D::Connection* connection) override;
+	unsigned Spawn(Urho3D::Scene* scene) override;
 
 	const Urho3D::String& GetName() const override;
 

@@ -26,7 +26,6 @@
 #include "ActionsDefs.h"
 #include "Core/ShellConfigurator.h"
 #include "Input/ActionsRegistry.h"
-#include "Input/InputReceiver.h"
 #include "Plugin/BinaryPluginUtils.h"
 #include "SampleActorController.h"
 #include "SamplePluginCore.h"
@@ -55,20 +54,15 @@ void SamplePluginCore::Start() {}
 
 void SamplePluginCore::Stop() {}
 
-unsigned SamplePluginCore::Spawn(Urho3D::Connection* connection)
+unsigned SamplePluginCore::Spawn(Urho3D::Scene* scene)
 {
 	URHO3D_LOGTRACE("SamplePluginCore::Spawn");
 
-	Scene* scene = connection->GetScene();
 	Node* node = scene->CreateChild();
 	node->SetPosition({0.0f, 4.0f, 0.0f});
 	node->Pitch(30.0f);
 
 	node->CreateComponent<SampleActorController>(REPLICATED);
-
-	InputReceiver* receiver = node->CreateComponent<InputReceiver>(REPLICATED);
-	receiver->SetConnection(connection);
-	receiver->SetTemporary(true);
 
 	return node->GetID();
 }

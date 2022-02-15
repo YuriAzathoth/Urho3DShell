@@ -28,7 +28,7 @@
 
 namespace Urho3D
 {
-class Connection;
+class Scene;
 }
 
 class U3SCOREAPI_EXPORT PluginInterfaceCore : public PluginInterface
@@ -41,7 +41,7 @@ public:
 	virtual void Setup() {}
 	virtual void Start() {}
 	virtual void Stop() {}
-	virtual unsigned Spawn(Urho3D::Connection*) { return 0; }
+	virtual unsigned Spawn(Urho3D::Scene*) { return 0; }
 
 	const Urho3D::String& GetName() const override = 0;
 

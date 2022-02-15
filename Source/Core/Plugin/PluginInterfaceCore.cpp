@@ -22,6 +22,8 @@
 
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
+#include <Urho3D/Scene/Scene.h>
+#include "Input/InputReceiver.h"
 #include "Network/NetworkEvents.h"
 #include "PluginInterfaceCore.h"
 
@@ -40,9 +42,17 @@ void PluginInterfaceCore::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::Varian
 {
 	using namespace ClientSceneLoaded;
 	Connection* connection = static_cast<Connection*>(eventData[P_CONNECTION].GetPtr());
-	const unsigned nodeId = Spawn(connection);
+	Scene* scene = connection->GetScene();
+
+	const unsigned nodeId = Spawn(scene);
 	if (nodeId)
 	{
+		Node* clientNode = scene->GetNode(nodeId);
+
+		InputReceiver* receiver = clientNode->CreateComponent<InputReceiver>(REPLICATED);
+		receiver->SetConnection(connection);
+		receiver->SetTemporary(true);
+
 		using namespace ServerSideSpawned;
 		eventData[P_NODE] = nodeId;
 		connection->SendRemoteEvent(E_SERVERSIDESPAWNED, true, eventData);
