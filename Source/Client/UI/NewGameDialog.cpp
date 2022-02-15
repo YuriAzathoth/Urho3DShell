@@ -29,6 +29,18 @@
 
 using namespace Urho3D;
 
+struct SceneItem
+{
+	String name_;
+	String path_;
+	SceneItem(const String& name, const String& path)
+		: name_(name)
+		, path_(path)
+	{
+	}
+	bool operator<(const SceneItem& rhs) { return name_ < rhs.name_; }
+};
+
 NewGameDialog::NewGameDialog(Urho3D::Context* context)
 	: HostItemsListWindow(context)
 {
@@ -38,24 +50,34 @@ NewGameDialog::NewGameDialog(Urho3D::Context* context)
 	row[0] = "Map";
 	SetCaptions(row);
 
-	StringVector resources;
-	for (const SharedPtr<PackageFile>& package : GetSubsystem<ResourceCache>()->GetPackageFiles())
+	ResourceCache* cache = GetSubsystem<ResourceCache>();
+	Vector<SceneItem> scenes;
+	StringVector names;
+	for (const SharedPtr<PackageFile>& package : cache->GetPackageFiles())
 	{
-		resources = package->GetEntryNames();
-		for (const String& filename : resources)
+		names = package->GetEntryNames();
+		for (const String& filename : names)
 			if (filename.StartsWith(SCENES_PATH) &&
 				(filename.EndsWith(".xml") || filename.EndsWith(".bin") || filename.EndsWith(".json")))
-			{
-				row[0] = filename.Replaced(SCENES_PATH, "");
-				AddItem(filename, row);
-			}
+				scenes.EmplaceBack(filename.Substring(filename.FindLast('/')), filename);
 	}
+	names.Clear();
 
-	StringVector files;
-	GetSubsystem<FileSystem>()->ScanDir(files, "Scenes/", "*.xml|*.bin|*.json", SCAN_FILES, true);
-	for (const String& filename : files)
+	FileSystem* fileSystem = GetSubsystem<FileSystem>();
+	String path;
+	for (const String& dir : cache->GetResourceDirs())
 	{
-		row[0] = filename.Replaced(SCENES_PATH, "");
-		AddItem(filename, row);
+		path = dir + "/Scenes/";
+		fileSystem->ScanDir(names, path, "*.*", SCAN_FILES, true);
+		for (const String& filename : names)
+			if (filename.EndsWith(".xml", false) || filename.EndsWith(".json", false) ||
+				filename.EndsWith(".bin", false))
+				scenes.EmplaceBack(filename, path + filename);
+	}
+	Sort(scenes.Begin(), scenes.End());
+	for (const auto& item : scenes)
+	{
+		row[0] = item.name_;
+		AddItem(item.path_, row);
 	}
 }
