@@ -145,7 +145,6 @@ bool PluginsRegistry::FindPlugin(Urho3D::StringVector& paths,
 #endif // NDEBUG
 
 	bool found = false;
-	FileSystem* fileSystem = GetSubsystem<FileSystem>();
 
 	String filePrefix = scanPath + pluginName;
 	String fileName;

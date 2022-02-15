@@ -41,7 +41,7 @@ public:
 	virtual void Setup() {}
 	virtual void Start() {}
 	virtual void Stop() {}
-	virtual void Spawn(Urho3D::Scene* scene, unsigned nodeId) {}
+	virtual void Spawn(Urho3D::Scene* /*scene*/, unsigned /*nodeId*/) {}
 
 private:
 	void OnServerSideSpawned(Urho3D::StringHash, Urho3D::VariantMap& eventData);

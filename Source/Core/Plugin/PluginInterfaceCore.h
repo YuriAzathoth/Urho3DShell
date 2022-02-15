@@ -41,9 +41,9 @@ public:
 	virtual void Setup() {}
 	virtual void Start() {}
 	virtual void Stop() {}
-	virtual unsigned Spawn(Urho3D::Connection* connection) { return 0; }
+	virtual unsigned Spawn(Urho3D::Connection*) { return 0; }
 
-	virtual const Urho3D::String& GetName() const = 0;
+	const Urho3D::String& GetName() const override = 0;
 
 private:
 	void OnClientSceneLoaded(Urho3D::StringHash, Urho3D::VariantMap& eventData);

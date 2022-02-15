@@ -44,7 +44,6 @@ void PluginInterfaceCore::OnClientSceneLoaded(Urho3D::StringHash, Urho3D::Varian
 	if (nodeId)
 	{
 		using namespace ServerSideSpawned;
-		VariantMap& eventData = GetEventDataMap();
 		eventData[P_NODE] = nodeId;
 		connection->SendRemoteEvent(E_SERVERSIDESPAWNED, true, eventData);
 	}
