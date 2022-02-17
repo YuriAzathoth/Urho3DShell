@@ -53,18 +53,21 @@ Server::~Server()
 	Stop();
 }
 
-void Server::LoadScene(const Urho3D::String& sceneName)
+bool Server::LoadScene(const Urho3D::String& sceneName)
 {
 	URHO3D_LOGTRACEF("Server::LoadScene(%s)", sceneName.CString());
 	SharedPtr<File> file = GetSubsystem<ResourceCache>()->GetFile(sceneName);
 	if (sceneName.EndsWith(".xml", false))
-		scene_.LoadAsyncXML(file);
+		return scene_.LoadAsyncXML(file);
 	else if (sceneName.EndsWith(".bin", false))
-		scene_.LoadAsync(file);
+		return scene_.LoadAsync(file);
 	else if (sceneName.EndsWith(".json", false))
-		scene_.LoadAsyncJSON(file);
+		return scene_.LoadAsyncJSON(file);
 	else
+	{
 		URHO3D_LOGERRORF("Failed to load scene %s: unsupported file format.", sceneName.CString());
+		return false;
+	}
 }
 
 void Server::ClearScene()
@@ -74,11 +77,10 @@ void Server::ClearScene()
 	scene_.Clear();
 }
 
-void Server::Start(unsigned short port)
+bool Server::Start(unsigned short port)
 {
 	URHO3D_LOGTRACEF("Server::Start(%u)", port);
-	GetSubsystem<Network>()->StartServer(port);
-	remote_ = false;
+	return GetSubsystem<Network>()->StartServer(port);
 }
 
 void Server::Stop()

@@ -35,10 +35,10 @@ public:
 	explicit Server(Urho3D::Context* context);
 	~Server();
 
-	void LoadScene(const Urho3D::String& sceneName);
+	bool LoadScene(const Urho3D::String& sceneName);
 	void ClearScene();
 
-	void Start(unsigned short port);
+	bool Start(unsigned short port);
 	void Stop();
 
 	void MakeVisible(const Urho3D::String& serverName);

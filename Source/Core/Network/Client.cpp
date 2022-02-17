@@ -49,14 +49,19 @@ Client::~Client()
 	Disconnect();
 }
 
-void Client::Connect(unsigned short port, const Urho3D::String& address)
+bool Client::Connect(unsigned short port, const Urho3D::String& address)
 {
 	URHO3D_LOGTRACEF("Client::Connect(%s)", address.CString());
 	VariantMap identity;
 	identity[CL_NAME] = "SimpleName";
-	GetSubsystem<Network>()->Connect(address, port, &scene_, identity);
-	SendEvent(E_REMOTECLIENTSTARTED);
-	SubscribeToEvent(E_SERVERCONNECTED, URHO3D_HANDLER(Client, OnServerConnected));
+	if (GetSubsystem<Network>()->Connect(address, port, &scene_, identity))
+	{
+		SendEvent(E_REMOTECLIENTSTARTED);
+		SubscribeToEvent(E_SERVERCONNECTED, URHO3D_HANDLER(Client, OnServerConnected));
+		return true;
+	}
+	else
+		return false;
 }
 
 void Client::Disconnect()
