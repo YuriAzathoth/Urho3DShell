@@ -28,8 +28,8 @@
 #include "Client.h"
 #include "Core/ShellEvents.h"
 #include "Input/ControllersRegistry.h"
-#include "NetworkEvents.h"
-#include "ServerDefs.h"
+#include "Network/NetworkEvents.h"
+#include "Network/ServerDefs.h"
 
 using namespace Urho3D;
 

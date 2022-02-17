@@ -26,7 +26,7 @@
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Scene/Scene.h>
-#include "U3SCoreAPI.h"
+#include "U3SClientAPI.h"
 
 namespace Urho3D
 {
@@ -34,7 +34,7 @@ class Connection;
 }
 class InputController;
 
-class U3SCOREAPI_EXPORT Client : public Urho3D::Object
+class U3SCLIENTAPI_EXPORT Client : public Urho3D::Object
 {
 	URHO3D_OBJECT(Client, Urho3D::Object)
 
