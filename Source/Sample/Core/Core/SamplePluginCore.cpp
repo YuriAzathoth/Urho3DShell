@@ -63,7 +63,7 @@ unsigned SamplePluginCore::Spawn(Urho3D::Scene* scene)
 	node->SetPosition({0.0f, 4.0f, 0.0f});
 	node->Pitch(30.0f);
 
-	node->CreateComponent<SampleActorController>(REPLICATED);
+	node->CreateComponent<SampleActorController>(LOCAL);
 
 	return node->GetID();
 }

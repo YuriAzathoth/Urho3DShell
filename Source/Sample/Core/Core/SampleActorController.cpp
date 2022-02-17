@@ -45,37 +45,32 @@ SampleActorController::SampleActorController(Urho3D::Context* context)
 }
 
 void SampleActorController::Update(float)
-{	
+{
 	const InputReceiver* input = GetComponent<InputReceiver>();
-	if (input->IsServerSide()) // Server-side only code
-	{
-		const float pitch = Clamp(input->GetPitch(), PITCH_MIN, PITCH_MAX);
-		const float yaw = input->GetYaw();
-		const Quaternion rotation(pitch, yaw, 0.0f);
-		node_->SetRotation(rotation);
-	}
+	const float pitch = Clamp(input->GetPitch(), PITCH_MIN, PITCH_MAX);
+	const float yaw = input->GetYaw();
+	const Quaternion rotation(pitch, yaw, 0.0f);
+	node_->SetRotation(rotation);
 }
 
 void SampleActorController::FixedUpdate(float timeStep)
 {
+	const ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
 	const InputReceiver* input = GetComponent<InputReceiver>();
-	if (input->IsServerSide()) // Server-side only code
-	{
-		const ActionsRegistry* actions = GetSubsystem<ActionsRegistry>();
-		Vector3 translation;
-		translation.x_ = static_cast<float>(input->IsDown(actions->GetFlag(MOVE_RIGHT)) -
-											input->IsDown(actions->GetFlag(MOVE_LEFT)));
-		translation.y_ =
-			static_cast<float>(input->IsDown(actions->GetFlag(MOVE_UP)) - input->IsDown(actions->GetFlag(MOVE_DOWN)));
-		translation.z_ = static_cast<float>(input->IsDown(actions->GetFlag(MOVE_FORWARD)) -
-											input->IsDown(actions->GetFlag(MOVE_BACK)));
-		translation.Normalize();
 
-		const bool walk = input->IsDown(actions->GetFlag(WALK));
-		translation *= timeStep;
-		translation *= walk ? WALK_SPEED : MOVE_SPEED;
-		node_->Translate(translation);
-	}
+	Vector3 translation;
+	translation.x_ =
+		static_cast<float>(input->IsDown(actions->GetFlag(MOVE_RIGHT)) - input->IsDown(actions->GetFlag(MOVE_LEFT)));
+	translation.y_ =
+		static_cast<float>(input->IsDown(actions->GetFlag(MOVE_UP)) - input->IsDown(actions->GetFlag(MOVE_DOWN)));
+	translation.z_ =
+		static_cast<float>(input->IsDown(actions->GetFlag(MOVE_FORWARD)) - input->IsDown(actions->GetFlag(MOVE_BACK)));
+	translation.Normalize();
+
+	const bool walk = input->IsDown(actions->GetFlag(WALK));
+	translation *= timeStep;
+	translation *= walk ? WALK_SPEED : MOVE_SPEED;
+	node_->Translate(translation);
 }
 
 void SampleActorController::RegisterObject(Urho3D::Context* context)
