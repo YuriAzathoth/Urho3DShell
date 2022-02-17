@@ -30,9 +30,8 @@ class SamplePluginCore : public PluginInterfaceCore
 	URHO3D_OBJECT(SamplePluginCore, PluginInterfaceCore)
 
 public:
-	using PluginInterfaceCore::PluginInterfaceCore;
+	explicit SamplePluginCore(Urho3D::Context* context);
 
-	void Setup() override;
 	void Start() override;
 	void Stop() override;
 	unsigned Spawn(Urho3D::Scene* scene) override;

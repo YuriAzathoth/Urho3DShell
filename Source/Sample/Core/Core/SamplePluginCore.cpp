@@ -34,7 +34,8 @@ using namespace Urho3D;
 
 const String SamplePluginCore::PLUGIN_NAME = "Sample game";
 
-void SamplePluginCore::Setup()
+SamplePluginCore::SamplePluginCore(Urho3D::Context* context)
+	: PluginInterfaceCore(context)
 {
 	GetSubsystem<ShellConfigurator>()->SetGameName("SampleGame");
 
