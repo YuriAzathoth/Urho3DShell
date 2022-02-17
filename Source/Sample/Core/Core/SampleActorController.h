@@ -32,6 +32,7 @@ class SampleActorController : public Urho3D::LogicComponent
 public:
 	explicit SampleActorController(Urho3D::Context* context);
 
+	void Update(float) override;
 	void FixedUpdate(float timeStep) override;
 
 	static void RegisterObject(Urho3D::Context* context);

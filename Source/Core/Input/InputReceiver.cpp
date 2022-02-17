@@ -30,6 +30,7 @@ using namespace Urho3D;
 
 InputReceiver::InputReceiver(Urho3D::Context* context)
 	: Component(context)
+	, previous_(0)
 	, connection_(nullptr)
 {
 }
@@ -42,14 +43,14 @@ void InputReceiver::SetConnection(const Urho3D::Connection* connection)
 
 void InputReceiver::OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	previous_ = current_;
+	previous_ = current_.buttons_;
 	current_ = connection_->GetControls();
 }
 
 void InputReceiver::RegisterObject(Urho3D::Context* context)
 {
 	context->RegisterFactory<InputReceiver>("Input");
-	URHO3D_ATTRIBUTE("Controls", unsigned, current_.buttons_, 0, AM_NOEDIT);
-	URHO3D_ATTRIBUTE("Pitch", float, current_.pitch_, 0, AM_NOEDIT);
-	URHO3D_ATTRIBUTE("Yaw", float, current_.yaw_, 0, AM_NOEDIT);
+	URHO3D_ATTRIBUTE("Controls", unsigned, current_.buttons_, 0, AM_NOEDIT | AM_LATESTDATA);
+	URHO3D_ATTRIBUTE("Pitch", float, current_.pitch_, 0, AM_NOEDIT | AM_LATESTDATA);
+	URHO3D_ATTRIBUTE("Yaw", float, current_.yaw_, 0, AM_NOEDIT | AM_LATESTDATA);
 }

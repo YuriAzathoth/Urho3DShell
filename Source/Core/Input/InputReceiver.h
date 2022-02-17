@@ -41,17 +41,20 @@ public:
 
 	void SetConnection(const Urho3D::Connection* connection);
 
-	const Urho3D::Controls& GetControls() const { return current_; }
-
-	bool IsDown(unsigned flag) const { return current_.IsDown(flag); }
-	bool IsPressed(unsigned flag) const { return current_.IsDown(flag) && !previous_.IsDown(flag); }
-	bool IsReleased(unsigned flag) const { return !current_.IsDown(flag) && previous_.IsDown(flag); }
+	bool IsDown(unsigned flag) const { return current_.buttons_ & flag; }
+	bool IsPressed(unsigned flag) const { return (current_.buttons_ & flag) && !(previous_ & flag); }
+	bool IsReleased(unsigned flag) const { return !(current_.buttons_ & flag) && (previous_ & flag); }
+	
+	float GetPitch() const { return current_.pitch_; }
+	float GetYaw() const { return current_.yaw_; }
+	
+	bool IsServerSide() const { return connection_ != nullptr; }
 
 private:
 	void OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&);
 
 	Urho3D::Controls current_;
-	Urho3D::Controls previous_;
+	unsigned previous_;
 	const Urho3D::Connection* connection_;
 
 public:

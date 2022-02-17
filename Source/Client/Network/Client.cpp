@@ -95,5 +95,5 @@ void Client::OnSceneUpdated(Urho3D::StringHash, Urho3D::VariantMap&)
 void Client::OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&)
 {
 	connection_->SetControls(controls_);
-	controls_.Reset();
+	controls_.buttons_ = 0;
 }
