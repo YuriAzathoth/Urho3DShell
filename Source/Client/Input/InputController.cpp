@@ -23,8 +23,8 @@
 #include <Urho3D/Container/HashSet.h>
 #include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/Resource/XMLElement.h>
-#include "ActionsRegistry.h"
 #include "ControllersRegistry.h"
+#include "Input/ActionsRegistry.h"
 #include "InputController.h"
 #include "InputEvents.h"
 

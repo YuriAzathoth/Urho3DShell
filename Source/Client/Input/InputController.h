@@ -24,7 +24,7 @@
 #define INPUTCONTROLLER_H
 
 #include <Urho3D/Core/Object.h>
-#include "U3SCoreAPI.h"
+#include "U3SClientAPI.h"
 
 namespace Urho3D
 {
@@ -32,7 +32,7 @@ class Controls;
 class XMLElement;
 } // namespace Urho3D
 
-class U3SCOREAPI_EXPORT InputController : public Urho3D::Object
+class U3SCLIENTAPI_EXPORT InputController : public Urho3D::Object
 {
 	URHO3D_OBJECT(InputController, Urho3D::Object)
 

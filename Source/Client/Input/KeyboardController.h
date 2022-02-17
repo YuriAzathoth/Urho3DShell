@@ -24,9 +24,9 @@
 #define KEYBOARDCONTROLLER_H
 
 #include "InputController.h"
-#include "U3SCoreAPI.h"
+#include "U3SClientAPI.h"
 
-class U3SCOREAPI_EXPORT KeyboardController : public InputController
+class U3SCLIENTAPI_EXPORT KeyboardController : public InputController
 {
 	URHO3D_OBJECT(KeyboardController, InputController)
 

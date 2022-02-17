@@ -25,14 +25,14 @@
 
 #include <Urho3D/Core/Object.h>
 #include "InputController.h"
-#include "U3SCoreAPI.h"
+#include "U3SClientAPI.h"
 
 namespace Urho3D
 {
 class XMLElement;
 }
 
-class U3SCOREAPI_EXPORT ControllersRegistry : public Urho3D::Object
+class U3SCLIENTAPI_EXPORT ControllersRegistry : public Urho3D::Object
 {
 	URHO3D_OBJECT(ControllersRegistry, Urho3D::Object)
 
