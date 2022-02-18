@@ -28,12 +28,6 @@
 #include <Urho3D/Scene/Scene.h>
 #include "U3SClientAPI.h"
 
-namespace Urho3D
-{
-class Connection;
-}
-class InputController;
-
 class U3SCLIENTAPI_EXPORT Client : public Urho3D::Object
 {
 	URHO3D_OBJECT(Client, Urho3D::Object)
@@ -54,7 +48,6 @@ private:
 
 	Urho3D::Controls controls_;
 	Urho3D::Scene scene_;
-	Urho3D::Connection* connection_;
 };
 
 #endif // CLIENT_H

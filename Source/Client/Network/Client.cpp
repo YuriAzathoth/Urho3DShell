@@ -36,7 +36,6 @@ using namespace Urho3D;
 Client::Client(Urho3D::Context* context)
 	: Object(context)
 	, scene_(context)
-	, connection_(nullptr)
 {
 	URHO3D_LOGTRACE("Client::Client");
 	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(Client, OnSceneLoaded));
@@ -76,9 +75,10 @@ void Client::Disconnect()
 	}
 }
 
+static Urho3D::Connection* conn;
+
 void Client::OnServerConnected(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	connection_ = GetSubsystem<Network>()->GetServerConnection();
 	SubscribeToEvent(E_SCENEUPDATE, URHO3D_HANDLER(Client, OnSceneUpdated));
 	SubscribeToEvent(E_PHYSICSPRESTEP, URHO3D_HANDLER(Client, OnPhysicsPreStep));
 }
@@ -94,6 +94,6 @@ void Client::OnSceneUpdated(Urho3D::StringHash, Urho3D::VariantMap&)
 
 void Client::OnPhysicsPreStep(Urho3D::StringHash, Urho3D::VariantMap&)
 {
-	connection_->SetControls(controls_);
+	GetSubsystem<Network>()->GetServerConnection()->SetControls(controls_);
 	controls_.buttons_ = 0;
 }
