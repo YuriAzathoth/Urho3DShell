@@ -39,6 +39,10 @@ public:
 	bool Connect(unsigned short port, const Urho3D::String& address = "localhost");
 	void Disconnect();
 
+	void SetPlayerName(const Urho3D::String& playerName) { playerName_ = playerName; }
+
+	const Urho3D::String& GetPlayerName() const { return playerName_; }
+
 private:
 	void OnServerConnected(Urho3D::StringHash, Urho3D::VariantMap&);
 	void OnConnectFailed(Urho3D::StringHash, Urho3D::VariantMap&);
@@ -48,6 +52,7 @@ private:
 
 	Urho3D::Controls controls_;
 	Urho3D::Scene scene_;
+	Urho3D::String playerName_;
 };
 
 #endif // CLIENT_H

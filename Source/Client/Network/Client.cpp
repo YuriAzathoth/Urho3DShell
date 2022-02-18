@@ -36,6 +36,7 @@ using namespace Urho3D;
 Client::Client(Urho3D::Context* context)
 	: Object(context)
 	, scene_(context)
+	, playerName_("Player")
 {
 	URHO3D_LOGTRACE("Client::Client");
 	SubscribeToEvent(E_ASYNCLOADFINISHED, URHO3D_HANDLER(Client, OnSceneLoaded));
@@ -52,7 +53,7 @@ bool Client::Connect(unsigned short port, const Urho3D::String& address)
 {
 	URHO3D_LOGTRACEF("Client::Connect(%s)", address.CString());
 	VariantMap identity;
-	identity[CL_NAME] = "SimpleName";
+	identity[CL_NAME] = playerName_;
 	if (GetSubsystem<Network>()->Connect(address, port, &scene_, identity))
 	{
 		SendEvent(E_REMOTECLIENTSTARTED);
