@@ -31,6 +31,36 @@
 *.out
 *.app
 
-# Clangd temporary files
+# CMake generated files
+*.project
+*.rc
 .cache
+.ninja_deps
+.ninja_log
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt
 compile_commands.json
+/bin
+/build.ninja
+/Source/Client/U3SClientAPI.h
+/Source/Client/U3SConfig.cmake
+/Source/Client/U3SConfigVersion.cmake
+/Source/Client/U3STargets.cmake
+/Source/Core/U3STargets.cmake
+/Source/Core/U3SConfig.cmake
+/Source/Core/U3SConfigVersion.cmake
+/Source/Core/U3SCoreAPI.h
+/Source/Sample/ClientApplication.cpp
+/Source/Sample/EditorApplication.cpp
+/Source/Sample/ServerApplication.cpp
+/Source/Sample/Core/SampleGameConfig.cmake
+/Source/Sample/Core/SampleGameConfigVersion.cmake
+/Source/Sample/Core/SampleGameCoreAPI.h
+/Source/Sample/Core/SampleGameTargets.cmake
+/Source/Sample/Client/SampleGameClientAPI.h
+/Source/Sample/Client/SampleGameConfig.cmake
+/Source/Sample/Client/SampleGameConfigVersion.cmake
+/Source/Sample/Client/SampleGameTargets.cmake
+/Urho3DShell.workspace
+/.codelite
